@@ -3,7 +3,7 @@
 Front-end of the Umbrela app
 
 ## How to run
-- Before running, make sure you are in the current directory, and make sure you have the [dependencies](https://facebook.github.io/react-native/docs/getting-started) installed for the iOS platform.
+- Before running, make sure you have the [dependencies](https://facebook.github.io/react-native/docs/getting-started) installed for the iOS platform, and you are in the current directory.
 
 - Install the dependencies with the command:
 `npm install`
