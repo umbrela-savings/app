@@ -15,8 +15,10 @@ class IntroScreen extends React.Component {
 
   render() {
     return (
-      <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
-        <TouchableOpacity onPress={() => this.props.navigation.navigate('LogIn')}>
+      <View
+        style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
+        <TouchableOpacity
+          onPress={() => this.props.navigation.navigate('LogIn')}>
           <View style={styles.button}>
             <Text style={styles.buttonText}>Log-In</Text>
           </View>
@@ -112,6 +114,12 @@ class SignUpScreen extends React.Component {
             <Text style={styles.buttonText}>Submit</Text>
           </View>
         </TouchableOpacity>
+        <TouchableOpacity
+          onPress={() => {this.props.navigation.navigate('Intro')}}>
+          <View style={styles.button}>
+            <Text style={styles.buttonText}>Cancel</Text>
+          </View>
+        </TouchableOpacity>
       </View>
     );
   }
@@ -187,6 +195,12 @@ class LogInScreen extends React.Component {
             <Text style={styles.buttonText}>Log-In</Text>
           </View>
         </TouchableOpacity>
+        <TouchableOpacity
+          onPress={() => {this.props.navigation.navigate('Intro')}}>
+          <View style={styles.button}>
+            <Text style={styles.buttonText}>Cancel</Text>
+          </View>
+        </TouchableOpacity>
       </View>
     );
   }
@@ -203,38 +217,17 @@ class HomeScreen extends React.Component {
 
   render() {
     return (
-      <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
+      <View
+        style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
         <Text>Successfully logged in!</Text>
-        <TouchableOpacity onPress={() => {this.props.navigation.navigate('Auth');}}>
+        <TouchableOpacity
+          onPress={() => {this.props.navigation.navigate('Auth')}}>
           <View style={styles.button}>
             <Text style={styles.buttonText}>Sign Out</Text>
           </View>
         </TouchableOpacity>
       </View>
     );
-  }
-}
-
-const AppStack = createStackNavigator({ Home: HomeScreen });
-const AuthStack =
-  createStackNavigator({ Intro: IntroScreen,
-                         LogIn: LogInScreen,
-                         SignUp: SignUpScreen });
-
-const AppContainer = createAppContainer(createSwitchNavigator(
-  {
-    Intro: IntroScreen,
-    App: AppStack,
-    Auth: AuthStack,
-  },
-  {
-    initialRouteName: 'Intro',
-  }
-));
-
-export default class app extends React.Component {
-  render() {
-    return <AppContainer />;
   }
 }
 
@@ -254,3 +247,25 @@ const styles = StyleSheet.create({
     color: 'white'
   }
 });
+
+const AppStack = createStackNavigator({ Home: HomeScreen });
+const AuthStack =
+  createStackNavigator({ LogIn: LogInScreen,
+                         SignUp: SignUpScreen });
+
+const AppContainer = createAppContainer(createSwitchNavigator(
+  {
+    Intro: IntroScreen,
+    App: AppStack,
+    Auth: AuthStack,
+  },
+  {
+    initialRouteName: 'Intro',
+  }
+));
+
+export default class app extends React.Component {
+  render() {
+    return <AppContainer />;
+  }
+}
