@@ -1,11 +1,38 @@
 import React from 'react';
 
-import { TextInput, StyleSheet, ScrollView, Alert, FlatList, Image,
-  Text, TouchableOpacity, View } from 'react-native';
+import { TextInput, StyleSheet, Alert, FlatList, Image,
+  Text, TouchableOpacity, View, ActivityIndicator, AsyncStorage,
+  StatusBar } from 'react-native';
 
 import { createAppContainer, createStackNavigator, StackNavigator,
-    StackActions, NavigationActions, createSwitchNavigator}
+    StackActions, NavigationActions, createSwitchNavigator }
     from 'react-navigation';
+
+class AuthLoadingScreen extends React.Component {
+  constructor(props) {
+    super(props);
+    this._bootstrapAsync();
+  }
+
+  // Fetch the token from storage then navigate to our appropriate place
+  _bootstrapAsync = async () => {
+    const userToken = await AsyncStorage.getItem('userToken');
+
+    // This will switch to the App screen or Auth screen and this loading
+    // screen will be unmounted and thrown away.
+    this.props.navigation.navigate(userToken ? 'App' : 'Auth');
+  };
+
+  // Render any loading content that you like here
+  render() {
+    return (
+      <View>
+        <ActivityIndicator />
+        <StatusBar barStyle="default" />
+      </View>
+    );
+  }
+}
 
 // first screen you see when you open the app.
 class IntroScreen extends React.Component {
@@ -49,7 +76,7 @@ class SignUpScreen extends React.Component {
   };
 
 
-  addUser() {
+  _addUser() {
     const name = this.state.name;
     const username = this.state.username;
     const password = this.state.password;
@@ -109,7 +136,7 @@ class SignUpScreen extends React.Component {
           secureTextEntry={true}
           onChangeText={(text) => this.setState({ password: text })}
           />
-        <TouchableOpacity onPress={() => {this.addUser()}}>
+        <TouchableOpacity onPress={() => {this._addUser()}}>
           <View style={styles.button}>
             <Text style={styles.buttonText}>Submit</Text>
           </View>
@@ -138,7 +165,7 @@ class LogInScreen extends React.Component {
     title: 'Log In',
   };
 
-  auth() {
+  _auth() {
     const username = this.state.username;
     const password = this.state.password;
 
@@ -152,7 +179,8 @@ class LogInScreen extends React.Component {
         for (var i = 0; i < users.length; i++) {
           if (users[i].username == username) {
             if (users[i].password == password) {
-              this.props.navigation.navigate('App');
+                AsyncStorage.setItem('userToken', users[i].id);
+                this.props.navigation.navigate('App');
               return;
             } else {
               Alert.alert('Password is wrong!');
@@ -190,7 +218,7 @@ class LogInScreen extends React.Component {
           secureTextEntry={true}
           onChangeText={(text) => this.setState({ password: text })}
           />
-        <TouchableOpacity onPress={() => {this.auth()}}>
+        <TouchableOpacity onPress={() => {this._auth()}}>
           <View style={styles.button}>
             <Text style={styles.buttonText}>Log-In</Text>
           </View>
@@ -211,17 +239,17 @@ class HomeScreen extends React.Component {
     title: 'SUCCESS!',
   };
 
-  _onPressButton() {
-    Alert.alert('You tapped the button!')
-  }
+  _signOutAsync = async () => {
+    await AsyncStorage.clear();
+    this.props.navigation.navigate('Auth');
+  };
 
   render() {
     return (
       <View
         style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
         <Text>Successfully logged in!</Text>
-        <TouchableOpacity
-          onPress={() => {this.props.navigation.navigate('Auth')}}>
+        <TouchableOpacity onPress={this._signOutAsync}>
           <View style={styles.button}>
             <Text style={styles.buttonText}>Sign Out</Text>
           </View>
@@ -250,17 +278,18 @@ const styles = StyleSheet.create({
 
 const AppStack = createStackNavigator({ Home: HomeScreen });
 const AuthStack =
-  createStackNavigator({ LogIn: LogInScreen,
+  createStackNavigator({ Intro: IntroScreen,
+                         LogIn: LogInScreen,
                          SignUp: SignUpScreen });
 
 const AppContainer = createAppContainer(createSwitchNavigator(
   {
-    Intro: IntroScreen,
+    AuthLoading: AuthLoadingScreen,
     App: AppStack,
     Auth: AuthStack,
   },
   {
-    initialRouteName: 'Intro',
+    initialRouteName: 'AuthLoading',
   }
 ));
 
