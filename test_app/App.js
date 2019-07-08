@@ -1,12 +1,23 @@
 import React from 'react';
 
-import { TextInput, StyleSheet, Alert, FlatList, Image,
-  Text, TouchableOpacity, View, ActivityIndicator, AsyncStorage,
-  StatusBar } from 'react-native';
+import { TextInput
+       , StyleSheet
+       , Alert
+       , FlatList
+       , Image
+       , Text
+       , TouchableOpacity
+       , View
+       , ActivityIndicator
+       , AsyncStorage
+       , StatusBar } from 'react-native';
 
-import { createAppContainer, createStackNavigator, StackNavigator,
-    StackActions, NavigationActions, createSwitchNavigator }
-    from 'react-navigation';
+import { createAppContainer
+       , createStackNavigator
+       , StackNavigator
+       , StackActions
+       , NavigationActions
+       , createSwitchNavigator } from 'react-navigation';
 
 class AuthLoadingScreen extends React.Component {
   constructor(props) {
