@@ -7,7 +7,7 @@
 - **components:** parts that are likely to be used repetitively.
 
 ## To-do:
-- [ ] clean up the files in the directory
+- [x] clean up the files in the directory
 - [ ] clean up unnecessary packages in `package.json`
 - [ ] add email input field to the log in page
 - [ ] update the source of AsyncStorage

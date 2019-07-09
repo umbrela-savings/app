@@ -8,13 +8,20 @@ import AuthLoadingScreen from '../screens/AuthLoadingScreen';
 import HomeScreen from '../screens/HomeScreen';
 import LogInScreen from '../screens/LogInScreen';
 import SignUpScreen from '../screens/SignUpScreen';
-import WelcomeScreen from '../screens/WelcomeScreen';
 
 const AppStack = createStackNavigator({ Home: HomeScreen });
 const AuthStack =
-  createStackNavigator({ Welcome: WelcomeScreen,
-                         LogIn: LogInScreen,
-                         SignUp: SignUpScreen });
+  createStackNavigator({ 
+    LogIn: {
+      screen: LogInScreen,
+      navigationOptions: () => ({
+        header: null
+      }),
+    },
+    SignUp: {
+      screen: SignUpScreen
+    }
+});
 
 export default createAppContainer(
   createSwitchNavigator({

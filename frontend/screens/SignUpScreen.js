@@ -1,4 +1,5 @@
 import React from 'react';
+
 import { TextInput, 
   StyleSheet,
   Alert,
@@ -60,36 +61,42 @@ export default class SignUpScreen extends React.Component {
 
   render() {
     return (
-      <View style={{padding: 10}}>
-        <TextInput
-          style={{height: 40}}
-          value={this.state.name}
-          placeholder="Name"
-          onChangeText={(text) => this.setState({ name: text })}
+      <View style={styles.container}>
+
+        <View style={styles.inputContainer}>
+          <TextInput
+            style={styles.body}
+            value={this.state.name}
+            placeholder="Name"
+            onChangeText={(text) => this.setState({ name: text })}
+            />
+        </View>
+
+        <View style={styles.inputContainer}>
+          <TextInput
+            style={styles.body}
+            value={this.state.username}
+            placeholder="User Name"
+            onChangeText={(text) => this.setState({ username: text })}
+            />
+        </View>
+
+        <View style={styles.inputContainer}>
+          <TextInput
+            style={styles.body}
+            value={this.state.password}
+            placeholder="Password"
+            secureTextEntry={true}
+            onChangeText={(text) => this.setState({ password: text })}
           />
-        <TextInput
-          style={{height: 40}}
-          value={this.state.username}
-          placeholder="User Name"
-          onChangeText={(text) => this.setState({ username: text })}
-          />
-        <TextInput
-          style={{height: 40}}
-          value={this.state.password}
-          placeholder="Password"
-          secureTextEntry={true}
-          onChangeText={(text) => this.setState({ password: text })}
-          />
-        <TouchableOpacity onPress={() => {this._addUser()}}>
-          <View style={styles.button}>
-            <Text style={styles.buttonText}>Submit</Text>
-          </View>
-        </TouchableOpacity>
-        <TouchableOpacity
-          onPress={() => {this.props.navigation.navigate('Welcome')}}>
-          <View style={styles.button}>
-            <Text style={styles.buttonText}>Cancel</Text>
-          </View>
+        </View>
+
+        <TouchableOpacity 
+          onPress={() => {this._addUser()}}
+          style={styles.loginContainer}>
+            <View style={styles.textContainer}>
+              <Text style={styles.loginText}>Submit</Text>
+            </View>
         </TouchableOpacity>
       </View>
     );
@@ -98,17 +105,41 @@ export default class SignUpScreen extends React.Component {
 
 const styles = StyleSheet.create({
   container: {
-    paddingTop: 60,
-    alignItems: 'center'
+    flex: 1,
+    alignItems: "center",
+    backgroundColor: "#2bcbff"
   },
-  button: {
-    marginBottom: 30,
-    width: 100,
-    alignItems: 'center',
-    backgroundColor: '#2A4073'
+  loginContainer: {
+    width: "80%",
+    backgroundColor: "#0086a2",
+    borderRadius: 5,
+    padding: 10,
+    marginTop: 30
   },
-  buttonText: {
-    padding: 20,
-    color: 'white'
+  textContainer: {
+    alignItems: "center"
+  },
+  loginText: {
+    color: "white",
+  },
+  inputContainer: {
+    width: "80%",
+    marginTop: 30,
+    borderWidth: 1,
+    borderStyle: "solid",
+    borderColor: "grey",
+    borderRadius: 5,
+    backgroundColor: "#ffffff"
+  },
+  body: {
+    height: 42,
+    paddingLeft: 20,
+    paddingRight: 20,
+    color: "#696969"
+  },
+  image: {
+    marginTop: 180,
+    width: 300,
+    height: 137
   }
 });

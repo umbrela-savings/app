@@ -9,7 +9,7 @@ import AppNavigator from './navigation/AppNavigator';
 
 export default function App(props) {
   const [isLoadingComplete, setLoadingComplete] = useState(false);
-
+/*
   if (!isLoadingComplete && !props.skipLoadingScreen) {
     return (
       <AppLoading
@@ -18,16 +18,16 @@ export default function App(props) {
         onFinish={() => handleFinishLoading(setLoadingComplete)}
       />
     );
-  } else {
+  } else {*/
     return (
       <View style={styles.container}>
         {Platform.OS === 'ios' && <StatusBar barStyle="default" />}
         <AppNavigator />
       </View>
     );
-  }
+//  }
 }
-
+/*
 async function loadResourcesAsync() {
   await Promise.all([
     Asset.loadAsync([
@@ -53,7 +53,7 @@ function handleLoadingError(error: Error) {
 function handleFinishLoading(setLoadingComplete) {
   setLoadingComplete(true);
 }
-
+*/
 const styles = StyleSheet.create({
   container: {
     flex: 1,
