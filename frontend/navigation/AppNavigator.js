@@ -6,14 +6,14 @@ import {
 
 import AuthLoadingScreen from '../screens/AuthLoadingScreen';
 import HomeScreen from '../screens/HomeScreen';
-import LogInScreen from '../screens/LogInScreen';
+import LandingScreen from '../screens/LandingScreen';
 import SignUpScreen from '../screens/SignUpScreen';
 
 const AppStack = createStackNavigator({ Home: HomeScreen });
 const AuthStack =
   createStackNavigator({ 
-    LogIn: {
-      screen: LogInScreen,
+    Landing: {
+      screen: LandingScreen,
       navigationOptions: () => ({
         header: null
       }),

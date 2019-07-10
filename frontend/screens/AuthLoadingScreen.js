@@ -3,8 +3,8 @@ import React from 'react';
 import { 
   View, 
   ActivityIndicator, 
-  AsyncStorage,
   StatusBar,
+  AsyncStorage
 } from 'react-native';
 
 export default class AuthLoadingScreen extends React.Component {

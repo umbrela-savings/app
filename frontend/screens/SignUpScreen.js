@@ -52,7 +52,7 @@ export default class SignUpScreen extends React.Component {
         password: null,
       });
 
-      this.props.navigation.navigate('LogIn');
+      this.props.navigation.navigate('Landing');
 
     } else {
       Alert.alert('A field is empty!');
