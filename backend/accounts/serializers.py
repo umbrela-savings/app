@@ -25,5 +25,6 @@ class LoginSerializer(serializers.Serializer):
 
     def validate(self, data):
         user = authenticate(**data)
-        if user and user.is_active:
-            return user
+        if not (user and user.is_active):
+            raise serializers.ValidationError("We can't find that username and password. You can reset your password or try again.")
+        return user
