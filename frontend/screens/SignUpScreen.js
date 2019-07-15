@@ -5,12 +5,19 @@ import {
   Alert,
   Text,
   TouchableOpacity,
-  View
+  View,
+  ImageBackground
 } from 'react-native';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 
 import { register } from '../actions/auth';
+import Logo from '../assets/images/umbrela_landing_logo.svg';
+import { 
+  LandingStyles,
+  Constants } from '../constants/Styles';
+
+const styles = LandingStyles;
 
 export class SignUpScreen extends React.Component {
   state = {
@@ -65,72 +72,83 @@ export class SignUpScreen extends React.Component {
 
   render() {
     return (
-      <View style={styles.container}>
+      <ImageBackground
+        source={Constants.images.background} 
+        style={{width: '100%', height: '100%'}}>
 
-        <View style={styles.inputContainer}>
-          <TextInput
-            style={styles.body}
-            value={this.state.first}
-            placeholder='First Name'
-            onChangeText={(text) => this.setState({ first: text })}
+        <View style={styles.container}>
+
+          <View style={styles.image}>
+            <Logo width={300} height={200}/>
+          </View>
+
+          <View style={styles.inputContainer}>
+            <TextInput
+              style={styles.body}
+              value={this.state.first}
+              placeholder='First Name'
+              onChangeText={(text) => this.setState({ first: text })}
+              />
+          </View>
+
+          <View style={styles.inputContainer}>
+            <TextInput
+              style={styles.body}
+              value={this.state.last}
+              placeholder='Last Name'
+              onChangeText={(text) => this.setState({ last: text })}
+              />
+          </View>
+
+          <View style={styles.inputContainer}>
+            <TextInput
+              style={styles.body}
+              value={this.state.username}
+              placeholder='Username'
+              onChangeText={(text) => this.setState({ username: text })}
+              />
+          </View>
+
+          <View style={styles.inputContainer}>
+            <TextInput
+              style={styles.body}
+              value={this.state.email}
+              placeholder='Email'
+              onChangeText={(text) => this.setState({ email: text })}
+              />
+          </View>
+
+          <View style={styles.inputContainer}>
+            <TextInput
+              style={styles.body}
+              value={this.state.password}
+              placeholder='Password'
+              secureTextEntry={true}
+              onChangeText={(text) => this.setState({ password: text })}
             />
-        </View>
+          </View>
 
-        <View style={styles.inputContainer}>
-          <TextInput
-            style={styles.body}
-            value={this.state.last}
-            placeholder='Last Name'
-            onChangeText={(text) => this.setState({ last: text })}
+          <View style={styles.inputContainer}>
+            <TextInput
+              style={styles.body}
+              value={this.state.password2}
+              placeholder='Confirm your password'
+              secureTextEntry={true}
+              onChangeText={(text) => this.setState({ password2: text })}
             />
+          </View>
+
+          <TouchableOpacity 
+            onPress={() => {this._addUser()}}
+            style={styles.loginContainer}>
+              <View style={styles.textContainer}>
+                <Text style={styles.loginText}>Submit</Text>
+              </View>
+          </TouchableOpacity>
+
         </View>
 
-        <View style={styles.inputContainer}>
-          <TextInput
-            style={styles.body}
-            value={this.state.username}
-            placeholder='Username'
-            onChangeText={(text) => this.setState({ username: text })}
-            />
-        </View>
-
-        <View style={styles.inputContainer}>
-          <TextInput
-            style={styles.body}
-            value={this.state.email}
-            placeholder='Email'
-            onChangeText={(text) => this.setState({ email: text })}
-            />
-        </View>
-
-        <View style={styles.inputContainer}>
-          <TextInput
-            style={styles.body}
-            value={this.state.password}
-            placeholder='Password'
-            secureTextEntry={true}
-            onChangeText={(text) => this.setState({ password: text })}
-          />
-        </View>
-
-        <View style={styles.inputContainer}>
-          <TextInput
-            style={styles.body}
-            value={this.state.password2}
-            placeholder='Confirm your password'
-            secureTextEntry={true}
-            onChangeText={(text) => this.setState({ password2: text })}
-          />
-        </View>
-
-        <TouchableOpacity 
-          onPress={() => {this._addUser()}}
-          style={styles.loginContainer}>
-            <View style={styles.textContainer}>
-              <Text style={styles.loginText}>Submit</Text>
-            </View>
-        </TouchableOpacity>
-      </View>
+      </ImageBackground>
     );
   }
 }
@@ -139,44 +157,3 @@ const mapStateToProps = state => ({
 });
 
 export default connect(mapStateToProps, { register }) (SignUpScreen);
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    alignItems: 'center',
-    backgroundColor: "#2bcbff"
-  },
-  loginContainer: {
-    width: '80%',
-    backgroundColor: '#0086a2',
-    borderRadius: 5,
-    padding: 10,
-    marginTop: 30
-  },
-  textContainer: {
-    alignItems: 'center'
-  },
-  loginText: {
-    color: 'white',
-  },
-  inputContainer: {
-    width: '80%',
-    marginTop: 30,
-    borderWidth: 1,
-    borderStyle: 'solid',
-    borderColor: 'grey',
-    borderRadius: 5,
-    backgroundColor: '#ffffff'
-  },
-  body: {
-    height: 42,
-    paddingLeft: 20,
-    paddingRight: 20,
-    color: '#696969'
-  },
-  image: {
-    marginTop: 180,
-    width: 300,
-    height: 137
-  }
-});

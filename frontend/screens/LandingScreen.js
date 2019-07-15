@@ -13,12 +13,15 @@ import {
 } from 'react-native';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
+import FastImage from 'react-native-fast-image';
 
-import Logo from '../assets/images/umbrela_landing_logo.svg';
 import { login } from '../actions/auth';
+import Logo from '../assets/images/umbrela_landing_logo.svg';
+import { 
+  LandingStyles,
+  Constants } from '../constants/Styles';
 
-const background = '../assets/images/umbrela_landing_background.png';
-const { height: deviceHeight, width: deviceWidth } = Dimensions.get('window');
+const styles = LandingStyles;
 
 export class LandingScreen extends React.Component {
   state = {
@@ -56,8 +59,8 @@ export class LandingScreen extends React.Component {
 
   render() {
     return (
-      <ImageBackground 
-        source={require(background)} 
+      <ImageBackground
+        source={Constants.images.background} 
         style={{width: '100%', height: '100%'}}>
 
         <View style={styles.container}>
@@ -108,6 +111,7 @@ export class LandingScreen extends React.Component {
           </TouchableOpacity>
 
         </View>
+        
       </ImageBackground>
     );
   }
@@ -117,45 +121,3 @@ const mapStateToProps = state => ({
   isAuthenticated: state.auth.isAuthenticated
 });
 export default connect(mapStateToProps, { login })(LandingScreen);
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    alignItems: 'center'
-  },
-  loginContainer: {
-    width: '80%',
-    backgroundColor: '#0086a2',
-    borderRadius: 5,
-    padding: 10,
-    marginTop: 30
-  },
-  textContainer: {
-    alignItems: 'center'
-  },
-  loginText: {
-    color: 'white',
-  },
-  inputContainer: {
-    width: '80%',
-    marginTop: 30,
-    borderWidth: 1,
-    borderStyle: 'solid',
-    borderColor: 'grey',
-    borderRadius: 5,
-    backgroundColor: '#ffffff'
-  },
-  body: {
-    height: 42,
-    paddingLeft: 20,
-    paddingRight: 20,
-    color: '#696969'
-  },
-  image: {
-    marginTop: 100
-  },
-  backgroundImage: {
-    height: deviceHeight,
-    width: deviceWidth
-  }
-});

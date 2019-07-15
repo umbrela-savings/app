@@ -30,10 +30,6 @@
   ```
 5. Start another terminal to install and run the backend code. 
 
-## To-do:
-- [ ] move the styles in `./constants/Styles.js`
-- [ ] update this readme file 
-
 ## Future improvements
 - The current code logs user in immediately after the user is registered. Will determine if that is necessary 
 - The current code checks the user input is empty of not after the user clicks submit, but the backend code also checks for that. Will determine which one should remain
