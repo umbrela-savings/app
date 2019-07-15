@@ -4,7 +4,7 @@ import {
   Text,
   TouchableOpacity,
   View,
-  AsyncStorage,
+  AsyncStorage
 } from 'react-native';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
@@ -18,7 +18,7 @@ export class HomeScreen extends React.Component {
 
   componentDidUpdate() {
     if (!this.props.isAuthenticated) {
-      this.props.navigation.navigate('Auth');
+      this.props.navigation.navigate('Landing');
     }
   }
 
@@ -50,6 +50,7 @@ export class HomeScreen extends React.Component {
 const mapStateToProps = state => ({
   isAuthenticated: state.auth.isAuthenticated
 });
+
 export default connect(mapStateToProps, { logout })(HomeScreen);
 
 const styles = StyleSheet.create({

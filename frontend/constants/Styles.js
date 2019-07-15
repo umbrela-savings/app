@@ -3,6 +3,8 @@ import { Dimensions, StyleSheet } from 'react-native';
 
 const { height: deviceHeight, width: deviceWidth } = Dimensions.get('window');
 
+export const background = '../assets/images/umbrela_landing_background.png';
+
 export const profileStyles = StyleSheet.create({
   flexRow: {
     backgroundColor: 'white',

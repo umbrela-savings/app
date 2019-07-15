@@ -1,30 +1,30 @@
 import React from 'react';
-
-import { TextInput, 
+import { 
+  TextInput, 
   StyleSheet,
   Alert,
   Text,
   TouchableOpacity,
-  View,
+  View
 } from 'react-native';
-
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 
 import { register } from '../actions/auth';
 
-
 export class SignUpScreen extends React.Component {
   state = {
-    username: "",
-    email: "",
-    password: "",
-    password2: ""
+    first: '',
+    last: '',
+    username: '',
+    email: '',
+    password: '',
+    password2: ''
   };
 
   componentDidUpdate() {
     if (this.props.isAuthenticated) {
-      this.props.navigation.navigate('Landing');
+      this.props.navigation.navigate('App');
     }
   }
 
@@ -49,8 +49,9 @@ export class SignUpScreen extends React.Component {
           password
         };
         this.props.register(newUser);
-        this.props.navigation.navigate('Landing');
         this.setState({
+          first: '',
+          last: '',
           username: '',
           email: '',
           password: '',
@@ -69,8 +70,26 @@ export class SignUpScreen extends React.Component {
         <View style={styles.inputContainer}>
           <TextInput
             style={styles.body}
+            value={this.state.first}
+            placeholder='First Name'
+            onChangeText={(text) => this.setState({ first: text })}
+            />
+        </View>
+
+        <View style={styles.inputContainer}>
+          <TextInput
+            style={styles.body}
+            value={this.state.last}
+            placeholder='Last Name'
+            onChangeText={(text) => this.setState({ last: text })}
+            />
+        </View>
+
+        <View style={styles.inputContainer}>
+          <TextInput
+            style={styles.body}
             value={this.state.username}
-            placeholder="Username"
+            placeholder='Username'
             onChangeText={(text) => this.setState({ username: text })}
             />
         </View>
@@ -79,7 +98,7 @@ export class SignUpScreen extends React.Component {
           <TextInput
             style={styles.body}
             value={this.state.email}
-            placeholder="Email"
+            placeholder='Email'
             onChangeText={(text) => this.setState({ email: text })}
             />
         </View>
@@ -88,7 +107,7 @@ export class SignUpScreen extends React.Component {
           <TextInput
             style={styles.body}
             value={this.state.password}
-            placeholder="Password"
+            placeholder='Password'
             secureTextEntry={true}
             onChangeText={(text) => this.setState({ password: text })}
           />
@@ -98,7 +117,7 @@ export class SignUpScreen extends React.Component {
           <TextInput
             style={styles.body}
             value={this.state.password2}
-            placeholder="Confirm your password"
+            placeholder='Confirm your password'
             secureTextEntry={true}
             onChangeText={(text) => this.setState({ password2: text })}
           />
@@ -124,36 +143,36 @@ export default connect(mapStateToProps, { register }) (SignUpScreen);
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    alignItems: "center",
+    alignItems: 'center',
     backgroundColor: "#2bcbff"
   },
   loginContainer: {
-    width: "80%",
-    backgroundColor: "#0086a2",
+    width: '80%',
+    backgroundColor: '#0086a2',
     borderRadius: 5,
     padding: 10,
     marginTop: 30
   },
   textContainer: {
-    alignItems: "center"
+    alignItems: 'center'
   },
   loginText: {
-    color: "white",
+    color: 'white',
   },
   inputContainer: {
-    width: "80%",
+    width: '80%',
     marginTop: 30,
     borderWidth: 1,
-    borderStyle: "solid",
-    borderColor: "grey",
+    borderStyle: 'solid',
+    borderColor: 'grey',
     borderRadius: 5,
-    backgroundColor: "#ffffff"
+    backgroundColor: '#ffffff'
   },
   body: {
     height: 42,
     paddingLeft: 20,
     paddingRight: 20,
-    color: "#696969"
+    color: '#696969'
   },
   image: {
     marginTop: 180,
