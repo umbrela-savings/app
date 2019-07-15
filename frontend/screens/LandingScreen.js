@@ -1,5 +1,4 @@
 import React from 'react';
-
 import { 
   TextInput,
   StyleSheet, 
@@ -12,66 +11,48 @@ import {
   Dimensions,
   AsyncStorage
 } from 'react-native';
+import { connect } from 'react-redux';
+import PropTypes from 'prop-types';
 
-import Logo from "../assets/images/umbrela_landing_logo.svg";
+import Logo from '../assets/images/umbrela_landing_logo.svg';
+import { login } from '../actions/auth';
 
-const background = "../assets/images/umbrela_landing_background.png";
+const background = '../assets/images/umbrela_landing_background.png';
 const { height: deviceHeight, width: deviceWidth } = Dimensions.get('window');
 
-export default class LogInScreen extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      username: null,
-      password: null,
-    };
-  }
-
-  _storeData = async (item) => {
-    try {
-      await AsyncStorage.setItem('userToken', item);
-    } catch (error) {
-      console.log(error);
-    }
+export class LandingScreen extends React.Component {
+  state = {
+    username: '',
+    password: ''
   };
 
-  _auth() {
-    const username = this.state.username;
-    const password = this.state.password;
+  componentDidUpdate() {
+    if (this.props.isAuthenticated) {
+      this.props.navigation.navigate('App');
+    }
+  }
 
-    var url = 'http://localhost:3000/users'
+  static propTypes = {
+    login: PropTypes.func.isRequired,
+    isAuthenticated: PropTypes.bool
+  };
+
+  _logIn() {
+    const { username, password} = this.state;
 
     if (username && password) {
-      fetch(url)
-      .then((response) => response.json())
-      .then((responseJson) => {
-        let users = responseJson;
-        for (var i = 0; i < users.length; i++) {
-          if (users[i].username == username) {
-            if (users[i].password == password) {
-                this._storeData(JSON.stringify(users[i].id));
-                this.props.navigation.navigate('App');
-                return;
-            } else {
-              Alert.alert('Password is wrong!');
-              return;
-            }
-          }
-        }
-        Alert.alert('No user found!');
-        this.setState({
-          name: null,
-          username: null,
-          password: null,
-        });
-      })
-      .catch((error) => {
-        console.error(error);
+      this.props.login(username, password);
+      
+      this.setState({
+        username: null,
+        password: null,
       });
+
     } else {
       Alert.alert('A field is empty!');
     }
-  }
+    
+  };
 
   render() {
     return (
@@ -89,7 +70,7 @@ export default class LogInScreen extends React.Component {
             <TextInput
               style={styles.body}
               value={this.state.username}
-              placeholder="User Name"
+              placeholder='User Name'
               onChangeText={(text) => this.setState({ username: text })}
             />
           </View>
@@ -98,7 +79,7 @@ export default class LogInScreen extends React.Component {
             <TextInput
               style={styles.body}
               value={this.state.password}
-              placeholder="Password"
+              placeholder='Password'
               secureTextEntry={true}
               onChangeText={(text) => this.setState({ password: text })}
             />
@@ -106,12 +87,12 @@ export default class LogInScreen extends React.Component {
 
           <Button 
           //onPress={() => this.onPressLogin()}
-            title="Forgot Password?"
-            color="white"
+            title='Forgot Password?'
+            color='white'
           />
           
           <TouchableOpacity 
-            onPress={() => {this._auth()}}
+            onPress={() => this._logIn()}
             style={styles.loginContainer}>
               <View style={styles.textContainer}>
                 <Text style={styles.loginText}>Log in</Text>
@@ -132,38 +113,43 @@ export default class LogInScreen extends React.Component {
   }
 }
 
+const mapStateToProps = state => ({
+  isAuthenticated: state.auth.isAuthenticated
+});
+export default connect(mapStateToProps, { login })(LandingScreen);
+
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    alignItems: "center"
+    alignItems: 'center'
   },
   loginContainer: {
-    width: "80%",
-    backgroundColor: "#0086a2",
+    width: '80%',
+    backgroundColor: '#0086a2',
     borderRadius: 5,
     padding: 10,
     marginTop: 30
   },
   textContainer: {
-    alignItems: "center"
+    alignItems: 'center'
   },
   loginText: {
-    color: "white",
+    color: 'white',
   },
   inputContainer: {
-    width: "80%",
+    width: '80%',
     marginTop: 30,
     borderWidth: 1,
-    borderStyle: "solid",
-    borderColor: "grey",
+    borderStyle: 'solid',
+    borderColor: 'grey',
     borderRadius: 5,
-    backgroundColor: "#ffffff"
+    backgroundColor: '#ffffff'
   },
   body: {
     height: 42,
     paddingLeft: 20,
     paddingRight: 20,
-    color: "#696969"
+    color: '#696969'
   },
   image: {
     marginTop: 100

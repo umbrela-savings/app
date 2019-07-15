@@ -8,52 +8,55 @@ import { TextInput,
   View,
 } from 'react-native';
 
-export default class SignUpScreen extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      name: null,
-      username: null,
-      password: null,
-    };
+import { connect } from 'react-redux';
+import PropTypes from 'prop-types';
+
+import { register } from '../actions/auth';
+
+
+export class SignUpScreen extends React.Component {
+  state = {
+    username: "",
+    email: "",
+    password: "",
+    password2: ""
+  };
+
+  componentDidUpdate() {
+    if (this.props.isAuthenticated) {
+      this.props.navigation.navigate('Landing');
+    }
   }
 
   static navigationOptions = {
     title: 'Sign Up',
   };
 
+  static propTypes = {
+    register: PropTypes.func.isRequired,
+    isAuthenticated: PropTypes.bool
+  };
+
   _addUser() {
-    const name = this.state.name;
-    const username = this.state.username;
-    const password = this.state.password;
-
-    if (name && username && password) {
-
-      let collection = {}
-      collection.name = name;
-      collection.username = username;
-      collection.password = password;
-
-      var url = 'http://localhost:3000/users'
-
-      fetch(url, {
-        method: 'POST',
-        headers: new Headers({
-          'Content-Type': 'application/json'
-        }),
-        body: JSON.stringify(collection)
-      }).then(res => res.json())
-      .catch(error => console.error(error))
-      .then(response => console.log(response));
-
-      this.setState({
-        name: null,
-        username: null,
-        password: null,
-      });
-
-      this.props.navigation.navigate('Landing');
-
+    const { username, email, password, password2 } = this.state;
+    if (username && email && password && password2) {
+      if (password !== password2) {
+        Alert.alert('Passwords do not match');
+      } else {
+        const newUser = {
+          username,
+          email,
+          password
+        };
+        this.props.register(newUser);
+        this.props.navigation.navigate('Landing');
+        this.setState({
+          username: '',
+          email: '',
+          password: '',
+          password2: ''
+        });
+      }
     } else {
       Alert.alert('A field is empty!');
     }
@@ -66,18 +69,18 @@ export default class SignUpScreen extends React.Component {
         <View style={styles.inputContainer}>
           <TextInput
             style={styles.body}
-            value={this.state.name}
-            placeholder="Name"
-            onChangeText={(text) => this.setState({ name: text })}
+            value={this.state.username}
+            placeholder="Username"
+            onChangeText={(text) => this.setState({ username: text })}
             />
         </View>
 
         <View style={styles.inputContainer}>
           <TextInput
             style={styles.body}
-            value={this.state.username}
-            placeholder="User Name"
-            onChangeText={(text) => this.setState({ username: text })}
+            value={this.state.email}
+            placeholder="Email"
+            onChangeText={(text) => this.setState({ email: text })}
             />
         </View>
 
@@ -88,6 +91,16 @@ export default class SignUpScreen extends React.Component {
             placeholder="Password"
             secureTextEntry={true}
             onChangeText={(text) => this.setState({ password: text })}
+          />
+        </View>
+
+        <View style={styles.inputContainer}>
+          <TextInput
+            style={styles.body}
+            value={this.state.password2}
+            placeholder="Confirm your password"
+            secureTextEntry={true}
+            onChangeText={(text) => this.setState({ password2: text })}
           />
         </View>
 
@@ -102,6 +115,11 @@ export default class SignUpScreen extends React.Component {
     );
   }
 }
+const mapStateToProps = state => ({
+  isAuthenticated: state.auth.isAuthenticated
+});
+
+export default connect(mapStateToProps, { register }) (SignUpScreen);
 
 const styles = StyleSheet.create({
   container: {
