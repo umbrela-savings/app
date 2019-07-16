@@ -46,5 +46,19 @@ spritesmith.scss
 
 # templated email
 tmp_email/
+
+
 .expo/packager-info.json
 .expo/settings.json
+node_modules/**/*
+.expo
+.expo-shared
+npm-debug.*
+*.jks
+*.p12
+*.key
+*.mobileprovision
+*.orig.*
+web-build/
+web-report/
+__tests__
