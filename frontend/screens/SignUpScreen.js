@@ -35,10 +35,6 @@ export class SignUpScreen extends React.Component {
     }
   }
 
-  static navigationOptions = {
-    title: 'Sign Up',
-  };
-
   static propTypes = {
     register: PropTypes.func.isRequired,
     isAuthenticated: PropTypes.bool
@@ -77,6 +73,18 @@ export class SignUpScreen extends React.Component {
         style={{width: '100%', height: '100%'}}>
 
         <View style={styles.container}>
+
+        <TouchableOpacity 
+            onPress={() => this.props.navigation.goBack()}
+            style={{
+              position: 'absolute',
+              right: 25,
+              top: 50,
+              }}>
+              <View style={styles.textContainer}>
+                <Text style={styles.loginText}>Back</Text>
+              </View>
+          </TouchableOpacity>
 
           <View style={styles.image}>
             <Logo width={300} height={200}/>

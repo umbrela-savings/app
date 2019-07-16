@@ -43,7 +43,8 @@ export const LandingStyles = StyleSheet.create({
     color: '#696969'
   },
   image: {
-    alignItems: 'center'
+    alignItems: 'center',
+    marginTop: 20
   },
   backgroundImage: {
     height: deviceHeight,

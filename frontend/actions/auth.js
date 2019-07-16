@@ -11,7 +11,7 @@ import {
   REGISTER_FAIL
 } from "../constants/Types";
 
-const url = 'http://localhost:8000/';
+const url = 'http://47.90.103.121:8000/';
 
 // CHECK TOKEN & LOAD USER
 export const loadUser = () => (dispatch, getState) => {

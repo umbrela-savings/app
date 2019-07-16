@@ -16,10 +16,13 @@ const AuthStack =
       screen: LandingScreen,
       navigationOptions: () => ({
         header: null
-      }),
+      })
     },
     SignUp: {
-      screen: SignUpScreen
+      screen: SignUpScreen,
+      navigationOptions: () => ({
+        header: null
+      })
     }
 });
 
