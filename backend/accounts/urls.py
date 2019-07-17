@@ -1,6 +1,14 @@
 from django.urls import path, include
 from .api import RegisterAPI, LoginAPI, UserAPI
 from knox import views as knox_views
+from rest_framework.routers import DefaultRouter
+from accounts import views
+
+# Create a router and register our viewsets with it.
+router = DefaultRouter()
+router.register(r'circles', views.CircleViewSet)
+router.register(r'users', views.UserViewSet)
+
 
 urlpatterns = [
     path('api/auth', include('knox.urls')),

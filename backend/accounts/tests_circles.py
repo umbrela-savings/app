@@ -1,0 +1,111 @@
+from rest_framework.test import APIRequestFactory, APITestCase
+from .serializers import CircleSerializer, CircleUserSerializer
+from .models import Circle, CircleUser
+from django.contrib.auth.models import User
+from django.test import TestCase
+from django.urls import reverse
+from datetime import date
+
+class CircleTestCase(APITestCase):
+    """
+    Test the Circles app.
+    """
+    def setUp(self):
+        # self.circle_name = 'john.doe'
+        # self.circle = Circle.objects.create_circle( )
+        pass
+
+    # user can create circle
+    def test_circle_created(self):
+        """
+        Circle created as expected
+        """
+        pass
+
+    def test_circle_create_has_error_as_expected(self):
+        """
+        Circle requires certain information, otherwise raise exception
+        """
+        pass
+
+    def test_circle_user_table_created(self):
+        """
+        Membership is tracked in CircleUser table
+        """
+        pass
+
+    def test_circle_requires_permissions(self):
+        """
+        Only authenticated users who are (pending) members of the circle
+        can view the circle.
+        """
+        pass
+
+    def test_circle_can_be_updated(self):
+        """
+        Update circle rules
+        """
+        pass
+
+    def test_add_user_to_circle_user_table(self):
+        """
+        User added to CircleUser table
+        """
+        pass
+
+    def test_circle_invitation_creates_pending_user(self):
+        pass
+
+    def test_added_user_accepts_spot_in_circle(self):
+        """
+        NEXT USER STORY
+        """
+        pass
+
+    def test_set_user_to_not_active_in_circle_user_table(self):
+        """
+        NEXT USER STORY (in place of "delete")
+        """
+        pass
+
+
+class CircleUserThroughTest(TestCase):
+    def setUp(self):
+        # Create three people:
+        self.nancy = User.objects.create(username='Nancy')
+        self.victor = User.objects.create(username='Victor')
+        self.jurl = User.objects.create(username='Jurl')
+
+        # And three groups:
+        self.tanda = Circle.objects.create(name='Tanda', start_date=date(2010,1,1))
+        self.rosca = Circle.objects.create(name='ROSCA', start_date=date(2010,1,1))
+        self.cundina = Circle.objects.create(name='Cundina', start_date=date(2010,1,1))
+
+        # Every user is a member of every circle, but
+        # nancy started tanda, victor started rosca, and jurl started cundina.
+        CircleUser.objects.create(user=self.nancy, circle=self.tanda, is_active=True)
+        CircleUser.objects.create(user=self.victor, circle=self.tanda, is_active=False)
+        CircleUser.objects.create(user=self.jurl, circle=self.tanda, is_active=False)
+
+        CircleUser.objects.create(user=self.nancy, circle=self.rosca, is_active=False)
+        CircleUser.objects.create(user=self.victor, circle=self.rosca, is_active=True)
+        CircleUser.objects.create(user=self.jurl, circle=self.rosca, is_active=False)
+
+        CircleUser.objects.create(user=self.nancy, circle=self.cundina, is_active=False)
+        CircleUser.objects.create(user=self.victor, circle=self.cundina, is_active=False)
+        CircleUser.objects.create(user=self.jurl, circle=self.cundina, is_active=True)
+
+    def test_unfiltered_membership(self):
+        # Which circles is victor in?
+        victors_circles = Circle.objects.filter(user=self.victor)
+        self.assertEqual(list(victors_circles), [self.tanda, self.rosca, self.cundina])
+
+    def test_is_active_circles(self):
+        # But which circles does victor admin?
+        victor_started = Circle.objects.filter(user=self.victor, membership__is_active=True)
+        self.assertEqual(list(victor_started), [self.rosca])
+
+    def test_member_circles(self):
+        # And which groups is jurl just a member of?
+        jurl_invited = Circle.objects.filter(user=self.jurl, membership__is_active=False)
+        self.assertEqual(list(jurl_invited), [self.tanda, self.rosca])
