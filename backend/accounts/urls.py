@@ -6,11 +6,11 @@ from accounts import views
 
 # Create a router and register our viewsets with it.
 router = DefaultRouter()
-router.register(r'circles', views.CircleViewSet)
-router.register(r'users', views.UserViewSet)
-
+router.register(r'circles', views.CircleViewSet, basename='circle')
+router.register(r'circleusers', views.CircleUserViewSet)
 
 urlpatterns = [
+    path('', include(router.urls)),
     path('api/auth', include('knox.urls')),
     path('api/auth/register', RegisterAPI.as_view(), name='user_register'),
     path('api/auth/login', LoginAPI.as_view(), name='user_login'),

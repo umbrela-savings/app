@@ -11,16 +11,49 @@ class CircleTestCase(APITestCase):
     Test the Circles app.
     """
     def setUp(self):
-        # self.circle_name = 'john.doe'
-        # self.circle = Circle.objects.create_circle( )
-        pass
+        # Users
+        self.username = 'john.doe'
+        self.password = 'missing2'
+
+        self.nancy = User.objects.create(username='Nancy')
+        self.victor = User.objects.create_user(username=self.username,
+                                          password=self.password)
+        self.jurl = User.objects.create(username='Jurl')
+
+
+
+        # Circle
+        self.rosca = Circle.objects.create(name='ROSCA', start_date=date(2010, 1, 1))
+        self.cundina = Circle.objects.create(name='Cundina', start_date=date(2010, 1, 1))
+
+        self.name = 'tanda'
+        self.start_date = date(2020, 1, 1)
 
     # user can create circle
     def test_circle_created(self):
         """
         Circle created as expected
         """
-        pass
+        url = reverse('user_login')
+        response = self.client.post(url, {'username': self.victor.username,
+                                          'password': self.victor.password})
+        self.assertIn('token', response.data)
+        self.client.credentials(HTTP_AUTHORIZATION=('Token %s' %
+                                                    response.data['token']))
+
+        url = reverse('circle-list')
+        response = self.client.post(url, {'name': self.name,
+                                          'start_date': self.start_date})
+
+        self.assertEqual(response.status_code, 201)
+        self.assertEqual(response.data['name'], self.name)
+        self.assertEqual(response.data['users'][0]['username'], self.username)
+
+        response = self.client.get(url)
+
+        self.assertEqual(response.status_code, 200)
+
+        self.assertEqual(response.data[-1]['name'], self.name)
 
     def test_circle_create_has_error_as_expected(self):
         """
@@ -97,15 +130,15 @@ class CircleUserThroughTest(TestCase):
 
     def test_unfiltered_membership(self):
         # Which circles is victor in?
-        victors_circles = Circle.objects.filter(user=self.victor)
+        victors_circles = Circle.objects.filter(users=self.victor)
         self.assertEqual(list(victors_circles), [self.tanda, self.rosca, self.cundina])
 
     def test_is_active_circles(self):
         # But which circles does victor admin?
-        victor_started = Circle.objects.filter(user=self.victor, membership__is_active=True)
+        victor_started = Circle.objects.filter(users=self.victor, circleuser__is_active=True)
         self.assertEqual(list(victor_started), [self.rosca])
 
     def test_member_circles(self):
         # And which groups is jurl just a member of?
-        jurl_invited = Circle.objects.filter(user=self.jurl, membership__is_active=False)
+        jurl_invited = Circle.objects.filter(users=self.jurl, circleuser__is_active=False)
         self.assertEqual(list(jurl_invited), [self.tanda, self.rosca])

@@ -32,14 +32,24 @@ class LoginSerializer(serializers.Serializer):
 
 
 class CircleSerializer(serializers.ModelSerializer):
+    users = UserSerializer(many=True, required=False, read_only=True)
+
     class Meta:
         model = Circle
-        fields = ('id', 'circle_name', 'voting_rules',
-                  'saving_rules', 'start_date')
+        fields = '__all__'
+
+    def create(self, validated_data):
+        creator = validated_data.pop('creator')
+        instance = Circle.objects.create(**validated_data)
+        CircleUser.objects.create(user=User.objects.get(username=creator),
+                                  circle=instance,
+                                  is_active=True)
+        return instance
 
 
-class CircleUserSerializer(serializers.ModelSerializer):
+class CircleUserSerializer(serializers.HyperlinkedModelSerializer):
+    user = serializers.IntegerField(source='user.pk')
+
     class Meta:
         model = CircleUser
-        fields = ('id', 'user', 'circle', 'date_invited',
-                  'date_joined', 'updated_at', 'status')
+        fields = '__all__'

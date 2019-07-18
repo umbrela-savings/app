@@ -24,12 +24,11 @@ class Profile(models.Model):
         instance.profile.save()
 
 
-voting_choices = [('one_person_one_vote',)]
-
-
 class Circle(models.Model):
     name = models.CharField(max_length=100)
-    user = models.ManyToManyField(User, through='CircleUser', related_name='circles')
+    users = models.ManyToManyField(User,
+                                   through='CircleUser',
+                                   related_name='circles')
     voting_rules = models.TextField(max_length=100, blank=True)
     saving_rules = models.TextField(max_length=100, blank=True)
     start_date = models.DateField(default=None, blank=True, null=True)
@@ -45,9 +44,8 @@ class Circle(models.Model):
 
 
 class CircleUser(models.Model):
-
-    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='membership')
-    circle = models.ForeignKey(Circle, on_delete=models.CASCADE, related_name='membership')
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='circleuser')
+    circle = models.ForeignKey(Circle, on_delete=models.CASCADE, related_name='circleuser')
     date_invited = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
     is_active = models.BooleanField(default=False)
