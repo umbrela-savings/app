@@ -1,6 +1,7 @@
 from rest_framework import serializers
 from django.contrib.auth.models import User
 from django.contrib.auth import authenticate
+from .models import Circle, CircleUser
 
 
 class UserSerializer(serializers.ModelSerializer):
@@ -28,3 +29,27 @@ class LoginSerializer(serializers.Serializer):
         if not (user and user.is_active):
             raise serializers.ValidationError("We can't find that username and password. You can reset your password or try again.")
         return user
+
+
+class CircleSerializer(serializers.ModelSerializer):
+    users = UserSerializer(many=True, required=False, read_only=True)
+
+    class Meta:
+        model = Circle
+        fields = '__all__'
+
+    def create(self, validated_data):
+        creator = validated_data.pop('creator')
+        instance = Circle.objects.create(**validated_data)
+        CircleUser.objects.create(user=User.objects.get(username=creator),
+                                  circle=instance,
+                                  is_active=True)
+        return instance
+
+
+class CircleUserSerializer(serializers.HyperlinkedModelSerializer):
+    user = serializers.IntegerField(source='user.pk')
+
+    class Meta:
+        model = CircleUser
+        fields = '__all__'

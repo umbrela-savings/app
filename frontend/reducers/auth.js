@@ -56,7 +56,7 @@ export default function(state = initialState, action) {
         ...state
       };
     case LOGOUT_SUCCESS:
-        AsyncStorage.clear();
+        AsyncStorage.removeItem(token);
         return {
           ...state,
           token: null,

@@ -1,23 +1,26 @@
 import React from 'react';
 import { 
-  TextInput, 
-  StyleSheet,
+  TextInput,
   Alert,
   Text,
   TouchableOpacity,
   View,
-  ImageBackground
+  ImageBackground,
+  Platform
 } from 'react-native';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
+import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
+
 
 import { register } from '../actions/auth';
 import Logo from '../assets/images/umbrela_landing_logo.svg';
 import { 
-  LandingStyles,
+  SignUpStyles,
   Constants } from '../constants/Styles';
+import KeyboardShift from '../components/Keyboard';
 
-const styles = LandingStyles;
+const styles = SignUpStyles;
 
 export class SignUpScreen extends React.Component {
   state = {
@@ -66,97 +69,199 @@ export class SignUpScreen extends React.Component {
     }
   }
 
+  
+
   render() {
-    return (
-      <ImageBackground
-        source={Constants.images.background} 
-        style={{width: '100%', height: '100%'}}>
 
-        <View style={styles.container}>
+    if (Platform.OS === 'ios') {
+      return (
+      <KeyboardAwareScrollView
+        resetScrollToCoords={{ x: 0, y: 0 }}
+        contentContainerStyle={styles.container}
+        scrollEnabled={true}
+        enableOnAndroid={true}
+        enableAutomaticScroll={true}>
 
-        <TouchableOpacity 
-            onPress={() => this.props.navigation.goBack()}
-            style={{
-              position: 'absolute',
-              right: 25,
-              top: 50,
-              }}>
-              <View style={styles.textContainer}>
-                <Text style={styles.loginText}>Back</Text>
-              </View>
-          </TouchableOpacity>
+        <ImageBackground
+          source={Constants.images.background} 
+          style={{width: '100%', height: '100%'}}>
 
-          <View style={styles.image}>
-            <Logo width={300} height={200}/>
-          </View>
-
-          <View style={styles.inputContainer}>
-            <TextInput
-              style={styles.body}
-              value={this.state.first}
-              placeholder='First Name'
-              onChangeText={(text) => this.setState({ first: text })}
-              />
-          </View>
-
-          <View style={styles.inputContainer}>
-            <TextInput
-              style={styles.body}
-              value={this.state.last}
-              placeholder='Last Name'
-              onChangeText={(text) => this.setState({ last: text })}
-              />
-          </View>
-
-          <View style={styles.inputContainer}>
-            <TextInput
-              style={styles.body}
-              value={this.state.username}
-              placeholder='Username'
-              onChangeText={(text) => this.setState({ username: text })}
-              />
-          </View>
-
-          <View style={styles.inputContainer}>
-            <TextInput
-              style={styles.body}
-              value={this.state.email}
-              placeholder='Email'
-              onChangeText={(text) => this.setState({ email: text })}
-              />
-          </View>
-
-          <View style={styles.inputContainer}>
-            <TextInput
-              style={styles.body}
-              value={this.state.password}
-              placeholder='Password'
-              secureTextEntry={true}
-              onChangeText={(text) => this.setState({ password: text })}
-            />
-          </View>
-
-          <View style={styles.inputContainer}>
-            <TextInput
-              style={styles.body}
-              value={this.state.password2}
-              placeholder='Confirm your password'
-              secureTextEntry={true}
-              onChangeText={(text) => this.setState({ password2: text })}
-            />
-          </View>
+          <View style={styles.container}>
 
           <TouchableOpacity 
-            onPress={() => {this._addUser()}}
-            style={styles.loginContainer}>
-              <View style={styles.textContainer}>
-                <Text style={styles.loginText}>Submit</Text>
+              onPress={() => this.props.navigation.goBack()}
+              style={styles.backContainer}>
+                <View style={styles.textContainer}>
+                  <Text style={styles.loginText}>Back</Text>
+                </View>
+            </TouchableOpacity>
+
+            <View style={styles.image}>
+              <Logo width={300} height={200}/>
+            </View>
+
+            <View style={styles.inputContainer}>
+              <TextInput
+                style={styles.body}
+                value={this.state.first}
+                placeholder='First Name'
+                onChangeText={(text) => this.setState({ first: text })}
+                />
+            </View>
+
+            <View style={styles.inputContainer}>
+              <TextInput
+                style={styles.body}
+                value={this.state.last}
+                placeholder='Last Name'
+                onChangeText={(text) => this.setState({ last: text })}
+                />
+            </View>
+
+            <View style={styles.inputContainer}>
+              <TextInput
+                style={styles.body}
+                value={this.state.username}
+                placeholder='Username'
+                onChangeText={(text) => this.setState({ username: text })}
+                />
+            </View>
+
+            <View style={styles.inputContainer}>
+              <TextInput
+                style={styles.body}
+                value={this.state.email}
+                placeholder='Email'
+                onChangeText={(text) => this.setState({ email: text })}
+                />
+            </View>
+
+            <View style={styles.inputContainer}>
+              <TextInput
+                style={styles.body}
+                value={this.state.password}
+                placeholder='Password'
+                secureTextEntry={true}
+                onChangeText={(text) => this.setState({ password: text })}
+              />
+            </View>
+
+            <View style={styles.inputContainer}>
+              <TextInput
+                style={styles.body}
+                value={this.state.password2}
+                placeholder='Confirm your password'
+                secureTextEntry={true}
+                onChangeText={(text) => this.setState({ password2: text })}
+              />
+            </View>
+
+            <TouchableOpacity 
+              onPress={() => {this._addUser()}}
+              style={styles.loginContainer}>
+                <View style={styles.textContainer}>
+                  <Text style={styles.loginText}>Submit</Text>
+                </View>
+            </TouchableOpacity>
+
+          </View>
+
+        </ImageBackground>
+
+      </KeyboardAwareScrollView>
+      );
+    }
+
+    return (
+      <KeyboardShift>
+        {() => (
+          <ImageBackground
+            source={Constants.images.background} 
+            style={{width: '100%', height: '100%'}}>
+
+            <View style={styles.container}>
+
+            <TouchableOpacity 
+                onPress={() => this.props.navigation.goBack()}
+                style={styles.backContainer}>
+                  <View style={styles.textContainer}>
+                    <Text style={styles.loginText}>Back</Text>
+                  </View>
+              </TouchableOpacity>
+
+              <View style={styles.image}>
+                <Logo width={300} height={200}/>
               </View>
-          </TouchableOpacity>
 
-        </View>
+              <View style={styles.inputContainer}>
+                <TextInput
+                  style={styles.body}
+                  value={this.state.first}
+                  placeholder='First Name'
+                  onChangeText={(text) => this.setState({ first: text })}
+                  />
+              </View>
 
-      </ImageBackground>
+              <View style={styles.inputContainer}>
+                <TextInput
+                  style={styles.body}
+                  value={this.state.last}
+                  placeholder='Last Name'
+                  onChangeText={(text) => this.setState({ last: text })}
+                  />
+              </View>
+
+              <View style={styles.inputContainer}>
+                <TextInput
+                  style={styles.body}
+                  value={this.state.username}
+                  placeholder='Username'
+                  onChangeText={(text) => this.setState({ username: text })}
+                  />
+              </View>
+
+              <View style={styles.inputContainer}>
+                <TextInput
+                  style={styles.body}
+                  value={this.state.email}
+                  placeholder='Email'
+                  onChangeText={(text) => this.setState({ email: text })}
+                  />
+              </View>
+
+              <View style={styles.inputContainer}>
+                <TextInput
+                  style={styles.body}
+                  value={this.state.password}
+                  placeholder='Password'
+                  secureTextEntry={true}
+                  onChangeText={(text) => this.setState({ password: text })}
+                />
+              </View>
+
+              <View style={styles.inputContainer}>
+                <TextInput
+                  style={styles.body}
+                  value={this.state.password2}
+                  placeholder='Confirm your password'
+                  secureTextEntry={true}
+                  onChangeText={(text) => this.setState({ password2: text })}
+                />
+              </View>
+
+              <TouchableOpacity 
+                onPress={() => {this._addUser()}}
+                style={styles.loginContainer}>
+                  <View style={styles.textContainer}>
+                    <Text style={styles.loginText}>Submit</Text>
+                  </View>
+              </TouchableOpacity>
+
+            </View>
+
+          </ImageBackground>
+        )}
+      </KeyboardShift>
     );
   }
 }

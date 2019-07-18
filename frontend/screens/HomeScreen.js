@@ -3,8 +3,7 @@ import {
   StyleSheet,
   Text,
   TouchableOpacity,
-  View,
-  AsyncStorage
+  View
 } from 'react-native';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
@@ -34,7 +33,16 @@ export class HomeScreen extends React.Component {
   render() {
     return (
       <View style={styles.container}>
-        <Text>Successfully logged in!</Text>
+
+        
+        <TouchableOpacity 
+          onPress={() => this._signOut()}
+          style={styles.loginContainer}>
+          <View style={styles.textContainer}>
+            <Text style={styles.loginText}>Sign Out</Text>
+          </View>
+        </TouchableOpacity>
+        
         <TouchableOpacity 
           onPress={() => this._signOut()}
           style={styles.loginContainer}>

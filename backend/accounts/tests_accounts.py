@@ -24,6 +24,13 @@ class AuthTestCase(APITestCase):
         self.email_unregistered = 'jane.doe@example.com'
         self.password_unregistered = 'hunter2'
 
+
+        self.username = 'john.doe'
+        #self.email = 'john.doe@example.com'
+        self.password = 'hunter2'
+        self.user = User.objects.create_user(self.username, self.email, self.password)
+
+
     def test_login_creates_keys(self):
         self.assertEqual(AuthToken.objects.count(), 0)
         url = reverse('user_login')
@@ -36,8 +43,8 @@ class AuthTestCase(APITestCase):
     def test_login_returns_serialized_token(self):
         self.assertEqual(AuthToken.objects.count(), 0)
         url = reverse('user_login')
-        response = self.client.post(url, {'username': self.username,
-                                          'password': self.password})
+        response = self.client.post(url, {'username': self.username2,
+                                          'password': self.password2})
         self.assertEqual(response.status_code, 200)
         self.assertIn('token', response.data)
         username_field = self.user.USERNAME_FIELD
