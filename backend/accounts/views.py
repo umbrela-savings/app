@@ -39,21 +39,40 @@ class CircleViewSet(viewsets.ModelViewSet):
     #     return Response(snippet.highlighted)
 
     def perform_create(self, serializer):
-         if not self.request.user.is_authenticated:
-             raise serializers.ValidationError("User must be authenticated to create a Circle")
-         serializer.save(creator=self.request.user)
+        """
+
+        """
+        if not self.request.user.is_authenticated:
+            raise serializers.ValidationError("User must be authenticated to create a Circle")
+        serializer.save(creator=self.request.user)
+
 
 class CircleUserViewSet(viewsets.ModelViewSet):
     """
     This viewset automatically provides `list`, `create`, `retrieve`,
     `update` and `destroy` actions.
-
-    Additionally we also provide an extra `highlight` action.
     """
     # authentication_classes = (TokenAuthentication,)
     # permission_classes = (IsAuthenticated,)
 
-    queryset = CircleUser.objects.all()
+    # queryset = CircleUser.objects.all()
     serializer_class = CircleUserSerializer
     # permission_classes = (permissions.IsAuthenticatedOrReadOnly,
     #                       IsOwnerOrReadOnly,)
+
+    def get_queryset(self):
+        """
+        Returns the queryset object for CircleUsers.
+        We can optionally filter by user_id and circle_id.
+        """
+        queryset = CircleUser.objects.all()
+        user_id = self.request.query_params.get('user_id', None)
+        circle_id = self.request.query_params.get('circle_id', None)
+
+        if user_id is not None:
+            queryset = queryset.filter(user=user_id)
+
+        if circle_id is not None:
+            queryset = queryset.filter(circle=circle_id)
+
+        return queryset

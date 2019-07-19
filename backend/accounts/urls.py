@@ -7,7 +7,7 @@ from accounts import views
 # Create a router and register our viewsets with it.
 router = DefaultRouter()
 router.register(r'circles', views.CircleViewSet, basename='circle')
-router.register(r'circleusers', views.CircleUserViewSet)
+router.register(r'circleusers', views.CircleUserViewSet, basename='circleuser')
 
 urlpatterns = [
     path('', include(router.urls)),
@@ -19,3 +19,8 @@ urlpatterns = [
          knox_views.LogoutView.as_view(),
          name='knox_logout')
 ]
+
+
+# urlpatterns += [
+#     path('api-auth/', include('rest_framework.urls')),
+# ]
