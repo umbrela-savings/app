@@ -99,11 +99,65 @@ export const SignUpStyles = StyleSheet.create({
   },
   backContainer: {
     position: 'absolute',
-    right: 25,
-    top: 50,
+    right: 10,
+    top: 40,
     borderRadius: 5,
     padding: 10,
     backgroundColor: '#0086a2',
-    width: '10%'
+    width: '15%'
+  }
+});
+
+export const HomeStyles = StyleSheet.create({
+  container: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center'
+  },
+  loginContainer: {
+    width: '80%',
+    backgroundColor: '#0086a2',
+    borderRadius: 5,
+    padding: 10,
+    marginHorizontal: 10,
+    marginVertical: 5
+  },
+  textContainer: {
+    alignItems: 'center'
+  },
+  loginText: {
+    color: 'white'
+  },
+  inputContainer: {
+    width: '80%',
+    marginHorizontal: 10,
+    marginVertical: 5,
+    borderWidth: 1,
+    borderStyle: 'solid',
+    borderColor: 'grey',
+    borderRadius: 5,
+    backgroundColor: '#ffffff'
+  },
+  body: {
+    height: 42,
+    paddingLeft: 20,
+    paddingRight: 20,
+    color: '#696969'
+  },
+  image: {
+    alignItems: 'center'
+  },
+  backgroundImage: {
+    height: deviceHeight,
+    width: deviceWidth
+  },
+  homeContainer: {
+    position: 'absolute',
+    left: 10,
+    top: 40,
+    borderRadius: 5,
+    padding: 10,
+    backgroundColor: '#0086a2',
+    width: '15%'
   }
 });

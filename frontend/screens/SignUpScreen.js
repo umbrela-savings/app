@@ -12,13 +12,13 @@ import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 
-
 import { register } from '../actions/auth';
 import Logo from '../assets/images/umbrela_landing_logo.svg';
 import { 
   SignUpStyles,
   Constants } from '../constants/Styles';
 import KeyboardShift from '../components/Keyboard';
+import LoadingScreen from './LoadingScreen';
 
 const styles = SignUpStyles;
 
@@ -40,7 +40,8 @@ export class SignUpScreen extends React.Component {
 
   static propTypes = {
     register: PropTypes.func.isRequired,
-    isAuthenticated: PropTypes.bool
+    isAuthenticated: PropTypes.bool,
+    isLoading: PropTypes.bool
   };
 
   _addUser() {
@@ -72,7 +73,6 @@ export class SignUpScreen extends React.Component {
   
 
   render() {
-
     if (Platform.OS === 'ios') {
       return (
       <KeyboardAwareScrollView
@@ -87,6 +87,8 @@ export class SignUpScreen extends React.Component {
           style={{width: '100%', height: '100%'}}>
 
           <View style={styles.container}>
+
+          <LoadingScreen loading={this.props.isLoading} />
 
           <TouchableOpacity 
               onPress={() => this.props.navigation.goBack()}
@@ -171,7 +173,6 @@ export class SignUpScreen extends React.Component {
       </KeyboardAwareScrollView>
       );
     }
-
     return (
       <KeyboardShift>
         {() => (
@@ -180,6 +181,8 @@ export class SignUpScreen extends React.Component {
             style={{width: '100%', height: '100%'}}>
 
             <View style={styles.container}>
+
+            <LoadingScreen loading={this.props.isLoading} />
 
             <TouchableOpacity 
                 onPress={() => this.props.navigation.goBack()}
@@ -266,7 +269,8 @@ export class SignUpScreen extends React.Component {
   }
 }
 const mapStateToProps = state => ({
-  isAuthenticated: state.auth.isAuthenticated
+  isAuthenticated: state.auth.isAuthenticated,
+  isLoading: state.auth.isLoading
 });
 
 export default connect(mapStateToProps, { register }) (SignUpScreen);

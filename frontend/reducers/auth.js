@@ -2,26 +2,27 @@ import {
   AsyncStorage, 
   Alert } from 'react-native';
 import {
-  USER_LOADED,
-  USER_LOADING,
-  AUTH_ERROR,
+  AUTH_LOADING,
   LOGIN_SUCCESS,
   LOGIN_FAIL,
   LOGOUT_SUCCESS,
+  LOGOUT_FAIL,
   REGISTER_SUCCESS,
-  REGISTER_FAIL
+  REGISTER_FAIL,
+  USER_LOADED,
+  LOAD_ERROR
 } from "../constants/Types";
 
 const initialState = {
-  token: AsyncStorage.getItem("token"),
+  token: null,
   isAuthenticated: null,
-  isLoading: false,
-  user: null
+  user: null,
+  isLoading: null
 };
 
 export default function(state = initialState, action) {
   switch (action.type) {
-    case USER_LOADING:
+    case AUTH_LOADING:
       return {
         ...state,
         isLoading: true
@@ -33,37 +34,47 @@ export default function(state = initialState, action) {
         isLoading: false,
         user: action.payload
       };
+    case LOAD_ERROR: 
+      Alert.alert(action.payload.detail);
+      return {
+        ...state,
+        isLoading: false
+      };
     case LOGIN_SUCCESS:
-      AsyncStorage.setItem('token', action.payload.token);
       return {
         ...state,
         ...action.payload,
-        isAuthenticated: true,
-        isLoading: false
+        token: action.payload.token,
+        isLoading: false,
+        isAuthenticated: true
       };
     case REGISTER_SUCCESS:
-      AsyncStorage.setItem('token', action.payload.token);
       return {
         ...state,
         ...action.payload,
-        isAuthenticated: true,
-        isLoading: false
+        token: action.payload.token,
+        isLoading: false,
+        isAuthenticated: true
       };
-    case AUTH_ERROR:
     case LOGIN_FAIL:
       Alert.alert(action.payload.non_field_errors.join());
       return {
-        ...state
+        ...state,
+        isLoading: false
       };
     case LOGOUT_SUCCESS:
-        AsyncStorage.removeItem(token);
-        return {
-          ...state,
-          token: null,
-          user: null,
-          isAuthenticated: false,
-          isLoading: false
-        };
+      return {
+        ...state,
+        token: null,
+        user: null,
+        isLoading: false,
+        isAuthenticated: false
+      };
+    case LOGOUT_FAIL:
+      if (action.payload.detail) Alert.alert(action.payload.detail);
+      return {
+        ...state
+      }
     case REGISTER_FAIL:
       if (action.payload.username) Alert.alert(action.payload.username.join());
       if (action.payload.email) Alert.alert(action.payload.email.join());
@@ -71,8 +82,8 @@ export default function(state = initialState, action) {
         ...state,
         token: null,
         user: null,
-        isAuthenticated: false,
-        isLoading: false
+        isLoading: false,
+        isAuthenticated: false
       };
     default:
       return state;

@@ -1,6 +1,5 @@
 import React from 'react';
 import {
-  StyleSheet,
   Text,
   TouchableOpacity,
   View
@@ -8,23 +7,41 @@ import {
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 
-import { logout } from '../actions/auth';
+import { logout, loadUser } from '../actions/auth';
+import { loadCircle } from '../actions/circle';
+import { HomeStyles } from '../constants/Styles';
+import LoadingScreen from './LoadingScreen';
+
+const styles = HomeStyles;
 
 export class HomeScreen extends React.Component {
-  static navigationOptions = {
-    title: 'SUCCESS!',
+  static propTypes = {
+    logout: PropTypes.func.isRequired,
+    loadUser: PropTypes.func.isRequired,
+    loadCircle: PropTypes.func.isRequired,
+    user: PropTypes.object,
+    circles: PropTypes.array,
+    isAuthenticated: PropTypes.bool,
+    isLoading: PropTypes.bool
   };
+
+  static navigationOptions = {
+    title: 'Home',
+  };
+
+  componentDidMount() {
+    this.props.loadUser();
+        
+    if (this.props.user != null && !this.props.circles) {
+      this.props.loadCircle(this.props.user.id);
+    }
+  }
 
   componentDidUpdate() {
     if (!this.props.isAuthenticated) {
       this.props.navigation.navigate('Landing');
     }
   }
-
-  static propTypes = {
-    logout: PropTypes.func.isRequired,
-    isAuthenticated: PropTypes.bool
-  };
 
   _signOut() {
     this.props.logout();
@@ -34,14 +51,28 @@ export class HomeScreen extends React.Component {
     return (
       <View style={styles.container}>
 
-        
+        <LoadingScreen loading={this.props.isLoading} />
+
         <TouchableOpacity 
-          onPress={() => this._signOut()}
-          style={styles.loginContainer}>
-          <View style={styles.textContainer}>
-            <Text style={styles.loginText}>Sign Out</Text>
-          </View>
+          onPress={() => this.props.navigation.navigate('Home')}
+          style={styles.homeContainer}>
+            <View style={styles.textContainer}>
+              <Text style={styles.loginText}>Home</Text>
+            </View>
         </TouchableOpacity>
+
+        <Text>{this.props.user.username}</Text>
+
+        <Text>{this.props.circles}</Text>
+
+        <TouchableOpacity 
+          onPress={() => this.props.navigation.navigate('NewCircle')}
+          style={styles.loginContainer}>
+            <View style={styles.textContainer}>
+              <Text style={styles.loginText}>Start A New Circle</Text>
+            </View>
+        </TouchableOpacity>
+        
         
         <TouchableOpacity 
           onPress={() => this._signOut()}
@@ -56,45 +87,13 @@ export class HomeScreen extends React.Component {
 }
 
 const mapStateToProps = state => ({
-  isAuthenticated: state.auth.isAuthenticated
+  isAuthenticated: state.auth.isAuthenticated,
+  isLoading: state.auth.isLoading || state.circle.isLoading,
+  user: state.auth.user,
+  circles: state.circle.circlelist
 });
 
-export default connect(mapStateToProps, { logout })(HomeScreen);
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    alignItems: 'center'
-  },
-  loginContainer: {
-    width: '80%',
-    backgroundColor: '#0086a2',
-    borderRadius: 5,
-    padding: 10,
-    marginTop: 30
-  },
-  textContainer: {
-    alignItems: 'center'
-  },
-  loginText: {
-    color: 'white',
-  },
-  inputContainer: {
-    width: '80%',
-    marginTop: 30,
-    borderWidth: 1,
-    borderStyle: 'solid',
-    borderColor: 'grey',
-    borderRadius: 5,
-    backgroundColor: '#ffffff'
-  },
-  body: {
-    height: 42,
-    paddingLeft: 20,
-    paddingRight: 20,
-    color: '#696969'
-  },
-  image: {
-    marginTop: 100
-  }
-});
+export default connect(mapStateToProps, 
+  { logout, 
+    loadUser, 
+    loadCircle })(HomeScreen);

@@ -24,6 +24,9 @@
     "ios": {
       "supportsTablet": true
     },
+    "android": {
+      "package": "com.yourcompany.yourappname"
+    },
     "packagerOpts": {
       "config": "metro.config.js"
     },
