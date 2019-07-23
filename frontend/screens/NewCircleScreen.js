@@ -22,16 +22,16 @@ const styles = LandingStyles;
 
 const sports = [
   {
-    label: 'Football',
-    value: 'football',
+    label: '1',
+    value: 'Rule: 1',
   },
   {
-    label: 'Baseball',
-    value: 'baseball',
+    label: '2',
+    value: 'Rule 2',
   },
   {
-    label: 'Hockey',
-    value: 'hockey',
+    label: '3',
+    value: 'Rule3',
   },
 ];
 
@@ -40,10 +40,10 @@ export class NewCircleScreen extends React.Component {
     name: '',
     votingRules: '',
     savingRules: '',
-    startDate: new Date(),
+    startRate: new Date(),
     isActive: true,
     isDateTimePickerVisible: false
-  }
+  };
 
   static propTypes = {
     createCircle: PropTypes.func.isRequired,
@@ -122,7 +122,7 @@ export class NewCircleScreen extends React.Component {
 
             <Button title="Show DatePicker" onPress={this.showDateTimePicker} />
               <DateTimePicker
-                minimumDate={this.state.startDate}
+                minimumDate={this.state.startRate}
                 isVisible={this.state.isDateTimePickerVisible}
                 onConfirm={this.handleDatePicked}
                 onCancel={this.hideDateTimePicker}

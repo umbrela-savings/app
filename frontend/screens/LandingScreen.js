@@ -43,7 +43,7 @@ export class LandingScreen extends React.Component {
   };
 
   _logIn() {
-    const { username, password} = this.state;
+    const { username, password } = this.state;
 
     if (username && password) {
       this.props.login(username, password);

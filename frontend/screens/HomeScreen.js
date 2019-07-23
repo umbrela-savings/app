@@ -2,7 +2,8 @@ import React from 'react';
 import {
   Text,
   TouchableOpacity,
-  View
+  View,
+  Button
 } from 'react-native';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
@@ -25,9 +26,17 @@ export class HomeScreen extends React.Component {
     isLoading: PropTypes.bool
   };
 
-  static navigationOptions = {
-    title: 'Home',
-  };
+  static navigationOptions = ({ navigation }) => {
+    return {
+      headerTitle: 'Home',
+      headerLeft: (
+        <Button
+          onPress={() => navigation.navigate('Home')}
+          title='Home' />
+      )
+    };
+    };
+    
 
   componentDidMount() {
     this.props.loadUser();
@@ -53,24 +62,14 @@ export class HomeScreen extends React.Component {
 
         <LoadingScreen loading={this.props.isLoading} />
 
-        <TouchableOpacity 
-          onPress={() => this.props.navigation.navigate('Home')}
-          style={styles.homeContainer}>
-            <View style={styles.textContainer}>
-              <Text style={styles.loginText}>Home</Text>
-            </View>
-        </TouchableOpacity>
-
-        <Text>{this.props.user.username}</Text>
-
-        <Text>{this.props.circles}</Text>
+        { /* <Text>{this.props.circles}</Text> */}
 
         <TouchableOpacity 
-          onPress={() => this.props.navigation.navigate('NewCircle')}
-          style={styles.loginContainer}>
-            <View style={styles.textContainer}>
-              <Text style={styles.loginText}>Start A New Circle</Text>
-            </View>
+            onPress={() => this.props.navigation.navigate('NewCircle')}
+            style={styles.loginContainer}>
+              <View style={styles.textContainer}>
+                <Text style={styles.loginText}>Start A New Circle</Text>
+              </View>
         </TouchableOpacity>
         
         

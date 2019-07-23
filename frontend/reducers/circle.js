@@ -37,7 +37,7 @@ export default function(state = initialState, action) {
         isLoading: false
       };
     case NEWCIRCLE_FAIL:
-      console.log(action.payload.name);
+      console.log(action.payload);
       Alert.alert(action.payload.name);
       return {
         ...state,

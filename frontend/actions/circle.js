@@ -31,10 +31,10 @@ export const loadCircle = (id) => (dispatch, getState) => {
 };
 
 export const createCircle = 
-({ name, votingRules, savingRules, startDate, isActive}) => (dispatch, getState) => {
+(name, votingRules, savingRules, startDate, isActive) => (dispatch, getState) => {
   dispatch({ type: CIRCLE_LOADING });
 
-  const body = JSON.stringify({ name, votingRules, savingRules, startDate, isActive});
+  const body = JSON.stringify({ name, votingRules, savingRules, startDate, isActive });
 
   axios
     .post(url+'/circles/', body, tokenConfig(getState))
