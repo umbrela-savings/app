@@ -38,7 +38,7 @@ export const loadUser = () => (dispatch, getState) => {
 
 // LOGIN USER
 export const login = (username, password) => dispatch => {
-  dispatch({ type: AUTH_LOADING });
+  //dispatch({ type: AUTH_LOADING });
   // Headers
   const config = {
     headers: {
@@ -67,7 +67,7 @@ export const login = (username, password) => dispatch => {
 
 // REGISTER USER
 export const register = ({ username, password, email }) => dispatch => {
-  dispatch({ type: AUTH_LOADING });
+  //dispatch({ type: AUTH_LOADING });
   // Headers
   const config = {
     headers: {

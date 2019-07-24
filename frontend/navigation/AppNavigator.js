@@ -9,13 +9,15 @@ import HomeScreen from '../screens/HomeScreen';
 import NewCircleScreen from '../screens/NewCircleScreen'
 import LandingScreen from '../screens/LandingScreen';
 import SignUpScreen from '../screens/SignUpScreen';
-import InvitationScreen from '../screens/InvitationScreen'
+import InvitationScreen from '../screens/InvitationScreen';
+import CircleScreen from '../screens/CircleScreen';
 
 const AppStack = 
 createStackNavigator({ 
   Home: HomeScreen,
   NewCircle: NewCircleScreen,
-  Invitation: InvitationScreen
+  Invitation: InvitationScreen,
+  Circle: CircleScreen
 });
 
 const AuthStack =

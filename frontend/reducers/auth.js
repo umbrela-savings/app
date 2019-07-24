@@ -17,7 +17,7 @@ const initialState = {
   token: null,
   isAuthenticated: null,
   user: null,
-  isLoading: null
+  isLoading: false
 };
 
 export default function(state = initialState, action) {
@@ -57,7 +57,7 @@ export default function(state = initialState, action) {
         isAuthenticated: true
       };
     case LOGIN_FAIL:
-      Alert.alert(action.payload.non_field_errors.join());
+      Alert.alert('Log In Failed:', action.payload.non_field_errors.join());
       return {
         ...state,
         isLoading: false

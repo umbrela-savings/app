@@ -1,7 +1,5 @@
 import React from 'react';
 import {
-  Text,
-  TouchableOpacity,
   View,
   Button,
   Share
@@ -9,14 +7,12 @@ import {
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 
-import { logout, loadUser } from '../actions/auth';
-import { loadCircle } from '../actions/circle';
 import { HomeStyles } from '../constants/Styles';
 import LoadingScreen from './LoadingScreen';
 
 const styles = HomeStyles;
 
-export default class HomeScreen extends React.Component {
+export default class InvitationScreen extends React.Component {
 
   onShare = async () => {
     try {

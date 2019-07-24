@@ -9,7 +9,7 @@ import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 
 import { logout, loadUser } from '../actions/auth';
-import { loadCircle } from '../actions/circle';
+import { loadCircleList } from '../actions/circle';
 import { HomeStyles } from '../constants/Styles';
 import LoadingScreen from './LoadingScreen';
 
@@ -19,7 +19,7 @@ export class HomeScreen extends React.Component {
   static propTypes = {
     logout: PropTypes.func.isRequired,
     loadUser: PropTypes.func.isRequired,
-    loadCircle: PropTypes.func.isRequired,
+    loadCircleList: PropTypes.func.isRequired,
     user: PropTypes.object,
     circleList: PropTypes.array,
     isAuthenticated: PropTypes.bool,
@@ -38,19 +38,21 @@ export class HomeScreen extends React.Component {
     };
     
 
-  componentDidMount = async () => {
-    await this.props.loadUser();
+  componentDidMount() {
+    this.props.loadUser();
         
     if (this.props.user != null) {
-      this.props.loadCircle(this.props.user.id);
+      this.props.loadCircleList(this.props.user.id);
     }
   }
 
-  componentDidUpdate() {
+  componentDidUpdate(prevProps) {
     if (!this.props.isAuthenticated) {
       this.props.navigation.navigate('Landing');
     }
-    this.props.loadCircle(this.props.user.id);
+    if (this.props.circleList.length != prevProps.circleList.length) 
+      this.props.loadCircleList(this.props.user.id);
+      
   }
 
   signOut() {
@@ -69,9 +71,13 @@ export class HomeScreen extends React.Component {
             <TouchableOpacity
                 key = {item.circle}
                 style = {styles.loginContainer}
-                onPress = {() => this.alertItemName(item)}>
+                onPress = {() => {
+                  this.props.navigation.navigate('Circle', {
+                    circleURL: item.circle
+                  });
+                }}>
                 <Text style = {styles.loginText}>
-                  {item.user}
+                  {item.circle}
                 </Text>
             </TouchableOpacity>
             )
@@ -108,4 +114,4 @@ const mapStateToProps = state => ({
 });
 
 export default connect(mapStateToProps, 
-  { loadUser, loadCircle, logout })(HomeScreen);
+  { loadUser, loadCircleList, logout })(HomeScreen);

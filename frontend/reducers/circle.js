@@ -4,12 +4,15 @@ import {
   CIRCLELIST_FAILED,
   CIRCLE_LOADING,
   NEWCIRCLE_SUCCESS,
-  NEWCIRCLE_FAIL
+  NEWCIRCLE_FAIL,
+  CIRCLE_FAILED,
+  CIRCLE_LOADED
 } from "../constants/Types";
 
 const initialState = {
   circleList: [],
-  isLoading: null,
+  circle: null,
+  isLoading: false,
   newCircleSuccess: null
 }
 
@@ -39,13 +42,24 @@ export default function(state = initialState, action) {
         newCircleSuccess: true
       };
     case NEWCIRCLE_FAIL:
-      console.log(action.payload);
       Alert.alert(action.payload.name);
       return {
         ...state,
         isLoading: false,
         newCircleSuccess: false
-      }
+      };
+    case CIRCLE_LOADED: 
+      return {
+        ...state,
+        circle: action.payload,
+        isLoading: false
+      };
+    case CIRCLE_FAILED: 
+      Alert.alert(action.payload.detail);
+      return {
+        ...state,
+        isLoading: false
+      };
     default:
       return state;
   }
