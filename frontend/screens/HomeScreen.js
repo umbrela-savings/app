@@ -21,7 +21,7 @@ export class HomeScreen extends React.Component {
     loadUser: PropTypes.func.isRequired,
     loadCircle: PropTypes.func.isRequired,
     user: PropTypes.object,
-    circles: PropTypes.array,
+    circleList: PropTypes.array,
     isAuthenticated: PropTypes.bool,
     isLoading: PropTypes.bool
   };
@@ -34,14 +34,14 @@ export class HomeScreen extends React.Component {
           onPress={() => navigation.navigate('Home')}
           title='Home' />
       )
-    };
+    }
     };
     
 
-  componentDidMount() {
-    this.props.loadUser();
+  componentDidMount = async () => {
+    await this.props.loadUser();
         
-    if (this.props.user != null && !this.props.circles) {
+    if (this.props.user != null) {
       this.props.loadCircle(this.props.user.id);
     }
   }
@@ -50,9 +50,10 @@ export class HomeScreen extends React.Component {
     if (!this.props.isAuthenticated) {
       this.props.navigation.navigate('Landing');
     }
+    this.props.loadCircle(this.props.user.id);
   }
 
-  _signOut() {
+  signOut() {
     this.props.logout();
   };
 
@@ -62,7 +63,20 @@ export class HomeScreen extends React.Component {
 
         <LoadingScreen loading={this.props.isLoading} />
 
-        { /* <Text>{this.props.circles}</Text> */}
+        <View>
+          {this.props.circleList &&
+            this.props.circleList.map((item, index) => 
+            <TouchableOpacity
+                key = {item.circle}
+                style = {styles.loginContainer}
+                onPress = {() => this.alertItemName(item)}>
+                <Text style = {styles.loginText}>
+                  {item.user}
+                </Text>
+            </TouchableOpacity>
+            )
+          }
+        </View>
 
         <TouchableOpacity 
             onPress={() => this.props.navigation.navigate('NewCircle')}
@@ -74,25 +88,24 @@ export class HomeScreen extends React.Component {
         
         
         <TouchableOpacity 
-          onPress={() => this._signOut()}
+          onPress={() => this.signOut()}
           style={styles.loginContainer}>
           <View style={styles.textContainer}>
             <Text style={styles.loginText}>Sign Out</Text>
           </View>
         </TouchableOpacity>
+
       </View>
     );
   }
 }
 
 const mapStateToProps = state => ({
+  circleList: state.circle.circleList,
   isAuthenticated: state.auth.isAuthenticated,
   isLoading: state.auth.isLoading || state.circle.isLoading,
-  user: state.auth.user,
-  circles: state.circle.circlelist
+  user: state.auth.user
 });
 
 export default connect(mapStateToProps, 
-  { logout, 
-    loadUser, 
-    loadCircle })(HomeScreen);
+  { loadUser, loadCircle, logout })(HomeScreen);

@@ -10,6 +10,7 @@ import {
 const initialState = {
   circleList: [],
   isLoading: null,
+  newCircleSuccess: null
 }
 
 export default function(state = initialState, action) {
@@ -34,14 +35,16 @@ export default function(state = initialState, action) {
     case NEWCIRCLE_SUCCESS:
       return {
         ...state,
-        isLoading: false
+        isLoading: false,
+        newCircleSuccess: true
       };
     case NEWCIRCLE_FAIL:
       console.log(action.payload);
       Alert.alert(action.payload.name);
       return {
         ...state,
-        isLoading: false
+        isLoading: false,
+        newCircleSuccess: false
       }
     default:
       return state;

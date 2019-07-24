@@ -14,7 +14,6 @@ import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view
 import DateTimePicker from "react-native-modal-datetime-picker";
 import RNPickerSelect from 'react-native-picker-select';
 
-
 import { LandingStyles } from '../constants/Styles';
 import { createCircle } from '../actions/circle'
 
@@ -22,15 +21,15 @@ const styles = LandingStyles;
 
 const sports = [
   {
-    label: '1',
+    label: 'Rule#1',
     value: 'Rule: 1',
   },
   {
-    label: '2',
+    label: 'Rule#2',
     value: 'Rule 2',
   },
   {
-    label: '3',
+    label: 'Rule#3',
     value: 'Rule3',
   },
 ];
@@ -47,7 +46,8 @@ export class NewCircleScreen extends React.Component {
 
   static propTypes = {
     createCircle: PropTypes.func.isRequired,
-    isLoading: PropTypes.bool
+    isLoading: PropTypes.bool,
+    newCircleSuccess: PropTypes.bool
   };
 
   handleDatePicked = date => {
@@ -65,8 +65,13 @@ export class NewCircleScreen extends React.Component {
 
   onSubmit() {
     const {name, votingRules, savingRules, startDate, isActive} = this.state;
-
     this.props.createCircle(name, votingRules, savingRules, startDate, isActive);
+  }
+
+  componentDidUpdate() {
+    if (this.props.newCircleSuccess) {
+      this.props.navigation.navigate('Invitation');
+    }
   }
 
 
@@ -174,7 +179,8 @@ const pickerSelectStyles = StyleSheet.create({
 });
 
 const mapStateToProps = state => ({
-  isLoading: state.circle.isLoading
+  isLoading: state.circle.isLoading,
+  newCircleSuccess: state.circle.newCircleSuccess
 });
 
 export default connect(mapStateToProps, { createCircle }) (NewCircleScreen);

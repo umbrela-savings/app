@@ -12,7 +12,7 @@ import {
 const url = 'http://47.90.103.121:8000';
 
 export const loadCircle = (id) => (dispatch, getState) => {
-  dispatch({ type: CIRCLE_LOADING });
+  //dispatch({ type: CIRCLE_LOADING });
 
   axios
     .get(url+'/circleusers/?user_id='+id, tokenConfig(getState))
