@@ -55,7 +55,7 @@ export default function(state = initialState, action) {
         isLoading: false
       };
     case CIRCLE_FAILED: 
-      Alert.alert(action.payload.detail);
+      Alert.alert(action.payload);
       return {
         ...state,
         isLoading: false

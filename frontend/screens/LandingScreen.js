@@ -47,11 +47,6 @@ export class LandingScreen extends React.Component {
 
     if (username && password) {
       this.props.login(username, password);
-      
-      this.setState({
-        username: null,
-        password: null,
-      });
 
     } else {
       Alert.alert('A field is empty!');

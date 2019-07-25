@@ -56,14 +56,6 @@ export class SignUpScreen extends React.Component {
           password
         };
         this.props.register(newUser);
-        this.setState({
-          first: '',
-          last: '',
-          username: '',
-          email: '',
-          password: '',
-          password2: ''
-        });
       }
     } else {
       Alert.alert('A field is empty!');

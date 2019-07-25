@@ -14,22 +14,18 @@ import { loadCircle } from '../actions/circle'
 const styles = HomeStyles;
 
 export class CircleScreen extends React.Component {
+
   static propTypes = {
     loadCircle: PropTypes.func.isRequired,
     circle: PropTypes.object,
     isLoading: PropTypes.bool
   };
 
-  static navigationOptions = {
-      title: "hey"
-    };
-
-    componentDidMount() {
-      const url = this.props.navigation.getParam('circleURL', 'none');
-      this.props.loadCircle(url);
-    }
-
-
+  componentDidMount() {
+    const url = this.props.navigation.getParam('circleURL', 'none');
+    this.props.loadCircle(url);
+  }
+    
   render() {
     return (
       <View style={styles.container}>
