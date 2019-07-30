@@ -4,10 +4,10 @@ from django.contrib.auth import authenticate
 from .models import Circle, CircleUser
 
 
-class UserSerializer(serializers.ModelSerializer):
+class UserSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = User
-        fields = ('id', 'username', 'email', 'first_name', 'last_name')
+        fields = ('id', 'url', 'username', 'email', 'first_name', 'last_name')
 
 
 class RegisterSerializer(serializers.ModelSerializer):
@@ -31,7 +31,7 @@ class LoginSerializer(serializers.Serializer):
         return user
 
 
-class CircleSerializer(serializers.ModelSerializer):
+class CircleSerializer(serializers.HyperlinkedModelSerializer):
     users = UserSerializer(many=True, required=False, read_only=True)
 
     class Meta:
@@ -48,8 +48,6 @@ class CircleSerializer(serializers.ModelSerializer):
 
 
 class CircleUserSerializer(serializers.HyperlinkedModelSerializer):
-    user = serializers.IntegerField(source='user.pk')
-
     class Meta:
         model = CircleUser
         fields = '__all__'
