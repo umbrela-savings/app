@@ -68,7 +68,7 @@ export const loadCircle = (circleURL) => (dispatch, getState) => {
     .catch(err => {
       dispatch({
         type: CIRCLE_FAILED,
-        payload: err.response.data
+        payload: error.response.data
       });
     });
 };

@@ -1,4 +1,7 @@
 import React from 'react';
+import {
+  Button
+} from 'react-native';
 import { 
   createAppContainer, 
   createSwitchNavigator,
@@ -21,15 +24,26 @@ import OverlayScreen from '../screens/OverlayScreen'
 import RequestScreen from '../screens/RequestScreen'
 
 const CircleStack = 
-  createBottomTabNavigator({
-    Overlay: OverlayScreen,
-    Circle: CircleScreen,
-    Messenger: MessengerScreen,
-    Request: RequestScreen
-  },
-  {
-    initialRouteName: 'Circle'
-  }
+createBottomTabNavigator({
+  Overlay: OverlayScreen,
+  CircleMain: CircleScreen,
+  Messenger: MessengerScreen,
+  Request: RequestScreen
+},
+{
+  initialRouteName: 'CircleMain',
+navigationOptions: ({ navigation }) => ({
+  headerLeft: (
+    <Button
+      onPress={() => navigation.navigate('Home')}
+      title='Home' />
+  ),
+  headerRight: (
+    <Button
+      onPress={() => alert('Notification!')}
+      title='bell' />
+  )
+})}
 );
 
 const AppStack = 
@@ -38,6 +52,10 @@ createStackNavigator({
   NewCircle: NewCircleScreen,
   Invitation: InvitationScreen,
   Circle: CircleStack
+},
+{
+    headerMode: 'float',
+    headerLayoutPreset: 'center',
 });
 
 const AuthStack =

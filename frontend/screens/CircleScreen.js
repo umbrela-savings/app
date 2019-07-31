@@ -21,7 +21,7 @@ export class CircleScreen extends React.Component {
     isLoading: PropTypes.bool
   };
 
-  componentDidMount() {
+  componentWillMount() {
     const url = this.props.navigation.getParam('circleURL', 'none');
     this.props.loadCircle(url);
   }

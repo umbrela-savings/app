@@ -6,6 +6,7 @@ import {
 } from 'react-native';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
+import { StackActions, NavigationActions } from 'react-navigation';
 
 import { HomeStyles } from '../constants/Styles';
 import LoadingScreen from './LoadingScreen';
@@ -14,6 +15,24 @@ const styles = HomeStyles;
 
 export default class InvitationScreen extends React.Component {
 
+  onSubmit() {
+    const circle = this.props.navigation.getParam('circle', 'none');
+
+    const resetAction = StackActions.reset({
+      index: 1,
+      actions: [
+        NavigationActions.navigate({ routeName: 'Home' }),
+        NavigationActions.navigate({ 
+          routeName: 'Circle',
+          params: {
+            circleURL: circle.url
+          }
+        })
+      ],
+    });
+    this.props.navigation.dispatch(resetAction);
+  }
+
   onShare = async () => {
     try {
       const result = await Share.share({
@@ -21,10 +40,12 @@ export default class InvitationScreen extends React.Component {
           'Check out http://umbrelasavings.org/',
       });
 
-      if (result.action === Share.sharedAction) {
-        if (result.activityType) {
+      const circle = this.props.navigation.getParam('circle', 'none');
+
+      if (result.action === Share.sharedAction) { 
+        if (result.activityType) { 
           // shared with activity type of result.activityType
-        } else {
+        } else { 
           // shared
         }
       } else if (result.action === Share.dismissedAction) {
@@ -38,8 +59,8 @@ export default class InvitationScreen extends React.Component {
   render() {
     return (
       <View style={styles.container}>
-
         <Button onPress={this.onShare} title="Share" />
+        <Button onPress={() => this.onSubmit()} title="Go to your circle" />
       </View>
     );
   }

@@ -1,8 +1,6 @@
 import axios from "axios";
 
 import {
-  USER_LOADED,
-  LOAD_ERROR,
   AUTH_LOADING,
   LOGIN_SUCCESS,
   LOGIN_FAIL,
@@ -13,28 +11,6 @@ import {
 } from "../constants/Types";
 
 const url = 'http://47.90.103.121:8000';
-
-// CHECK TOKEN & LOAD USER
-export const loadUser = () => (dispatch, getState) => {
-  // User Loading
-  dispatch({ type: AUTH_LOADING });
-
-  axios
-    .get(url+'/api/auth/user', tokenConfig(getState))
-    .then(res => {
-      dispatch({
-        type: USER_LOADED,
-        payload: res.data
-      });
-    })
-    .catch(err => {
-      dispatch({
-        type: LOAD_ERROR,
-        payload: err.response.data
-      });
-    });
-};
-
 
 // LOGIN USER
 export const login = (username, password) => dispatch => {

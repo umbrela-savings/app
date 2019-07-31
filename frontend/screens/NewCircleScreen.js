@@ -47,7 +47,8 @@ export class NewCircleScreen extends React.Component {
   static propTypes = {
     createCircle: PropTypes.func.isRequired,
     isLoading: PropTypes.bool,
-    newCircleSuccess: PropTypes.bool
+    newCircleSuccess: PropTypes.bool,
+    circle: PropTypes.object
   };
 
   handleDatePicked = date => {
@@ -70,7 +71,9 @@ export class NewCircleScreen extends React.Component {
 
   componentDidUpdate() {
     if (this.props.newCircleSuccess) {
-      this.props.navigation.navigate('Invitation');
+      this.props.navigation.navigate('Invitation', {
+        circle: this.props.circle
+      });
     }
   }
 
@@ -180,7 +183,8 @@ const pickerSelectStyles = StyleSheet.create({
 
 const mapStateToProps = state => ({
   isLoading: state.circle.isLoading,
-  newCircleSuccess: state.circle.newCircleSuccess
+  newCircleSuccess: state.circle.newCircleSuccess,
+  circle: state.circle.circle
 });
 
 export default connect(mapStateToProps, { createCircle }) (NewCircleScreen);

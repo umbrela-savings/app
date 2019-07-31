@@ -8,7 +8,7 @@ import {
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 
-import { logout, loadUser } from '../actions/auth';
+import { logout } from '../actions/auth';
 import { loadCircleList } from '../actions/circle';
 import { HomeStyles } from '../constants/Styles';
 import LoadingScreen from './LoadingScreen';
@@ -18,7 +18,6 @@ const styles = HomeStyles;
 export class HomeScreen extends React.Component {
   static propTypes = {
     logout: PropTypes.func.isRequired,
-    loadUser: PropTypes.func.isRequired,
     loadCircleList: PropTypes.func.isRequired,
     user: PropTypes.object,
     circleList: PropTypes.array,
@@ -33,14 +32,17 @@ export class HomeScreen extends React.Component {
         <Button
           onPress={() => navigation.navigate('Home')}
           title='Home' />
+      ),
+      headerRight: (
+        <Button
+          onPress={() => alert('Notification!')}
+          title='bell' />
       )
     }
-    };
+  };
     
 
   componentDidMount() {
-    this.props.loadUser();
-        
     if (this.props.user != null) {
       this.props.loadCircleList(this.props.user.id);
     }
@@ -63,7 +65,7 @@ export class HomeScreen extends React.Component {
     return (
       <View style={styles.container}>
 
-        <LoadingScreen loading={this.props.isLoading} />
+        { /*<LoadingScreen loading={this.props.isLoading} />*/ }
 
         <View>
           {this.props.circleList &&
@@ -114,4 +116,4 @@ const mapStateToProps = state => ({
 });
 
 export default connect(mapStateToProps, 
-  { loadUser, loadCircleList, logout })(HomeScreen);
+  { loadCircleList, logout })(HomeScreen);

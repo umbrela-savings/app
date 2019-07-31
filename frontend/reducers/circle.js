@@ -26,8 +26,8 @@ export default function(state = initialState, action) {
     case CIRCLELIST_LOADED: 
       return {
         ...state,
-        circleList: action.payload,
-        isLoading: false
+        isLoading: false,
+        circleList: action.payload
       };
     case CIRCLELIST_FAILED: 
       Alert.alert(action.payload.detail);
@@ -39,6 +39,7 @@ export default function(state = initialState, action) {
       return {
         ...state,
         isLoading: false,
+        circle: action.payload,
         newCircleSuccess: true
       };
     case NEWCIRCLE_FAIL:
@@ -51,14 +52,16 @@ export default function(state = initialState, action) {
     case CIRCLE_LOADED: 
       return {
         ...state,
+        isLoading: false,
         circle: action.payload,
-        isLoading: false
+        newCircleSuccess: false
       };
     case CIRCLE_FAILED: 
-      Alert.alert(action.payload);
+      Alert.alert(action.payload.detail);
       return {
         ...state,
-        isLoading: false
+        isLoading: false,
+        newCircleSuccess: false
       };
     default:
       return state;

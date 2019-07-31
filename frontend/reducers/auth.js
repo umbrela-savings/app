@@ -27,23 +27,11 @@ export default function(state = initialState, action) {
         ...state,
         isLoading: true
       };
-    case USER_LOADED:
-      return {
-        ...state,
-        isAuthenticated: true,
-        isLoading: false,
-        user: action.payload
-      };
-    case LOAD_ERROR: 
-      Alert.alert(action.payload.detail);
-      return {
-        ...state,
-        isLoading: false
-      };
     case LOGIN_SUCCESS:
       return {
         ...state,
         ...action.payload,
+        user: action.payload.user,
         token: action.payload.token,
         isLoading: false,
         isAuthenticated: true
@@ -52,6 +40,7 @@ export default function(state = initialState, action) {
       return {
         ...state,
         ...action.payload,
+        user: action.payload.user,
         token: action.payload.token,
         isLoading: false,
         isAuthenticated: true
