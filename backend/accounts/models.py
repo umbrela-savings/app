@@ -2,11 +2,14 @@ from django.db import models
 from django.contrib.auth.models import User
 from django.db.models.signals import post_save
 from django.dispatch import receiver
-
+from django.utils.crypto import get_random_string
 
 # This method of extending User comes from:
 # https://simpleisbetterthancomplex.com/tutorial/2016/07/22/how-to-extend-django-user-model.html#onetoone
 # Probably not good?
+def get_join_code():
+    return get_random_string(8)
+
 class Profile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     bio = models.TextField(max_length=500, blank=True)
@@ -35,6 +38,11 @@ class Circle(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
     is_active = models.BooleanField(default=True)
+    join_code = models.TextField(max_length=12,
+                                 blank=True,
+                                 null=True,
+                                 unique=True,
+                                 default=get_join_code)
 
     class Meta:
         db_table = 'circle'
@@ -55,3 +63,14 @@ class CircleUser(models.Model):
     class Meta:
         db_table = 'circle_user'
         unique_together = ('user', 'circle')
+
+
+class Message(models.Model):
+    circle = models.ForeignKey(Circle, on_delete=models.CASCADE, related_name='message')
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='message')
+    message = models.CharField(max_length=5000)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        db_table = 'message'

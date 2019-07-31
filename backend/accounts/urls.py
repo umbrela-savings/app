@@ -8,7 +8,8 @@ from accounts import views
 router = DefaultRouter()
 router.register(r'circles', views.CircleViewSet, basename='circle')
 router.register(r'circleusers', views.CircleUserViewSet, basename='circleuser')
-router.register(r'users', views.UserViewSet, basename='user')
+router.register(r'users', views.UserViewSet)
+router.register(r'messages', views.MessageViewSet, basename='message')
 
 urlpatterns = [
     path('', include(router.urls)),

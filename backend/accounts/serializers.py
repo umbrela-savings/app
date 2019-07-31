@@ -1,7 +1,7 @@
 from rest_framework import serializers
 from django.contrib.auth.models import User
 from django.contrib.auth import authenticate
-from .models import Circle, CircleUser
+from .models import Circle, CircleUser, Message
 
 
 class UserSerializer(serializers.HyperlinkedModelSerializer):
@@ -50,4 +50,10 @@ class CircleSerializer(serializers.HyperlinkedModelSerializer):
 class CircleUserSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = CircleUser
+        fields = '__all__'
+
+
+class MessageSerializer(serializers.HyperlinkedModelSerializer):
+    class Meta:
+        model = Message
         fields = '__all__'
