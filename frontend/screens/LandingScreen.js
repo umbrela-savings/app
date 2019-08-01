@@ -81,7 +81,11 @@ export class LandingScreen extends React.Component {
                 <TextInput
                   style={styles.body}
                   value={this.state.username}
-                  placeholder='User Name'
+                  placeholder='Username'
+                  autoCapitalize='none'
+                  enablesReturnKeyAutomatically={true}
+                  textContentType='username'
+                  clearButtonMode='while-editing'
                   onChangeText={(text) => this.setState({ username: text })}
                 />
               </View>
@@ -92,6 +96,10 @@ export class LandingScreen extends React.Component {
                   style={styles.body}
                   value={this.state.password}
                   placeholder='Password'
+                  autoCapitalize='none'
+                  enablesReturnKeyAutomatically={true}
+                  textContentType='password'
+                  clearButtonMode='while-editing'
                   secureTextEntry={true}
                   onChangeText={(text) => this.setState({ password: text })}
                 />
@@ -167,7 +175,7 @@ export class LandingScreen extends React.Component {
               title='Forgot Password?'
               color='grey'
             />
-            
+
             <TouchableOpacity 
               onPress={() => this._logIn()}
               style={styles.loginContainer}>

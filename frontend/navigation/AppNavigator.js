@@ -22,41 +22,43 @@ import CircleScreen from '../screens/CircleScreen';
 import MessengerScreen from '../screens/MessengerScreen'
 import OverlayScreen from '../screens/OverlayScreen'
 import RequestScreen from '../screens/RequestScreen'
+import JoinCircleScreen from '../screens/JoinCircleScreen'
 
 const CircleStack = 
-createBottomTabNavigator({
-  Overlay: OverlayScreen,
-  CircleMain: CircleScreen,
-  Messenger: MessengerScreen,
-  Request: RequestScreen
-},
-{
-  initialRouteName: 'CircleMain',
-navigationOptions: ({ navigation }) => ({
-  headerLeft: (
-    <Button
-      onPress={() => navigation.navigate('Home')}
-      title='Home' />
-  ),
-  headerRight: (
-    <Button
-      onPress={() => alert('Notification!')}
-      title='bell' />
-  )
-})}
-);
+  createBottomTabNavigator({
+    Overlay: OverlayScreen,
+    CircleMain: CircleScreen,
+    Messenger: MessengerScreen,
+    Request: RequestScreen
+  },
+  {
+    initialRouteName: 'CircleMain',
+    navigationOptions: ({ navigation }) => ({
+      headerLeft: (
+        <Button
+          onPress={() => navigation.navigate('Home')}
+          title='Home' />
+      ),
+      headerRight: (
+        <Button
+          onPress={() => alert('Notification!')}
+          title='bell' />
+      )
+    })
+  });
 
 const AppStack = 
-createStackNavigator({ 
-  Home: HomeScreen,
-  NewCircle: NewCircleScreen,
-  Invitation: InvitationScreen,
-  Circle: CircleStack
-},
-{
+  createStackNavigator({ 
+    Home: HomeScreen,
+    NewCircle: NewCircleScreen,
+    Invitation: InvitationScreen,
+    Join: JoinCircleScreen,
+    Circle: CircleStack
+  },
+  {
     headerMode: 'float',
     headerLayoutPreset: 'center',
-});
+  });
 
 const AuthStack =
   createStackNavigator({ 

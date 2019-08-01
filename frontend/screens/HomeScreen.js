@@ -93,6 +93,14 @@ export class HomeScreen extends React.Component {
                 <Text style={styles.loginText}>Start A New Circle</Text>
               </View>
         </TouchableOpacity>
+
+        <TouchableOpacity 
+            onPress={() => this.props.navigation.navigate('Join')}
+            style={styles.loginContainer}>
+              <View style={styles.textContainer}>
+                <Text style={styles.loginText}>Join A New Circle</Text>
+              </View>
+        </TouchableOpacity>
         
         
         <TouchableOpacity 

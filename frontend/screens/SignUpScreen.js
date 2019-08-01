@@ -99,6 +99,10 @@ export class SignUpScreen extends React.Component {
                 style={styles.body}
                 value={this.state.first}
                 placeholder='First Name'
+                autoCapitalize='none'
+                  enablesReturnKeyAutomatically={true}
+                  textContentType='givenName'
+                  clearButtonMode='while-editing'
                 onChangeText={(text) => this.setState({ first: text })}
                 />
             </View>
@@ -108,6 +112,10 @@ export class SignUpScreen extends React.Component {
                 style={styles.body}
                 value={this.state.last}
                 placeholder='Last Name'
+                autoCapitalize='none'
+                  enablesReturnKeyAutomatically={true}
+                  textContentType='familyName'
+                  clearButtonMode='while-editing'
                 onChangeText={(text) => this.setState({ last: text })}
                 />
             </View>
@@ -117,6 +125,10 @@ export class SignUpScreen extends React.Component {
                 style={styles.body}
                 value={this.state.username}
                 placeholder='Username'
+                autoCapitalize='none'
+                  enablesReturnKeyAutomatically={true}
+                  textContentType='username'
+                  clearButtonMode='while-editing'
                 onChangeText={(text) => this.setState({ username: text })}
                 />
             </View>
@@ -126,6 +138,10 @@ export class SignUpScreen extends React.Component {
                 style={styles.body}
                 value={this.state.email}
                 placeholder='Email'
+                autoCapitalize='none'
+                  enablesReturnKeyAutomatically={true}
+                  textContentType='emailAddress'
+                  clearButtonMode='while-editing'
                 onChangeText={(text) => this.setState({ email: text })}
                 />
             </View>
@@ -135,6 +151,10 @@ export class SignUpScreen extends React.Component {
                 style={styles.body}
                 value={this.state.password}
                 placeholder='Password'
+                autoCapitalize='none'
+                  enablesReturnKeyAutomatically={true}
+                  textContentType='password'
+                  clearButtonMode='while-editing'
                 secureTextEntry={true}
                 onChangeText={(text) => this.setState({ password: text })}
               />
@@ -145,6 +165,10 @@ export class SignUpScreen extends React.Component {
                 style={styles.body}
                 value={this.state.password2}
                 placeholder='Confirm your password'
+                autoCapitalize='none'
+                  enablesReturnKeyAutomatically={true}
+                  textContentType='password'
+                  clearButtonMode='while-editing'
                 secureTextEntry={true}
                 onChangeText={(text) => this.setState({ password2: text })}
               />

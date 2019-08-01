@@ -43,7 +43,7 @@ export default function(state = initialState, action) {
         newCircleSuccess: true
       };
     case NEWCIRCLE_FAIL:
-      Alert.alert(action.payload.name);
+      Alert.alert(action.payload);
       return {
         ...state,
         isLoading: false,

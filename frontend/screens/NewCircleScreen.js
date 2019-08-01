@@ -6,13 +6,15 @@ import {
   Switch,
   TextInput,
   Button,
-  StyleSheet
+  StyleSheet,
+  Linking
 } from 'react-native';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import DateTimePicker from "react-native-modal-datetime-picker";
 import RNPickerSelect from 'react-native-picker-select';
+import { CheckBox } from 'react-native-elements'
 
 import { LandingStyles } from '../constants/Styles';
 import { createCircle } from '../actions/circle'
@@ -39,9 +41,10 @@ export class NewCircleScreen extends React.Component {
     name: '',
     votingRules: '',
     savingRules: '',
-    startRate: new Date(),
+    startDate: new Date(),
     isActive: true,
-    isDateTimePickerVisible: false
+    isDateTimePickerVisible: false,
+    isChecked: false
   };
 
   static propTypes = {
@@ -66,7 +69,12 @@ export class NewCircleScreen extends React.Component {
 
   onSubmit() {
     const {name, votingRules, savingRules, startDate, isActive} = this.state;
-    this.props.createCircle(name, votingRules, savingRules, startDate, isActive);
+    this.props.createCircle(
+      name, 
+      votingRules, 
+      savingRules, 
+      startDate.toISOString().substr(0, 10), 
+      isActive);
   }
 
   componentDidUpdate() {
@@ -94,7 +102,7 @@ export class NewCircleScreen extends React.Component {
 
           <View style={styles.container}>
 
-
+            <Text>Circle name:</Text>
             <View style={styles.inputContainer}>
               <TextInput
                 style={styles.body}
@@ -104,6 +112,7 @@ export class NewCircleScreen extends React.Component {
                 />
             </View>
 
+            <Text>Voting Rules</Text>
             <RNPickerSelect
               placeholder={placeholder}
               items={sports}
@@ -115,7 +124,8 @@ export class NewCircleScreen extends React.Component {
               style={pickerSelectStyles}
               value={this.state.votingRules}
             />
-
+            
+            <Text>Saving Rules</Text>
             <RNPickerSelect
               placeholder={placeholder}
               items={sports}
@@ -128,19 +138,37 @@ export class NewCircleScreen extends React.Component {
               value={this.state.savingRules}
             />
 
+            <Text>
+              Date: {this.state.startDate.toString().substr(4, 12)}
+            </Text>
+
             <Button title="Show DatePicker" onPress={this.showDateTimePicker} />
               <DateTimePicker
-                minimumDate={this.state.startRate}
+                minimumDate={this.state.startDate}
                 isVisible={this.state.isDateTimePickerVisible}
                 onConfirm={this.handleDatePicked}
                 onCancel={this.hideDateTimePicker}
             />
 
+            <Text>
+              Is active?
+            </Text>
             <Switch
               value={this.state.isActive}
               onValueChange={() => this.setState({isActive: !this.state.isActive})}
             />
 
+            <CheckBox
+              title='I have read and agreed with the following agreement'
+              checked={this.state.isChecked}
+              onPress={() => this.setState({isChecked: !this.state.isChecked})}
+            />
+            <Button
+              onPress={() => {
+                //on clicking we are going to open the URL using Linking
+                Linking.openURL('http://umbrelasavings.org/');
+              }}
+              title='User Agreement'/>
             
             <TouchableOpacity 
               style={styles.loginContainer}
