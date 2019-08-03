@@ -150,14 +150,6 @@ export class NewCircleScreen extends React.Component {
                 onCancel={this.hideDateTimePicker}
             />
 
-            <Text>
-              Is active?
-            </Text>
-            <Switch
-              value={this.state.isActive}
-              onValueChange={() => this.setState({isActive: !this.state.isActive})}
-            />
-
             <CheckBox
               title='I have read and agreed with the following agreement'
               checked={this.state.isChecked}

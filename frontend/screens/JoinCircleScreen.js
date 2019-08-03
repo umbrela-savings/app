@@ -4,15 +4,85 @@ import {
   TextInput,
   Button
 } from 'react-native';
+import { connect } from 'react-redux';
+import PropTypes from 'prop-types';
+import { StackActions, NavigationActions } from 'react-navigation';
+
 import { HomeStyles } from '../constants/Styles';
-import LoadingScreen from './LoadingScreen';
+import { loadCircleFromCode, findUserInCircle } from '../actions/circle';
 
 const styles = HomeStyles;
 
-export default class JoinCircleScreen extends React.Component {
+export class JoinCircleScreen extends React.Component {
   state = {
     code: null
   };
+
+  static propTypes = {
+    loadCircleFromCode: PropTypes.func.isRequired,
+    findUserInCircle: PropTypes.func.isRequired,
+    isLoading: PropTypes.bool,
+    codeSuccess: PropTypes.bool,
+    circleuserExist: PropTypes.bool,
+    circle: PropTypes.object
+  };
+
+  componentDidUpdate() {
+    const user = this.props.navigation.getParam('user');
+
+    if (this.props.codeSuccess) {
+      if (this.props.circleuserExist == null)
+        this.props.findUserInCircle(user.id, this.props.circle.url.substr(34, 1));
+      else if (this.props.circleuserExist) {
+        const resetAction = StackActions.reset({
+          index: 1,
+          actions: [
+            NavigationActions.navigate({ routeName: 'MyCircles' }),
+            NavigationActions.navigate({ 
+              routeName: 'Circle',
+              params: {
+                circleURL: this.props.circle.url
+              }
+            })
+          ],
+        });
+        this.props.navigation.dispatch(resetAction);
+      } else {
+        this.props.navigation.navigate('CircleModal', 
+        { 
+          circleURL: this.props.circle.url,
+          user: user
+        });
+      }
+    }
+/*
+    if (this.props.circleuserExist == null && this.props.codeSuccess)
+      this.props.findUserInCircle(user.id, this.props.circle.url.substr(34, 1));
+
+    if (this.props.codeSuccess) {
+      if (this.props.circleuserExist) {
+        const resetAction = StackActions.reset({
+          index: 1,
+          actions: [
+            NavigationActions.navigate({ routeName: 'MyCircles' }),
+            NavigationActions.navigate({ 
+              routeName: 'Circle',
+              params: {
+                circleURL: this.props.circle.url
+              }
+            })
+          ],
+        });
+        this.props.navigation.dispatch(resetAction);
+      } else {
+        this.props.navigation.navigate('CircleModal', 
+        { 
+          circleURL: this.props.circle.url,
+          user: user
+        });
+      }
+    }*/
+  }
 
   render() {
     return (
@@ -25,8 +95,21 @@ export default class JoinCircleScreen extends React.Component {
             onChangeText={(text) => this.setState({ code: text })}
             />
         </View>
-        <Button title='Find'/>
+        <Button 
+          title='Find'
+          onPress={() => this.props.loadCircleFromCode(this.state.code)}
+        />
       </View>
     );
   }
 }
+
+const mapStateToProps = state => ({
+  isLoading: state.circle.isLoading,
+  circle: state.circle.circle,
+  codeSuccess: state.circle.codeSuccess,
+  circleuserExist: state.circle.circleuserExist
+});
+
+export default connect(mapStateToProps, 
+  { loadCircleFromCode, findUserInCircle }) (JoinCircleScreen);

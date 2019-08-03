@@ -21,7 +21,7 @@ export default class InvitationScreen extends React.Component {
     const resetAction = StackActions.reset({
       index: 1,
       actions: [
-        NavigationActions.navigate({ routeName: 'Home' }),
+        NavigationActions.navigate({ routeName: 'MyCircles' }),
         NavigationActions.navigate({ 
           routeName: 'Circle',
           params: {
@@ -35,12 +35,12 @@ export default class InvitationScreen extends React.Component {
 
   onShare = async () => {
     try {
+      const circle = this.props.navigation.getParam('circle', 'none');
+
       const result = await Share.share({
         message:
-          'Check out http://umbrelasavings.org/',
+          circle.join_code,
       });
-
-      const circle = this.props.navigation.getParam('circle', 'none');
 
       if (result.action === Share.sharedAction) { 
         if (result.activityType) { 
@@ -49,7 +49,7 @@ export default class InvitationScreen extends React.Component {
           // shared
         }
       } else if (result.action === Share.dismissedAction) {
-        alert('Did not share successfully T T')
+        alert('Did not share successfully')
       }
     } catch (error) {
       alert(error.message);

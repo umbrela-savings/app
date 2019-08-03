@@ -22,10 +22,10 @@ import LoadingScreen from './LoadingScreen';
 
 const styles = SignUpStyles;
 
-export class SignUpScreen extends React.Component {
+export class RegisterScreen extends React.Component {
   state = {
-    first: '',
-    last: '',
+    firstName: '',
+    lastName: '',
     username: '',
     email: '',
     password: '',
@@ -45,15 +45,23 @@ export class SignUpScreen extends React.Component {
   };
 
   _addUser() {
-    const { username, email, password, password2 } = this.state;
-    if (username && email && password && password2) {
+    const { 
+      firstName, 
+      lastName, 
+      username, 
+      email, 
+      password, 
+      password2 } = this.state;
+    if (username && email && password && password2 && firstName && lastName) {
       if (password !== password2) {
         Alert.alert('Passwords do not match');
       } else {
         const newUser = {
           username,
           email,
-          password
+          password,
+          firstName,
+          lastName,
         };
         this.props.register(newUser);
       }
@@ -97,26 +105,24 @@ export class SignUpScreen extends React.Component {
             <View style={styles.inputContainer}>
               <TextInput
                 style={styles.body}
-                value={this.state.first}
+                value={this.state.firstName}
                 placeholder='First Name'
-                autoCapitalize='none'
-                  enablesReturnKeyAutomatically={true}
-                  textContentType='givenName'
-                  clearButtonMode='while-editing'
-                onChangeText={(text) => this.setState({ first: text })}
+                enablesReturnKeyAutomatically={true}
+                textContentType='givenName'
+                clearButtonMode='while-editing'
+                onChangeText={(text) => this.setState({ firstName: text })}
                 />
             </View>
 
             <View style={styles.inputContainer}>
               <TextInput
                 style={styles.body}
-                value={this.state.last}
+                value={this.state.lastName}
                 placeholder='Last Name'
-                autoCapitalize='none'
-                  enablesReturnKeyAutomatically={true}
-                  textContentType='familyName'
-                  clearButtonMode='while-editing'
-                onChangeText={(text) => this.setState({ last: text })}
+                enablesReturnKeyAutomatically={true}
+                textContentType='familyName'
+                clearButtonMode='while-editing'
+                onChangeText={(text) => this.setState({ lastName: text })}
                 />
             </View>
 
@@ -126,9 +132,9 @@ export class SignUpScreen extends React.Component {
                 value={this.state.username}
                 placeholder='Username'
                 autoCapitalize='none'
-                  enablesReturnKeyAutomatically={true}
-                  textContentType='username'
-                  clearButtonMode='while-editing'
+                enablesReturnKeyAutomatically={true}
+                textContentType='username'
+                clearButtonMode='while-editing'
                 onChangeText={(text) => this.setState({ username: text })}
                 />
             </View>
@@ -152,9 +158,9 @@ export class SignUpScreen extends React.Component {
                 value={this.state.password}
                 placeholder='Password'
                 autoCapitalize='none'
-                  enablesReturnKeyAutomatically={true}
-                  textContentType='password'
-                  clearButtonMode='while-editing'
+                enablesReturnKeyAutomatically={true}
+                textContentType='password'
+                clearButtonMode='while-editing'
                 secureTextEntry={true}
                 onChangeText={(text) => this.setState({ password: text })}
               />
@@ -166,9 +172,9 @@ export class SignUpScreen extends React.Component {
                 value={this.state.password2}
                 placeholder='Confirm your password'
                 autoCapitalize='none'
-                  enablesReturnKeyAutomatically={true}
-                  textContentType='password'
-                  clearButtonMode='while-editing'
+                enablesReturnKeyAutomatically={true}
+                textContentType='password'
+                clearButtonMode='while-editing'
                 secureTextEntry={true}
                 onChangeText={(text) => this.setState({ password2: text })}
               />
@@ -215,7 +221,7 @@ export class SignUpScreen extends React.Component {
               <View style={styles.inputContainer}>
                 <TextInput
                   style={styles.body}
-                  value={this.state.first}
+                  value={this.state.firstName}
                   placeholder='First Name'
                   onChangeText={(text) => this.setState({ first: text })}
                   />
@@ -224,7 +230,7 @@ export class SignUpScreen extends React.Component {
               <View style={styles.inputContainer}>
                 <TextInput
                   style={styles.body}
-                  value={this.state.last}
+                  value={this.state.lastName}
                   placeholder='Last Name'
                   onChangeText={(text) => this.setState({ last: text })}
                   />
@@ -289,4 +295,4 @@ const mapStateToProps = state => ({
   isLoading: state.auth.isLoading
 });
 
-export default connect(mapStateToProps, { register }) (SignUpScreen);
+export default connect(mapStateToProps, { register }) (RegisterScreen);

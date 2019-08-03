@@ -32,7 +32,7 @@ export class LandingScreen extends React.Component {
 
   componentDidUpdate() {
     if (this.props.isAuthenticated) {
-      this.props.navigation.navigate('Home');
+      this.props.navigation.navigate('MyCircles');
     }
   }
 
@@ -120,7 +120,7 @@ export class LandingScreen extends React.Component {
               </TouchableOpacity>
     
               <TouchableOpacity 
-                onPress={() => {this.props.navigation.navigate('SignUp')}}
+                onPress={() => {this.props.navigation.navigate('Register')}}
                 style={styles.loginContainer}>
                   <View style={styles.textContainer}>
                     <Text style={styles.loginText}>Create Account</Text>
@@ -185,7 +185,7 @@ export class LandingScreen extends React.Component {
             </TouchableOpacity>
   
             <TouchableOpacity 
-              onPress={() => {this.props.navigation.navigate('SignUp')}}
+              onPress={() => {this.props.navigation.navigate('Register')}}
               style={styles.loginContainer}>
                 <View style={styles.textContainer}>
                   <Text style={styles.loginText}>Create Account</Text>

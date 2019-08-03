@@ -13,52 +13,71 @@ import { Transition } from 'react-native-reanimated';
 
 
 import AuthLoadingScreen from '../screens/AuthLoadingScreen';
-import HomeScreen from '../screens/HomeScreen';
+import MyCirclesScreen from '../screens/MyCirclesScreen';
 import NewCircleScreen from '../screens/NewCircleScreen'
 import LandingScreen from '../screens/LandingScreen';
-import SignUpScreen from '../screens/SignUpScreen';
+import RegisterScreen from '../screens/RegisterScreen';
 import InvitationScreen from '../screens/InvitationScreen';
 import CircleScreen from '../screens/CircleScreen';
 import MessengerScreen from '../screens/MessengerScreen'
 import OverlayScreen from '../screens/OverlayScreen'
 import RequestScreen from '../screens/RequestScreen'
 import JoinCircleScreen from '../screens/JoinCircleScreen'
+import CircleModalScreen from '../screens/CircleModalScreen'
 
-const CircleStack = 
-  createBottomTabNavigator({
+const RequestStack = 
+createStackNavigator(
+  {
+    Request: RequestScreen
+  }
+);
+
+const CircleTab = 
+createBottomTabNavigator(
+  {
     Overlay: OverlayScreen,
     CircleMain: CircleScreen,
     Messenger: MessengerScreen,
-    Request: RequestScreen
+    Request: RequestStack
   },
   {
     initialRouteName: 'CircleMain',
     navigationOptions: ({ navigation }) => ({
-      headerLeft: (
-        <Button
-          onPress={() => navigation.navigate('Home')}
-          title='Home' />
-      ),
+      headerBackTitle: 'null',
       headerRight: (
         <Button
           onPress={() => alert('Notification!')}
           title='bell' />
       )
     })
-  });
+  }
+);
+
+const JoinStack = 
+createStackNavigator(
+  {
+    Code: JoinCircleScreen,
+    CircleModal: CircleModalScreen
+  },
+  {
+    headerMode: 'none'
+  }
+);
 
 const AppStack = 
-  createStackNavigator({ 
-    Home: HomeScreen,
+createStackNavigator(
+  { 
+    MyCircles: MyCirclesScreen,
     NewCircle: NewCircleScreen,
     Invitation: InvitationScreen,
-    Join: JoinCircleScreen,
-    Circle: CircleStack
+    Join: JoinStack,
+    Circle: CircleTab
   },
   {
     headerMode: 'float',
     headerLayoutPreset: 'center',
-  });
+  }
+);
 
 const AuthStack =
   createStackNavigator({ 
@@ -68,8 +87,8 @@ const AuthStack =
         header: null
       })
     },
-    SignUp: {
-      screen: SignUpScreen,
+    Register: {
+      screen: RegisterScreen,
       navigationOptions: () => ({
         header: null
       })

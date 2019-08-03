@@ -3,7 +3,9 @@ import {
   Text,
   TouchableOpacity,
   View,
-  Button
+  Button,
+  RefreshControl,
+  ScrollView
 } from 'react-native';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
@@ -15,7 +17,7 @@ import LoadingScreen from './LoadingScreen';
 
 const styles = HomeStyles;
 
-export class HomeScreen extends React.Component {
+export class MyCirclesScreen extends React.Component {
   static propTypes = {
     logout: PropTypes.func.isRequired,
     loadCircleList: PropTypes.func.isRequired,
@@ -40,26 +42,24 @@ export class HomeScreen extends React.Component {
       )
     }
   };
-    
 
   componentDidMount() {
-    if (this.props.user != null) {
-      this.props.loadCircleList(this.props.user.id);
-    }
+    this.props.loadCircleList(this.props.user.id);
   }
 
   componentDidUpdate(prevProps) {
     if (!this.props.isAuthenticated) {
       this.props.navigation.navigate('Landing');
     }
-    if (this.props.circleList.length != prevProps.circleList.length) 
-      this.props.loadCircleList(this.props.user.id);
-      
   }
 
   signOut() {
     this.props.logout();
   };
+
+  onRefresh = () => {
+    this.props.loadCircleList(this.props.user.id);
+  }
 
   render() {
     return (
@@ -67,7 +67,13 @@ export class HomeScreen extends React.Component {
 
         { /*<LoadingScreen loading={this.props.isLoading} />*/ }
 
-        <View>
+        <ScrollView
+          refreshControl={
+            <RefreshControl
+              refreshing={this.props.isLoading}
+              onRefresh={this.onRefresh}
+          />}
+        >
           {this.props.circleList &&
             this.props.circleList.map((item, index) => 
             <TouchableOpacity
@@ -84,23 +90,24 @@ export class HomeScreen extends React.Component {
             </TouchableOpacity>
             )
           }
-        </View>
-
-        <TouchableOpacity 
+          <TouchableOpacity 
             onPress={() => this.props.navigation.navigate('NewCircle')}
             style={styles.loginContainer}>
               <View style={styles.textContainer}>
                 <Text style={styles.loginText}>Start A New Circle</Text>
               </View>
-        </TouchableOpacity>
+          </TouchableOpacity>
 
-        <TouchableOpacity 
-            onPress={() => this.props.navigation.navigate('Join')}
+          <TouchableOpacity 
+            onPress={() => this.props.navigation.navigate('Join', {
+              user: this.props.user
+            })}
             style={styles.loginContainer}>
               <View style={styles.textContainer}>
                 <Text style={styles.loginText}>Join A New Circle</Text>
               </View>
-        </TouchableOpacity>
+          </TouchableOpacity>
+        </ScrollView>
         
         
         <TouchableOpacity 
@@ -124,4 +131,4 @@ const mapStateToProps = state => ({
 });
 
 export default connect(mapStateToProps, 
-  { loadCircleList, logout })(HomeScreen);
+  { loadCircleList, logout })(MyCirclesScreen);

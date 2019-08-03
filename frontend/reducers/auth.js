@@ -56,8 +56,8 @@ export default function(state = initialState, action) {
         ...state,
         token: null,
         user: null,
-        isLoading: false,
-        isAuthenticated: false
+        isLoading: null,
+        isAuthenticated: null
       };
     case LOGOUT_FAIL:
       if (action.payload.detail) Alert.alert(action.payload.detail);
