@@ -36,7 +36,15 @@ class CircleSerializer(serializers.HyperlinkedModelSerializer):
 
     class Meta:
         model = Circle
-        fields = '__all__'
+        fields = ('id',
+                  'url',
+                  'voting_rules',
+                  'saving_rules',
+                  'start_date',
+                  'created_at',
+                  'updated_at',
+                  'is_active',
+                  'join_code')
 
     def create(self, validated_data):
         creator = validated_data.pop('creator')
