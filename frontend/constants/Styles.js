@@ -65,31 +65,19 @@ export const SignUpStyles = StyleSheet.create({
     backgroundColor: '#0086a2',
     borderRadius: 5,
     padding: 10,
-<<<<<<< HEAD
-    marginTop: 30
-=======
     marginHorizontal: 10,
     marginVertical: 5
->>>>>>> issue#18-new-circle
   },
   textContainer: {
     alignItems: 'center'
   },
   loginText: {
-<<<<<<< HEAD
-    color: 'white',
-  },
-  inputContainer: {
-    width: '80%',
-    marginTop: 30,
-=======
     color: 'white'
   },
   inputContainer: {
     width: '80%',
     marginHorizontal: 10,
     marginVertical: 5,
->>>>>>> issue#18-new-circle
     borderWidth: 1,
     borderStyle: 'solid',
     borderColor: 'grey',
@@ -108,8 +96,6 @@ export const SignUpStyles = StyleSheet.create({
   backgroundImage: {
     height: deviceHeight,
     width: deviceWidth
-<<<<<<< HEAD
-=======
   },
   backContainer: {
     position: 'absolute',
@@ -173,6 +159,5 @@ export const HomeStyles = StyleSheet.create({
     padding: 10,
     backgroundColor: '#0086a2',
     width: '15%'
->>>>>>> issue#18-new-circle
   }
 });
