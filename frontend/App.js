@@ -11,10 +11,6 @@ import store from './Store'
 
 export default function App(props) {
   const [isLoadingComplete, setLoadingComplete] = useState(false);
-<<<<<<< HEAD
-/*
-=======
->>>>>>> issue#18-new-circle
   if (!isLoadingComplete && !props.skipLoadingScreen) {
     return (
       <AppLoading
@@ -23,11 +19,7 @@ export default function App(props) {
         onFinish={() => handleFinishLoading(setLoadingComplete)}
       />
     );
-<<<<<<< HEAD
-  } else {*/
-=======
   } else {
->>>>>>> issue#18-new-circle
     return (
       <Provider store={store}>
         <View style={styles.container}>
@@ -36,23 +28,6 @@ export default function App(props) {
         </View>
       </Provider>
     );
-<<<<<<< HEAD
-//  }
-}
-/*
-async function loadResourcesAsync() {
-  await Promise.all([
-    Asset.loadAsync([
-      require('./assets/images/robot-dev.png'),
-      require('./assets/images/robot-prod.png'),
-    ]),
-    Font.loadAsync({
-      // This is the font that we are using for our tab bar
-      ...Ionicons.font,
-      // We include SpaceMono because we use it in HomeScreen.js. Feel free to
-      // remove this if you are not using it in your app
-      'space-mono': require('./assets/fonts/SpaceMono-Regular.ttf'),
-=======
   }
 }
 
@@ -67,7 +42,6 @@ async function loadResourcesAsync() {
       //...Ionicons.font,
       // We include SpaceMono because we use it in HomeScreen.js. Feel free to
       // remove this if you are not using it in your app
->>>>>>> issue#18-new-circle
     }),
   ]);
 }
@@ -81,11 +55,6 @@ function handleLoadingError(error: Error) {
 function handleFinishLoading(setLoadingComplete) {
   setLoadingComplete(true);
 }
-<<<<<<< HEAD
-*/
-=======
-
->>>>>>> issue#18-new-circle
 const styles = StyleSheet.create({
   container: {
     flex: 1,

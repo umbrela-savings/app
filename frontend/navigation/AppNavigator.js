@@ -1,24 +1,11 @@
-<<<<<<< HEAD
-=======
 import React from 'react';
 import {
   Button
 } from 'react-native';
->>>>>>> issue#18-new-circle
 import { 
   createAppContainer, 
   createSwitchNavigator,
   createStackNavigator,
-<<<<<<< HEAD
-} from 'react-navigation';
-
-import AuthLoadingScreen from '../screens/AuthLoadingScreen';
-import HomeScreen from '../screens/HomeScreen';
-import LandingScreen from '../screens/LandingScreen';
-import SignUpScreen from '../screens/SignUpScreen';
-
-const AppStack = createStackNavigator({ Home: HomeScreen });
-=======
   createBottomTabNavigator,
   createDrawerNavigator
 } from 'react-navigation';
@@ -132,31 +119,12 @@ createStackNavigator(
   }
 );
 
->>>>>>> issue#18-new-circle
 const AuthStack =
   createStackNavigator({ 
     Landing: {
       screen: LandingScreen,
       navigationOptions: () => ({
         header: null
-<<<<<<< HEAD
-      }),
-    },
-    SignUp: {
-      screen: SignUpScreen
-    }
-});
-
-export default createAppContainer(
-  createSwitchNavigator({
-    AuthLoading: AuthLoadingScreen,
-    App: AppStack,
-    Auth: AuthStack,
-  },
-  {
-    initialRouteName: 'AuthLoading',
-  })
-=======
       })
     },
     Register: {
@@ -188,5 +156,4 @@ export default createAppContainer(
     ),
   }),
   
->>>>>>> issue#18-new-circle
 );

@@ -12,10 +12,6 @@ export const Constants = {
 export const LandingStyles = StyleSheet.create({
   container: {
     flex: 1,
-<<<<<<< HEAD
-    alignItems: 'center'
-  },
-=======
     alignItems: 'center',
     justifyContent: 'center'
   },
@@ -64,7 +60,6 @@ export const SignUpStyles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center'
   },
->>>>>>> issue#18-new-circle
   loginContainer: {
     width: '80%',
     backgroundColor: '#0086a2',

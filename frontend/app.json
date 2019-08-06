@@ -11,11 +11,7 @@
     ],
     "version": "1.0.0",
     "orientation": "portrait",
-<<<<<<< HEAD
-    "icon": "./assets/images/icon.png",
-=======
     "icon": "./assets/images/Umbrela_icon.png",
->>>>>>> issue#18-new-circle
     "splash": {
       "backgroundColor": "#ffffff"
     },
@@ -28,10 +24,6 @@
     "ios": {
       "supportsTablet": true
     },
-<<<<<<< HEAD
-    "packagerOpts": {
-      "config": "metro.config.js"
-=======
     "android": {
       "package": "com.yourcompany.yourappname"
     },
@@ -41,7 +33,6 @@
     },
     "androidStatusBar": {
       "backgroundColor": "#000000"
->>>>>>> issue#18-new-circle
     }
   }
 }

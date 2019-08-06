@@ -23,12 +23,6 @@
     "react": "16.8.3",
     "react-dom": "^16.8.6",
     "react-native": "https://github.com/expo/react-native/archive/sdk-33.0.0.tar.gz",
-<<<<<<< HEAD
-    "react-native-fast-image": "^7.0.2",
-    "react-native-svg": "^9.5.1",
-    "react-native-web": "^0.11.4",
-    "react-navigation": "^3.11.0",
-=======
     "react-native-elements": "^1.1.0",
     "react-native-fast-image": "^7.0.2",
     "react-native-keyboard-aware-scroll-view": "^0.8.0",
@@ -39,7 +33,6 @@
     "react-native-web": "^0.11.4",
     "react-navigation": "^3.11.0",
     "react-navigation-animated-switch": "^0.2.1",
->>>>>>> issue#18-new-circle
     "react-redux": "^7.1.0",
     "redux": "^4.0.4",
     "redux-thunk": "^2.3.0"
