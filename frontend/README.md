@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # Umbrela Frontend with Expo
 
 ## Purpose for different folders
@@ -33,3 +34,10 @@
 ## Future improvements
 - The current code logs user in immediately after the user is registered. Will determine if that is necessary 
 - Right now the error checking is going through the `Alert` from from the react package. Will try to find out a way to display red container around the input and an error message below the message area
+=======
+# Frontend
+
+## Purpose for different folders
+
+- **components:** parts that are likely to be used repetitively.
+>>>>>>> issue#18-new-circle

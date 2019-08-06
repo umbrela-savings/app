@@ -46,5 +46,24 @@ spritesmith.scss
 
 # templated email
 tmp_email/
+<<<<<<< HEAD
 .expo/packager-info.json
 .expo/settings.json
+=======
+
+
+.expo/packager-info.json
+.expo/settings.json
+node_modules/**/*
+.expo
+.expo-shared
+npm-debug.*
+*.jks
+*.p12
+*.key
+*.mobileprovision
+*.orig.*
+web-build/
+web-report/
+__tests__
+>>>>>>> issue#18-new-circle

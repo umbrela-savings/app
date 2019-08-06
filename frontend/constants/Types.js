@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 export const GET_LEADS = "GET_LEADS";
 export const DELETE_LEAD = "DELETE_LEAD";
 export const ADD_LEAD = "ADD_LEAD";
@@ -12,3 +13,29 @@ export const LOGOUT_SUCCESS = "LOGOUT_SUCCESS";
 export const REGISTER_SUCCESS = "REGISTER_SUCCESS";
 export const REGISTER_FAIL = "REGISTER_FAIL";
 export const CLEAR_LEADS = 'CLEAR_LEADS';
+=======
+export const USER_LOADED = 'USER_LOADED';
+export const CIRCLELIST_LOADED = 'CIRCLELIST_LOADED'
+export const CIRCLELIST_FAILED = 'CIRCLELIST_FAILED'
+export const CIRCLE_LOADED = 'CIRCLE_LOADED'
+export const CIRCLE_FAILED = 'CIRCLE_FAILED'
+export const LOAD_ERROR = 'LOAD_ERROR';
+export const LOGIN_SUCCESS = 'LOGIN_SUCCESS';
+export const LOGIN_FAIL = 'LOGIN_FAIL';
+export const LOGOUT_SUCCESS = 'LOGOUT_SUCCESS';
+export const LOGOUT_FAIL = 'LOGOUT_FAIL';
+export const REGISTER_SUCCESS = 'REGISTER_SUCCESS';
+export const REGISTER_FAIL = 'REGISTER_FAIL';
+export const AUTH_LOADING = 'AUTH_LOADING';
+export const CIRCLE_LOADING = 'CIRCLE_LOADING';
+export const NEWCIRCLE_SUCCESS = 'NEWCIRCLE_SUCCESS';
+export const NEWCIRCLE_FAIL = 'NEWCIRCLE_FAIL';
+export const CODE_SUCCESS = 'CODE_SUCCESS';
+export const CODE_FAILED = 'CODE_FAILED';
+export const CIRCLEUSER_EXIST = 'CIRCLEUSER_EXIST';
+export const CIRCLEUSER_NONEXIST = 'CIRCLEUSER_NONEXIST';
+export const JOIN_SUCCESS = 'JOIN_SUCCESS';
+export const JOIN_FAILED = 'JOIN_FAILED';
+export const MESSAGE_SUCCESS = 'MESSAGE_SUCCESS';
+export const MESSAGE_FAILED = 'MESSAGE_FAILED';
+>>>>>>> issue#18-new-circle
