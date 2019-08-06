@@ -14,7 +14,9 @@ import {
   CIRCLEUSER_EXIST,
   CIRCLEUSER_NONEXIST,
   JOIN_SUCCESS,
-  JOIN_FAILED
+  JOIN_FAILED,
+  MESSAGE_FAILED,
+  MESSAGE_SUCCESS
 } from "../constants/Types";
 
 const url = 'http://47.90.103.121:8000';
@@ -125,7 +127,6 @@ export const joinCircle = (user, circle) => (dispatch, getState) => {
   const body = JSON.stringify({ 
     circle, user
   })
-  console.log(body);
 
   axios
     .post(url+'/circleusers/', body, tokenConfig(getState))
@@ -138,6 +139,32 @@ export const joinCircle = (user, circle) => (dispatch, getState) => {
     .catch(err => {
       dispatch({
         type: JOIN_FAILED,
+        payload: err.response.data
+      });
+    });
+};
+
+export const sendMessage = (message, circle, user) => (dispatch, getState) => {
+  dispatch({ type: CIRCLE_LOADING });
+
+  let circle_id = circle.id;
+  let circle_url = circle.url
+
+  const body = JSON.stringify({ 
+    message, circle: circle_url, user
+  })
+
+  axios
+    .post(url+'/messages/'+'?'+'circle_id='+circle_id, body, tokenConfig(getState))
+    .then(res => {
+      dispatch({
+        type: MESSAGE_SUCCESS,
+        payload: res.data
+      });
+    })
+    .catch(err => {
+      dispatch({
+        type: MESSAGE_FAILED,
         payload: err.response.data
       });
     });

@@ -69,17 +69,22 @@ export class NewCircleScreen extends React.Component {
 
   onSubmit() {
     const {name, votingRules, savingRules, startDate, isActive} = this.state;
-    this.props.createCircle(
-      name, 
-      votingRules, 
-      savingRules, 
-      startDate.toISOString().substr(0, 10), 
-      isActive);
+    if (!this.state.isChecked) {
+      Alert.alert('Submit failed:', 'You have not checked the box yet')
+    } else {
+      this.props.createCircle(
+        name, 
+        votingRules, 
+        savingRules, 
+        startDate.toISOString().substr(0, 10), 
+        isActive);
+    }
   }
 
   componentDidUpdate() {
     if (this.props.newCircleSuccess) {
-      this.props.navigation.navigate('Invitation', {
+      this.props.navigation.navigate('Add', {
+        user: this.props.navigation.getParam('user', 'none'),
         circle: this.props.circle
       });
     }
@@ -163,6 +168,7 @@ export class NewCircleScreen extends React.Component {
               title='User Agreement'/>
             
             <TouchableOpacity 
+              disabled={!this.state.isChecked}
               style={styles.loginContainer}
               onPress={() => this.onSubmit()}>
                 <View style={styles.textContainer}>

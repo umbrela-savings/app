@@ -6,7 +6,8 @@ import {
   createAppContainer, 
   createSwitchNavigator,
   createStackNavigator,
-  createBottomTabNavigator
+  createBottomTabNavigator,
+  createDrawerNavigator
 } from 'react-navigation';
 import createAnimatedSwitchNavigator from 'react-navigation-animated-switch';
 import { Transition } from 'react-native-reanimated';
@@ -20,29 +21,42 @@ import RegisterScreen from '../screens/RegisterScreen';
 import InvitationScreen from '../screens/InvitationScreen';
 import CircleScreen from '../screens/CircleScreen';
 import MessengerScreen from '../screens/MessengerScreen'
-import OverlayScreen from '../screens/OverlayScreen'
 import RequestScreen from '../screens/RequestScreen'
 import JoinCircleScreen from '../screens/JoinCircleScreen'
 import CircleModalScreen from '../screens/CircleModalScreen'
+import LoanScreen from '../screens/LoanScreen'
+import NewLoanScreen from '../screens/NewLoanScreen'
+import AddUserScreen from '../screens/AddUserScreen'
 
 const RequestStack = 
 createStackNavigator(
   {
-    Request: RequestScreen
+    Request: RequestScreen,
+    Loan: LoanScreen,
+    NewLoan: NewLoanScreen
+  },
+  {
+    headerMode: 'none'
   }
 );
 
-const CircleTab = 
-createBottomTabNavigator(
+const CircleTab = createBottomTabNavigator(
   {
-    Overlay: OverlayScreen,
+    Drawer: {
+      screen: () => null,
+      navigationOptions: ({ navigation }) => ({
+        tabBarOnPress: () => {
+          navigation.openDrawer();
+        },
+      })
+    },
     CircleMain: CircleScreen,
     Messenger: MessengerScreen,
     Request: RequestStack
   },
   {
     initialRouteName: 'CircleMain',
-    navigationOptions: ({ navigation }) => ({
+    navigationOptions: () => ({
       headerBackTitle: 'null',
       headerRight: (
         <Button
@@ -53,11 +67,38 @@ createBottomTabNavigator(
   }
 );
 
-const JoinStack = 
-createStackNavigator(
+const CircleDrawer = createDrawerNavigator(
+  {
+    CircleHome: CircleTab
+  },
+  {
+    initialRouteName: 'CircleHome',
+    navigationOptions: ({ navigation }) => ({
+      headerBack: 'null',
+      headerRight: (
+        <Button
+          onPress={() => alert('Notification!')}
+          title='bell' />
+      )
+    })
+  }
+)
+
+const JoinStack = createStackNavigator(
   {
     Code: JoinCircleScreen,
     CircleModal: CircleModalScreen
+  },
+  {
+    headerMode: 'none'
+  }
+);
+
+const NewCircleStack = createStackNavigator(
+  {
+    Rules: NewCircleScreen,
+    Add: AddUserScreen,
+    Invitation: InvitationScreen
   },
   {
     headerMode: 'none'
@@ -68,10 +109,9 @@ const AppStack =
 createStackNavigator(
   { 
     MyCircles: MyCirclesScreen,
-    NewCircle: NewCircleScreen,
-    Invitation: InvitationScreen,
+    NewCircle: NewCircleStack,
     Join: JoinStack,
-    Circle: CircleTab
+    Circle: CircleDrawer
   },
   {
     headerMode: 'float',

@@ -29,12 +29,7 @@ export class MyCirclesScreen extends React.Component {
 
   static navigationOptions = ({ navigation }) => {
     return {
-      headerTitle: 'Home',
-      headerLeft: (
-        <Button
-          onPress={() => navigation.navigate('Home')}
-          title='Home' />
-      ),
+      headerTitle: 'My Circles',
       headerRight: (
         <Button
           onPress={() => alert('Notification!')}
@@ -91,7 +86,9 @@ export class MyCirclesScreen extends React.Component {
             )
           }
           <TouchableOpacity 
-            onPress={() => this.props.navigation.navigate('NewCircle')}
+            onPress={() => this.props.navigation.navigate('NewCircle', {
+              user: this.props.user
+            })}
             style={styles.loginContainer}>
               <View style={styles.textContainer}>
                 <Text style={styles.loginText}>Start A New Circle</Text>

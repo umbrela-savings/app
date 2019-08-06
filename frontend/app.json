@@ -28,7 +28,8 @@
       "package": "com.yourcompany.yourappname"
     },
     "packagerOpts": {
-      "config": "metro.config.js"
+      "config": "metro.config.js", 
+      "sourceExts": ["js", "jsx", "svg"] 
     },
     "androidStatusBar": {
       "backgroundColor": "#000000"

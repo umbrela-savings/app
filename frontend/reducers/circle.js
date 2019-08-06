@@ -12,7 +12,9 @@ import {
   CIRCLEUSER_EXIST,
   CIRCLEUSER_NONEXIST,
   JOIN_FAILED,
-  JOIN_SUCCESS
+  JOIN_SUCCESS,
+  MESSAGE_FAILED,
+  MESSAGE_SUCCESS
 } from "../constants/Types";
 
 const initialState = {
@@ -22,7 +24,8 @@ const initialState = {
   newCircleSuccess: null,
   codeSuccess: null,
   circleuserExist: null,
-  joinSuccess: null
+  joinSuccess: null,
+  messageSuccess: null
 }
 
 export default function(state = initialState, action) {
@@ -53,14 +56,16 @@ export default function(state = initialState, action) {
         ...state,
         isLoading: false,
         circle: action.payload,
-        newCircleSuccess: true
+        newCircleSuccess: true,
+        messageSuccess: null,
       };
     case NEWCIRCLE_FAIL:
       Alert.alert(action.payload);
       return {
         ...state,
         isLoading: false,
-        newCircleSuccess: false
+        newCircleSuccess: false,
+        messageSuccess: null
       };
     case CIRCLE_LOADED: 
       return {
@@ -126,6 +131,19 @@ export default function(state = initialState, action) {
         codeSuccess: null,
         circleuserExist: null,
         joinSuccess: false
+      };
+      case MESSAGE_SUCCESS: 
+      return {
+        ...state,
+        isLoading: false,
+        messageSuccess: true
+      };
+    case MESSAGE_FAILED: 
+    Alert.alert(action.payload);
+      return {
+        ...state,
+        isLoading: false,
+        messageSuccess: false
       };
     default:
       return state;

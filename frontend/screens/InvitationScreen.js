@@ -16,7 +16,7 @@ const styles = HomeStyles;
 export default class InvitationScreen extends React.Component {
 
   onSubmit() {
-    const circle = this.props.navigation.getParam('circle', 'none');
+    const circleURL = this.props.navigation.getParam('circleURL', 'none');
 
     const resetAction = StackActions.reset({
       index: 1,
@@ -25,7 +25,7 @@ export default class InvitationScreen extends React.Component {
         NavigationActions.navigate({ 
           routeName: 'Circle',
           params: {
-            circleURL: circle.url
+            circleURL: circleURL
           }
         })
       ],
@@ -35,11 +35,10 @@ export default class InvitationScreen extends React.Component {
 
   onShare = async () => {
     try {
-      const circle = this.props.navigation.getParam('circle', 'none');
+      const message = this.props.navigation.getParam('message', 'none');
 
       const result = await Share.share({
-        message:
-          circle.join_code,
+        message: message
       });
 
       if (result.action === Share.sharedAction) { 

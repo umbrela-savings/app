@@ -32,7 +32,7 @@ export class JoinCircleScreen extends React.Component {
 
     if (this.props.codeSuccess) {
       if (this.props.circleuserExist == null)
-        this.props.findUserInCircle(user.id, this.props.circle.url.substr(34, 1));
+        this.props.findUserInCircle(user.id, this.props.circle.id);
       else if (this.props.circleuserExist) {
         const resetAction = StackActions.reset({
           index: 1,
@@ -55,33 +55,6 @@ export class JoinCircleScreen extends React.Component {
         });
       }
     }
-/*
-    if (this.props.circleuserExist == null && this.props.codeSuccess)
-      this.props.findUserInCircle(user.id, this.props.circle.url.substr(34, 1));
-
-    if (this.props.codeSuccess) {
-      if (this.props.circleuserExist) {
-        const resetAction = StackActions.reset({
-          index: 1,
-          actions: [
-            NavigationActions.navigate({ routeName: 'MyCircles' }),
-            NavigationActions.navigate({ 
-              routeName: 'Circle',
-              params: {
-                circleURL: this.props.circle.url
-              }
-            })
-          ],
-        });
-        this.props.navigation.dispatch(resetAction);
-      } else {
-        this.props.navigation.navigate('CircleModal', 
-        { 
-          circleURL: this.props.circle.url,
-          user: user
-        });
-      }
-    }*/
   }
 
   render() {
