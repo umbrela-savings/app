@@ -1,7 +1,7 @@
 from rest_framework.test import APIRequestFactory, APITestCase
 from .serializers import CircleSerializer, CircleUserSerializer
-from .models import Circle, CircleUser
-from django.contrib.auth.models import User
+from .models import Circle, CircleUser, User
+# from django.contrib.auth.models import User
 from django.test import TestCase
 from django.urls import reverse
 from datetime import date

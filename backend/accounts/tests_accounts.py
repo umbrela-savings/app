@@ -1,8 +1,8 @@
-from django.contrib.auth.models import User
+# from django.contrib.auth.models import User
 from rest_framework.test import APIRequestFactory, APITestCase
 
 from .serializers import UserSerializer, RegisterSerializer, LoginSerializer
-
+from .models import User
 from knox.models import AuthToken
 from knox.auth import TokenAuthentication
 from knox.settings import CONSTANTS, knox_settings
