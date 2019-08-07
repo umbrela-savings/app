@@ -38,6 +38,7 @@ class CircleSerializer(serializers.HyperlinkedModelSerializer):
         model = Circle
         fields = ('id',
                   'url',
+                  'users',
                   'voting_rules',
                   'saving_rules',
                   'start_date',
@@ -64,4 +65,16 @@ class CircleUserSerializer(serializers.HyperlinkedModelSerializer):
 class MessageSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = Message
+        fields = '__all__'
+
+
+class CircleUserAccountSerializer(serializers.HyperlinkedModelSerializer):
+    class Meta:
+        model = CircleUserAccount
+        fields = '__all__'
+
+
+class CircleAccountSerializer(serializers.HyperlinkedModelSerializer):
+    class Meta:
+        model = CircleAccount
         fields = '__all__'
