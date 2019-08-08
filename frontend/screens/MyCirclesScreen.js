@@ -46,7 +46,7 @@ export class MyCirclesScreen extends React.Component {
     }
   };
 
-  componentDidMount() {
+  componentWillMount() {
     this.props.loadCircleList(this.props.user.id);
   }
 
@@ -59,15 +59,14 @@ export class MyCirclesScreen extends React.Component {
     let list = this.state.listOfCircles;
     let index = this.state.index
 
-    if (circle && 
-      list.length < circleList.length &&
-      circle != prevProps.circle) {
+    if (circle && circle != prevProps.circle) {
+        console.log(index);
         this.state.listOfCircles.push(circle);
     }
 
     if (circleList.length > 0 && index < circleList.length) {
       this.props.loadCircle(circleList[index].circle);
-      this.state.index++;
+      ++this.state.index;
     } 
   }
 
