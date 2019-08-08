@@ -12,7 +12,6 @@ import {
 import createAnimatedSwitchNavigator from 'react-navigation-animated-switch';
 import { Transition } from 'react-native-reanimated';
 
-
 import AuthLoadingScreen from '../screens/AuthLoadingScreen';
 import MyCirclesScreen from '../screens/MyCirclesScreen';
 import NewCircleScreen from '../screens/NewCircleScreen'
@@ -27,6 +26,7 @@ import CircleModalScreen from '../screens/CircleModalScreen'
 import LoanScreen from '../screens/LoanScreen'
 import NewLoanScreen from '../screens/NewLoanScreen'
 import AddUserScreen from '../screens/AddUserScreen'
+import DashboardScreen from '../screens/DashboardScreen'
 
 const RequestStack = 
 createStackNavigator(
@@ -40,6 +40,16 @@ createStackNavigator(
   }
 );
 
+const CircleMainStack = createStackNavigator(
+  {
+    Main: CircleScreen,
+    Dashboard: DashboardScreen
+  },
+  {
+    initialRouteName: 'Main'
+  }
+)
+
 const CircleTab = createBottomTabNavigator(
   {
     Drawer: {
@@ -50,20 +60,20 @@ const CircleTab = createBottomTabNavigator(
         },
       })
     },
-    CircleMain: CircleScreen,
+    CircleMain: CircleMainStack,
     Messenger: MessengerScreen,
     Request: RequestStack
   },
   {
     initialRouteName: 'CircleMain',
-    navigationOptions: () => ({
+    /*navigationOptions: () => ({
       headerBackTitle: 'null',
       headerRight: (
         <Button
           onPress={() => alert('Notification!')}
           title='bell' />
       )
-    })
+    })*/
   }
 );
 
@@ -87,7 +97,7 @@ const CircleDrawer = createDrawerNavigator(
 const JoinStack = createStackNavigator(
   {
     Code: JoinCircleScreen,
-    CircleModal: CircleModalScreen
+    CircleModal: CircleScreen
   },
   {
     headerMode: 'none'

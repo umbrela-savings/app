@@ -14,7 +14,9 @@ import {
   JOIN_FAILED,
   JOIN_SUCCESS,
   MESSAGE_FAILED,
-  MESSAGE_SUCCESS
+  MESSAGE_SUCCESS,
+  MESSAGE_LOADED,
+  MESSAGE_NONEXIST
 } from "../constants/Types";
 
 const initialState = {
@@ -25,7 +27,8 @@ const initialState = {
   codeSuccess: null,
   circleuserExist: null,
   joinSuccess: null,
-  messageSuccess: null
+  messageSuccess: null,
+  message: []
 }
 
 export default function(state = initialState, action) {
@@ -42,14 +45,18 @@ export default function(state = initialState, action) {
         ...state,
         isLoading: false,
         circleList: action.payload,
-        newCircleSuccess: null
+        newCircleSuccess: null,
+        circleuserExist: null,
+        joinSuccess: null
       };
     case CIRCLELIST_FAILED: 
       Alert.alert(action.payload.detail);
       return {
         ...state,
         isLoading: false,
-        newCircleSuccess: null
+        newCircleSuccess: null,
+        circleuserExist: null,
+        joinSuccess: null
       };
     case NEWCIRCLE_SUCCESS:
       return {
@@ -132,12 +139,12 @@ export default function(state = initialState, action) {
         circleuserExist: null,
         joinSuccess: false
       };
-      case MESSAGE_SUCCESS: 
-      return {
-        ...state,
-        isLoading: false,
-        messageSuccess: true
-      };
+    case MESSAGE_SUCCESS: 
+    return {
+      ...state,
+      isLoading: false,
+      messageSuccess: true
+    };
     case MESSAGE_FAILED: 
     Alert.alert(action.payload);
       return {
@@ -145,6 +152,18 @@ export default function(state = initialState, action) {
         isLoading: false,
         messageSuccess: false
       };
+    case MESSAGE_LOADED:
+      return {
+        ...state,
+        isLoading: false,
+        message: action.payload
+      }
+    case MESSAGE_NONEXIST:
+      return {
+        ...state,
+        isLoading: false,
+        message: action.payload
+      }
     default:
       return state;
   }

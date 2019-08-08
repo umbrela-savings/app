@@ -16,7 +16,7 @@ const styles = HomeStyles;
 export default class InvitationScreen extends React.Component {
 
   onSubmit() {
-    const circleURL = this.props.navigation.getParam('circleURL', 'none');
+    const circle = this.props.navigation.getParam('circle', 'none');
 
     const resetAction = StackActions.reset({
       index: 1,
@@ -25,7 +25,7 @@ export default class InvitationScreen extends React.Component {
         NavigationActions.navigate({ 
           routeName: 'Circle',
           params: {
-            circleURL: circleURL
+            circle: circle
           }
         })
       ],
