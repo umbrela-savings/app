@@ -22,3 +22,8 @@ export const JOIN_SUCCESS = 'JOIN_SUCCESS';
 export const JOIN_FAILED = 'JOIN_FAILED';
 export const MESSAGE_SUCCESS = 'MESSAGE_SUCCESS';
 export const MESSAGE_FAILED = 'MESSAGE_FAILED';
+<<<<<<< HEAD
+=======
+export const MESSAGE_LOADED = 'MESSAGE_LOADED';
+export const MESSAGE_NONEXIST = 'MESSAGE_NONEXIST';
+>>>>>>> issue#18-new-circle

@@ -30,7 +30,7 @@ export class AddUserScreen extends React.Component {
     if (this.props.messageSuccess) {
       const circle = this.props.navigation.getParam('circle', 'none');
       this.props.navigation.navigate('Invitation', {
-        circleURL: circle.url, 
+        circle: circle, 
         message: this.state.message
       });
     }

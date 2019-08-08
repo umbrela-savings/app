@@ -41,7 +41,7 @@ export class JoinCircleScreen extends React.Component {
             NavigationActions.navigate({ 
               routeName: 'Circle',
               params: {
-                circleURL: this.props.circle.url
+                circle: this.props.circle
               }
             })
           ],
@@ -50,7 +50,7 @@ export class JoinCircleScreen extends React.Component {
       } else {
         this.props.navigation.navigate('CircleModal', 
         { 
-          circleURL: this.props.circle.url,
+          circle: this.props.circle, 
           user: user
         });
       }

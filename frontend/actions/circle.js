@@ -16,7 +16,9 @@ import {
   JOIN_SUCCESS,
   JOIN_FAILED,
   MESSAGE_FAILED,
-  MESSAGE_SUCCESS
+  MESSAGE_SUCCESS,
+  MESSAGE_LOADED,
+  MESSAGE_NONEXIST
 } from "../constants/Types";
 
 const url = 'http://47.90.103.121:8000';
@@ -168,4 +170,24 @@ export const sendMessage = (message, circle, user) => (dispatch, getState) => {
         payload: err.response.data
       });
     });
+};
+
+export const loadMessage = (circle_id) => (dispatch, getState) => {
+  dispatch({ type: CIRCLE_LOADING });
+
+  axios
+    .get(url+'/messages/'+'?'+'circle_id='+circle_id, tokenConfig(getState))
+    .then(res => {
+      if (res.data.length < 1) {
+        dispatch({
+          type: MESSAGE_NONEXIST,
+          payload: res.data
+        });
+      } else {
+        dispatch({
+          type: MESSAGE_LOADED,
+          payload: res.data
+        });
+      }
+    })
 };

@@ -9,19 +9,27 @@ import {
 } from 'react-native';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
+import { StackActions } from 'react-navigation';
 
 import { logout } from '../actions/auth';
-import { loadCircleList } from '../actions/circle';
+import { loadCircleList, loadCircle } from '../actions/circle';
 import { HomeStyles } from '../constants/Styles';
 import LoadingScreen from './LoadingScreen';
 
 const styles = HomeStyles;
 
 export class MyCirclesScreen extends React.Component {
+  state = {
+    listOfCircles: [],
+    index: 0,
+    reload: null
+  }
   static propTypes = {
     logout: PropTypes.func.isRequired,
     loadCircleList: PropTypes.func.isRequired,
+    loadCircle: PropTypes.func.isRequired,
     user: PropTypes.object,
+    circle: PropTypes.object,
     circleList: PropTypes.array,
     isAuthenticated: PropTypes.bool,
     isLoading: PropTypes.bool
@@ -46,6 +54,21 @@ export class MyCirclesScreen extends React.Component {
     if (!this.props.isAuthenticated) {
       this.props.navigation.navigate('Landing');
     }
+    let circleList = this.props.circleList;
+    let circle = this.props.circle;
+    let list = this.state.listOfCircles;
+    let index = this.state.index
+
+    if (circle && 
+      list.length < circleList.length &&
+      circle != prevProps.circle) {
+        this.state.listOfCircles.push(circle);
+    }
+
+    if (circleList.length > 0 && index < circleList.length) {
+      this.props.loadCircle(circleList[index].circle);
+      this.state.index++;
+    } 
   }
 
   signOut() {
@@ -69,22 +92,20 @@ export class MyCirclesScreen extends React.Component {
               onRefresh={this.onRefresh}
           />}
         >
-          {this.props.circleList &&
-            this.props.circleList.map((item, index) => 
+          {this.state.listOfCircles &&
+            this.state.listOfCircles.map((circle, index) => 
             <TouchableOpacity
-                key = {item.circle}
+                key = {index}
                 style = {styles.loginContainer}
-                onPress = {() => {
-                  this.props.navigation.navigate('Circle', {
-                    circleURL: item.circle
-                  });
-                }}>
+                onPress = {() => this.props.navigation.navigate('Circle',
+                 {circle: circle})}>
                 <Text style = {styles.loginText}>
-                  {item.circle}
+                  {circle.id}
                 </Text>
             </TouchableOpacity>
             )
           }
+
           <TouchableOpacity 
             onPress={() => this.props.navigation.navigate('NewCircle', {
               user: this.props.user
@@ -124,8 +145,9 @@ const mapStateToProps = state => ({
   circleList: state.circle.circleList,
   isAuthenticated: state.auth.isAuthenticated,
   isLoading: state.auth.isLoading || state.circle.isLoading,
-  user: state.auth.user
+  user: state.auth.user,
+  circle: state.circle.circle
 });
 
 export default connect(mapStateToProps, 
-  { loadCircleList, logout })(MyCirclesScreen);
+  { loadCircleList, logout, loadCircle })(MyCirclesScreen);
