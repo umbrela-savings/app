@@ -82,7 +82,9 @@ const CircleDrawer = createDrawerNavigator(
   {
     CircleHome: CircleTab,
     RecordPayment: RecordPaymentScreen,
-    ConfirmPayment: ConfirmPaymentScreen
+    ConfirmPayment: ConfirmPaymentScreen,
+    LoanRequest: RequestStack,
+    NewLoan: NewLoanScreen
   },
   {
     initialRouteName: 'CircleHome',
