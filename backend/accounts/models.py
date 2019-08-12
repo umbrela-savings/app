@@ -14,7 +14,7 @@ def get_join_code():
 class User(AbstractUser):
     # id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     class Meta:
-        db_table = 'users'
+        db_table = 'user'
 
 
 def get_sentinel_user():
@@ -23,8 +23,6 @@ def get_sentinel_user():
 
 class Profile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
-    bio = models.TextField(max_length=500, blank=True)
-    location = models.CharField(max_length=30, blank=True)
     birth_date = models.DateField(null=True, blank=True)
     phone_number = models.CharField(max_length=15, blank=True)
 
@@ -36,6 +34,9 @@ class Profile(models.Model):
     @receiver(post_save, sender=User)
     def save_user_profile(sender, instance, **kwargs):
         instance.profile.save()
+
+    class Meta:
+        db_table = 'user_profile'
 
 
 class Circle(models.Model):
@@ -73,8 +74,8 @@ class CircleUser(models.Model):
     """
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='circleuser')
     circle = models.ForeignKey(Circle, on_delete=models.PROTECT, related_name='circleuser')
-    date_invited = models.DateTimeField(auto_now_add=True)
-    updated_at = models.DateTimeField(auto_now=True)
+    date_invited = models.DateTimeField(auto_now_add=True, null=True)
+    updated_at = models.DateTimeField(auto_now=True, null=True)
     is_active = models.BooleanField(default=False)
     # is_current = models.BooleanField(default=True)
     # votes_required = models.IntegerField(default=0)
