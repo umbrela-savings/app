@@ -1,5 +1,6 @@
 from rest_framework import serializers
 from django.contrib.auth import authenticate, get_user_model
+from django.db import transaction as db_transaction
 from .models import *
 
 
@@ -16,9 +17,6 @@ class RegisterSerializer(serializers.ModelSerializer):
         model = User
         fields = ('id', 'username', 'email', 'password', 'first_name', 'last_name')
         extra_kwargs = {'password': {'write_only': True}}
-
-    def create(self, validated_data):
-        return User.objects.create_user(**validated_data)
 
 
 class LoginSerializer(serializers.Serializer):
@@ -48,6 +46,7 @@ class CircleSerializer(serializers.HyperlinkedModelSerializer):
                   'is_active',
                   'join_code')
 
+    @db_transaction.atomic()
     def create(self, validated_data):
         creator = validated_data.pop('creator')
         instance = Circle.objects.create(**validated_data)
@@ -82,6 +81,26 @@ class CircleAccountSerializer(serializers.HyperlinkedModelSerializer):
 
 
 class TransactionSerializer(serializers.HyperlinkedModelSerializer):
+    # account = CircleUserAccountSerializer(many=False, required=False, read_only=True)
+    # circle_account = CircleAccountSerializer(many=False, required=False, read_only=True)
+
     class Meta:
         model = Transaction
-        fields = '__all__'
+        fields = ('transaction_id', 'circle_account', 'account', 'type', 'amount', 'created_at')
+
+        # @db_transaction.atomic()
+        # def save(self, validated_data):
+        #     # write transaction as deposit to circle_user
+        #     circle_account = CircleAccount.objects.get(pk=validated_data.circle_account)
+        #     account = CircleAccount.objects.get(pk=validated_data.account)
+        #     validated_data.amount = 30
+        #     is_deposit = False
+        #     if validated_data.type == "DP":
+        #         is_deposit = True
+        #
+        #     # Update accounts
+        #     account.set_pending_funds(delta=validated_data.amount, is_depost=is_deposit)
+        #     circle_account.set_pending_funds(delta=validated_data.amount, is_deposit=is_deposit)
+        #     transaction = Transaction.objects.create(**validated_data)
+        #
+        #     return transaction, account, circle_account

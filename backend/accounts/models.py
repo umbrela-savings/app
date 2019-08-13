@@ -142,6 +142,7 @@ class AbstractAccount(models.Model):
         abstract = True
 
     # TODO: Add logic to ensure pending funds occured before update funds.
+    
     def set_pending_transaction(self, delta, is_deposit):
         assert(delta > 0)
 
@@ -151,8 +152,7 @@ class AbstractAccount(models.Model):
         else:
             self.pending_withdrawals += delta
 
-        return self
-
+        return self.save()
 
     def clear_pending_transaction(self, delta, is_deposit):
         assert(delta > 0)
@@ -196,14 +196,17 @@ class CircleAccount(AbstractAccount):
         if created:
             CircleAccount.objects.get_or_create(circle=instance)
 
+
+
 class Transaction(models.Model):
+
     WITHDRAWL = "WD"
     DEPOSIT = "DP"
     TYPES = [
-        (WITHDRAWL, "withdrawl"),
+        (WITHDRAWL, "withdrawal"),
         (DEPOSIT, "deposit")
     ]
-    transaction_id = models.CharField(max_length=8)
+    transaction_id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     circle_account = models.ForeignKey(CircleAccount, on_delete=models.PROTECT)
     account = models.ForeignKey(CircleUserAccount, on_delete=models.PROTECT)
     type = models.CharField(max_length=2, choices=TYPES)

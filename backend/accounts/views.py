@@ -9,9 +9,10 @@ from .serializers import *
 
 from knox.auth import TokenAuthentication
 from rest_framework.permissions import IsAuthenticated
+from django.utils.crypto import get_random_string
+import uuid
 
 User = get_user_model()
-
 
 class UserViewSet(viewsets.ReadOnlyModelViewSet):
     """
@@ -103,14 +104,14 @@ class MessageViewSet(viewsets.ModelViewSet):
         return Message.objects.filter(circle=circle_id).order_by("-created_at")
 
 
-class CircleAccountViewSet(viewsets.ModelViewSet):
+class CircleAccountViewSet(viewsets.ReadOnlyModelViewSet):
     """
     This viewset automatically provides `list` and `detail` actions.
     """
     queryset = CircleAccount.objects.all()
     serializer_class = CircleAccountSerializer
 
-class CircleUserAccountViewSet(viewsets.ModelViewSet):
+class CircleUserAccountViewSet(viewsets.ReadOnlyModelViewSet):
     """
     This viewset automatically provides `list` and `detail` actions.
     """
@@ -124,45 +125,18 @@ class TransactionViewSet(viewsets.ModelViewSet):
     queryset = Transaction.objects.all()
     serializer_class = TransactionSerializer
 
-    # @db_transaction.atomic()
-    # def create_transaction(self, amount, is_deposit):
-    #     transaction_id = get_join_code()
-    #     circle = Circle.objects.get(pk=self.circle)
-    #     user = User.objects.get(pk=self.user)
-    #
-    #     if is_deposit:
-    #         type = self.DEPOSIT
-    #     else:
-    #         type = self.WITHDRAWL
-    #
-    #     # write transaction as deposit to circle_user
-    #     user_transaction = Transaction.object.create(
-    #                 transaction_id=transaction_id,
-    #                 circle=circle,
-    #                 user=user,
-    #                 type=type,
-    #                 amount=amount
-    #                 )
-    #     user_transaction.save()
-    #     # write transaction as deposit to circle (Is this necessary?)
-    #     circle_transaction = Transaction.object.create(
-    #                 transaction_id=transaction_id,
-    #                 circle=circle,
-    #                 type=type,
-    #                 amount=amount
-    #                 )
-    #     circle_transaction.save()
-    #     # look up circle_user account
-    #     # add amount to account
-    #     self.set_pending_funds(delta=amount, is_depost=is_deposit)
-    #
-    #     # look up circle account
-    #     circle_account = CircleAccount.objects.get(circle=circle)
-    #     # add amount to account
-    #     circle_account.set_pending_funds(delta=amount, is_deposit=is_deposit)
-    #
-    #     return
-    #
-    # def reject_transaction(self, amount, is_deposit):
-    #     self.create_transaction(-1*amount, not is_deposit)
-    #     return
+    @db_transaction.atomic()
+    def create(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        self.perform_create(serializer)
+        headers = self.get_success_headers(serializer.data)
+
+        is_deposit = False
+        if serializer.validated_data['type'] == "DP":
+            is_deposit = True
+        circle_account = CircleAccount.objects.get(pk=serializer.validated_data["circle_account"])
+        account = CircleUserAccount.objects.get(pk=serializer.validated_data["account"])
+        account.set_pending_transaction(delta=serializer.validated_data["amount"], is_deposit=is_deposit)
+        circle_account.set_pending_transaction(delta=serializer.validated_data["amount"], is_deposit=is_deposit)
+        return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
