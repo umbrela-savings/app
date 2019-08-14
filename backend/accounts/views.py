@@ -115,8 +115,25 @@ class CircleUserAccountViewSet(viewsets.ReadOnlyModelViewSet):
     """
     This viewset automatically provides `list` and `detail` actions.
     """
-    queryset = CircleUserAccount.objects.all()
+    #queryset = CircleUserAccount.objects.all()
     serializer_class = CircleUserAccountSerializer
+
+    def get_queryset(self):
+        """
+        Returns the queryset object for CircleUsers.
+        We can optionally filter by user_id and circle_id.
+        """
+        queryset = CircleUserAccount.objects.all()
+        user_id = self.request.query_params.get('user_id', None)
+        circle_id = self.request.query_params.get('circle_id', None)
+
+        if user_id is not None:
+            queryset = queryset.filter(circle_user__user=user_id)
+
+        if circle_id is not None:
+            queryset = queryset.filter(circle_user__circle=circle_id)
+
+        return queryset
 
 class TransactionViewSet(viewsets.ModelViewSet):
     """

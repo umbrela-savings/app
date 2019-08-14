@@ -37,6 +37,7 @@ class CircleSerializer(serializers.HyperlinkedModelSerializer):
         model = Circle
         fields = ('id',
                   'url',
+                  'name',
                   'users',
                   'voting_rules',
                   'saving_rules',
@@ -57,6 +58,7 @@ class CircleSerializer(serializers.HyperlinkedModelSerializer):
 
 
 class CircleUserSerializer(serializers.HyperlinkedModelSerializer):
+
     class Meta:
         model = CircleUser
         fields = '__all__'
@@ -69,15 +71,19 @@ class MessageSerializer(serializers.HyperlinkedModelSerializer):
 
 
 class CircleUserAccountSerializer(serializers.HyperlinkedModelSerializer):
+    circle_user = CircleUserSerializer(many=False, required=False, read_only=True)
+
     class Meta:
         model = CircleUserAccount
-        fields = '__all__'
+        fields = ('url', 'deposits', 'withdrawals', 'pending_deposits', 'pending_withdrawals',
+                 'n_pending', 'circle_user', 'updated_at')
 
 
 class CircleAccountSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = CircleAccount
         fields = '__all__'
+
 
 
 class TransactionSerializer(serializers.HyperlinkedModelSerializer):
