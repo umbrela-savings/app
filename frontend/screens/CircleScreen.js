@@ -16,7 +16,8 @@ const styles = HomeStyles;
 
 export class CircleScreen extends React.Component {
   state = {
-    circle: null
+    circle: null,
+    account: null
   }
 
   static propTypes = {
@@ -30,8 +31,10 @@ export class CircleScreen extends React.Component {
   componentWillMount() {
     const circle = this.props.navigation.dangerouslyGetParent().getParam('circle', 
     this.props.navigation.getParam('circle'));
+    const account = this.props.navigation.dangerouslyGetParent().getParam('account');
     this.setState({
-      circle: circle
+      circle: circle,
+      account: account
     })
   }
 
@@ -63,6 +66,8 @@ export class CircleScreen extends React.Component {
       <View style={styles.container}>
         {this.state.circle &&
         <Text>{this.state.circle.name}</Text>}
+        {this.state.account &&
+        <Text>deposits: {this.state.account.deposits}</Text>}
         { (this.props.circleuserExist === false ||
           this.props.joinSuccess === false) && 
           <Button 

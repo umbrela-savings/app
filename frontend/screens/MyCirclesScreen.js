@@ -13,6 +13,7 @@ import { StackActions } from 'react-navigation';
 
 import { logout } from '../actions/auth';
 import { loadCircleList, loadCircle } from '../actions/circle';
+import { loadCircleAccount } from '../actions/account';
 import { HomeStyles } from '../constants/Styles';
 import LoadingScreen from './LoadingScreen';
 
@@ -21,18 +22,22 @@ const styles = HomeStyles;
 export class MyCirclesScreen extends React.Component {
   state = {
     listOfCircles: [],
+    accountList: [],
     index: 0,
-    reload: null
+    reload: null,
+    newIndex: 0
   }
   static propTypes = {
     logout: PropTypes.func.isRequired,
     loadCircleList: PropTypes.func.isRequired,
     loadCircle: PropTypes.func.isRequired,
+    loadCircleAccount: PropTypes.func.isRequired,
     user: PropTypes.object,
     circle: PropTypes.object,
     circleList: PropTypes.array,
     isAuthenticated: PropTypes.bool,
-    isLoading: PropTypes.bool
+    isLoading: PropTypes.bool,
+    circleAccounts: PropTypes.array
   };
 
   static navigationOptions = ({ navigation }) => {
@@ -48,6 +53,7 @@ export class MyCirclesScreen extends React.Component {
 
   componentWillMount() {
     this.props.loadCircleList(this.props.user.id);
+    this.props.loadCircleAccount();
   }
 
   componentDidUpdate(prevProps) {
@@ -57,11 +63,18 @@ export class MyCirclesScreen extends React.Component {
     let circleList = this.props.circleList;
     let circle = this.props.circle;
     let list = this.state.listOfCircles;
-    let index = this.state.index
+    let index = this.state.index;
+    let newIndex = this.state.newIndex;
+
+    if (list.length == circleList.length && circleList.length > 0 &&
+        newIndex < list.length) {
+      let circleAccounts = this.props.circleAccounts;
+      this.state.accountList.push(circleAccounts[list[newIndex].id - 1]);
+      ++this.state.newIndex
+    }
 
     if (circle && circle != prevProps.circle) {
-        console.log(index);
-        this.state.listOfCircles.push(circle);
+      this.state.listOfCircles.push(circle);
     }
 
     if (circleList.length > 0 && index < circleList.length) {
@@ -91,16 +104,20 @@ export class MyCirclesScreen extends React.Component {
               onRefresh={this.onRefresh}
           />}
         >
-          {this.state.listOfCircles &&
+          {(this.state.listOfCircles && this.state.accountList) &&
             this.state.listOfCircles.map((circle, index) => 
             <TouchableOpacity
-                key = {index}
-                style = {styles.loginContainer}
-                onPress = {() => this.props.navigation.navigate('Circle',
-                 {circle: circle})}>
-                <Text style = {styles.loginText}>
-                  {circle.id}
-                </Text>
+              key = {index}
+              style = {styles.loginContainer}
+              onPress = {() => this.props.navigation.navigate('Circle',
+                { circle: circle, 
+                  account: this.state.accountList[index]})}>
+              <Text style = {styles.loginText}>
+                Team Name
+                {circle.users.length} savers
+                $10/month
+                ends in 5 months
+              </Text>
             </TouchableOpacity>
             )
           }
@@ -145,8 +162,9 @@ const mapStateToProps = state => ({
   isAuthenticated: state.auth.isAuthenticated,
   isLoading: state.auth.isLoading || state.circle.isLoading,
   user: state.auth.user,
-  circle: state.circle.circle
+  circle: state.circle.circle,
+  circleAccounts: state.account.circleAccounts
 });
 
 export default connect(mapStateToProps, 
-  { loadCircleList, logout, loadCircle })(MyCirclesScreen);
+  { loadCircleList, logout, loadCircle, loadCircleAccount })(MyCirclesScreen);

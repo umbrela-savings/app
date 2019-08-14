@@ -10,7 +10,7 @@ import {
   REGISTER_FAIL
 } from "../constants/Types";
 
-const url = 'http://47.90.103.121:8000';
+import url from '../constants/URL';
 
 // LOGIN USER
 export const login = (username, password) => dispatch => {

@@ -16,7 +16,9 @@ import {
   MESSAGE_FAILED,
   MESSAGE_SUCCESS,
   MESSAGE_LOADED,
-  MESSAGE_NONEXIST
+  MESSAGE_NONEXIST,
+  USERLIST_LOADED,
+  USERLIST_FAILED
 } from "../constants/Types";
 
 const initialState = {
@@ -28,7 +30,8 @@ const initialState = {
   circleuserExist: null,
   joinSuccess: null,
   messageSuccess: null,
-  message: []
+  message: [],
+  userList: []
 }
 
 export default function(state = initialState, action) {
@@ -157,12 +160,21 @@ export default function(state = initialState, action) {
         ...state,
         isLoading: false,
         message: action.payload
-      }
+      };
     case MESSAGE_NONEXIST:
       return {
         ...state,
         isLoading: false,
         message: action.payload
+      };
+    case USERLIST_LOADED:
+      return {
+        ...state,
+        userList: action.payload
+      }
+    case USERLIST_FAILED:
+      return {
+        ...state,
       }
     default:
       return state;
