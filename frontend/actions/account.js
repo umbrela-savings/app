@@ -5,14 +5,18 @@ import {
   CIRCLEACCOUNT_LOADED,
   CIRCLEACCOUNT_FAILED,
   USERACCOUNT_LOADED,
-  USERACCOUNT_FAILED
+  USERACCOUNT_FAILED,
+  ACCOUNT_LOADING,
+  PAYMENT_SUCCESS,
+  PAYMENT_FAILED
 } from "../constants/Types";
 
 import url from '../constants/URL';
 
-export const loadCircleAccount = () => (dispatch, getState) => {
+export const loadCircleAccount = (id) => (dispatch, getState) => {
+  dispatch({ type: ACCOUNT_LOADING });
   axios
-    .get(url+'/circle_accounts/', tokenConfig(getState))
+    .get(url+'/circle_accounts/'+id, tokenConfig(getState))
     .then(res => {
       dispatch({
         type: CIRCLEACCOUNT_LOADED,
@@ -27,9 +31,10 @@ export const loadCircleAccount = () => (dispatch, getState) => {
     });
 };
 
-export const loadUserAccount = (id) => (dispatch, getState) => {
+export const loadUserAccount = (user_id, circle_id) => (dispatch, getState) => {
+  dispatch({ type: ACCOUNT_LOADING });
   axios
-    .get(url+'/accounts/'+id, tokenConfig(getState))
+    .get(url+'/accounts/?circle_id='+circle_id+'&user_id='+user_id, tokenConfig(getState))
     .then(res => {
       dispatch({
         type: USERACCOUNT_LOADED,
@@ -39,6 +44,33 @@ export const loadUserAccount = (id) => (dispatch, getState) => {
     .catch(err => {
       dispatch({
         type: USERACCOUNT_FAILED,
+        payload: err.response.data
+      });
+    });
+};
+
+export const recordPayment = (circle, user, amount) => (dispatch, getState) => {
+  dispatch({ type: ACCOUNT_LOADING });
+
+  const body = JSON.stringify(
+    { circle_account: circle,
+      account: user,
+      type: 'WD',
+      amount: amount
+    }
+    );
+
+  axios
+    .post(url+'/transactions/', body, tokenConfig(getState))
+    .then(res => {
+      dispatch({
+        type: PAYMENT_SUCCESS,
+        payload: res.data
+      });
+    })
+    .catch(err => {
+      dispatch({
+        type: PAYMENT_FAILED,
         payload: err.response.data
       });
     });

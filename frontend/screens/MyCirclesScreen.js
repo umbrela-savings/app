@@ -24,8 +24,7 @@ export class MyCirclesScreen extends React.Component {
     listOfCircles: [],
     accountList: [],
     index: 0,
-    reload: null,
-    newIndex: 0
+    reload: null
   }
   static propTypes = {
     logout: PropTypes.func.isRequired,
@@ -37,7 +36,7 @@ export class MyCirclesScreen extends React.Component {
     circleList: PropTypes.array,
     isAuthenticated: PropTypes.bool,
     isLoading: PropTypes.bool,
-    circleAccounts: PropTypes.array
+    circleAccount: PropTypes.object
   };
 
   static navigationOptions = ({ navigation }) => {
@@ -53,7 +52,6 @@ export class MyCirclesScreen extends React.Component {
 
   componentWillMount() {
     this.props.loadCircleList(this.props.user.id);
-    this.props.loadCircleAccount();
   }
 
   componentDidUpdate(prevProps) {
@@ -62,18 +60,15 @@ export class MyCirclesScreen extends React.Component {
     }
     let circleList = this.props.circleList;
     let circle = this.props.circle;
-    let list = this.state.listOfCircles;
+    let account = this.props.circleAccount;
     let index = this.state.index;
-    let newIndex = this.state.newIndex;
 
-    if (list.length == circleList.length && circleList.length > 0 &&
-        newIndex < list.length) {
-      let circleAccounts = this.props.circleAccounts;
-      this.state.accountList.push(circleAccounts[list[newIndex].id - 1]);
-      ++this.state.newIndex
+    if (account && account != prevProps.circleAccount) {
+      this.state.accountList.push(account);
     }
 
     if (circle && circle != prevProps.circle) {
+      this.props.loadCircleAccount(circle.id);
       this.state.listOfCircles.push(circle);
     }
 
@@ -104,19 +99,19 @@ export class MyCirclesScreen extends React.Component {
               onRefresh={this.onRefresh}
           />}
         >
-          {(this.state.listOfCircles && this.state.accountList) &&
-            this.state.listOfCircles.map((circle, index) => 
+          {this.state.accountList &&
+            this.state.accountList.map((account, index) => 
             <TouchableOpacity
               key = {index}
               style = {styles.loginContainer}
               onPress = {() => this.props.navigation.navigate('Circle',
-                { circle: circle, 
-                  account: this.state.accountList[index]})}>
+                { circle: this.state.listOfCircles[index], 
+                  account: account,
+                  user: this.props.user})}>
               <Text style = {styles.loginText}>
-                Team Name
-                {circle.users.length} savers
-                $10/month
-                ends in 5 months
+                Team Name {this.state.listOfCircles[index].name} 
+                {this.state.listOfCircles[index].users.length} savers 
+                {account.deposits}
               </Text>
             </TouchableOpacity>
             )
@@ -160,10 +155,10 @@ export class MyCirclesScreen extends React.Component {
 const mapStateToProps = state => ({
   circleList: state.circle.circleList,
   isAuthenticated: state.auth.isAuthenticated,
-  isLoading: state.auth.isLoading || state.circle.isLoading,
+  isLoading: state.auth.isLoading || state.circle.isLoading || state.account.isLoading,
   user: state.auth.user,
   circle: state.circle.circle,
-  circleAccounts: state.account.circleAccounts
+  circleAccount: state.account.circleAccount
 });
 
 export default connect(mapStateToProps, 
