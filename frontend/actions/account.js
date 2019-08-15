@@ -55,7 +55,7 @@ export const recordPayment = (circle, user, amount) => (dispatch, getState) => {
   const body = JSON.stringify(
     { circle_account: circle,
       account: user,
-      type: 'WD',
+      type: 'DP',
       amount: amount
     }
     );
