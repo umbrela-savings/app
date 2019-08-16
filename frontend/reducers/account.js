@@ -6,7 +6,9 @@ import {
   USERACCOUNT_FAILED,
   ACCOUNT_LOADING,
   PAYMENT_SUCCESS,
-  PAYMENT_FAILED
+  PAYMENT_FAILED,
+  WITHDRAW_FAILED,
+  WITHDRAW_SUCCESS
 } from "../constants/Types";
 
 const initialState = {
@@ -46,13 +48,25 @@ export default function(state = initialState, action) {
         isLoading: false
       };
     case PAYMENT_SUCCESS:
-      Alert.alert('Payment Success!');
+      Alert.alert('Payment success!');
       return {
         ...state,
         isLoading: false
       };
     case PAYMENT_FAILED:
       Alert.alert('Payment failed!');
+      return {
+        ...state,
+        isLoading: false
+      };
+    case WITHDRAW_SUCCESS:
+      Alert.alert('Withdrawal submitted!');
+      return {
+        ...state,
+        isLoading: false
+      };
+    case WITHDRAW_FAILED:
+      Alert.alert('Withdrawal failed!');
       return {
         ...state,
         isLoading: false

@@ -8,7 +8,9 @@ import {
   USERACCOUNT_FAILED,
   ACCOUNT_LOADING,
   PAYMENT_SUCCESS,
-  PAYMENT_FAILED
+  PAYMENT_FAILED,
+  WITHDRAW_FAILED,
+  WITHDRAW_SUCCESS
 } from "../constants/Types";
 
 import url from '../constants/URL';
@@ -71,6 +73,33 @@ export const recordPayment = (circle, user, amount) => (dispatch, getState) => {
     .catch(err => {
       dispatch({
         type: PAYMENT_FAILED,
+        payload: err.response.data
+      });
+    });
+};
+
+export const withdraw = (circle, user, amount) => (dispatch, getState) => {
+  dispatch({ type: ACCOUNT_LOADING });
+
+  const body = JSON.stringify(
+    { circle_account: circle,
+      account: user,
+      type: 'WD',
+      amount: amount
+    }
+    );
+
+  axios
+    .post(url+'/transactions/', body, tokenConfig(getState))
+    .then(res => {
+      dispatch({
+        type: WITHDRAW_SUCCESS,
+        payload: res.data
+      });
+    })
+    .catch(err => {
+      dispatch({
+        type: WITHDRAW_FAILED,
         payload: err.response.data
       });
     });
