@@ -2,6 +2,7 @@ from rest_framework import serializers
 from django.contrib.auth import authenticate, get_user_model
 from django.db import transaction as db_transaction
 from .models import *
+from django.utils import timezone
 
 
 User = get_user_model()
@@ -49,9 +50,9 @@ class CircleSerializer(serializers.HyperlinkedModelSerializer):
 
     @db_transaction.atomic()
     def create(self, validated_data):
-        creator = validated_data.pop('creator')
+        executor = validated_data['executor']
         instance = Circle.objects.create(**validated_data)
-        CircleUser.objects.create(user=User.objects.get(username=creator),
+        CircleUser.objects.create(user=User.objects.get(username=executor),
                                   circle=instance,
                                   is_active=True)
         return instance
@@ -61,7 +62,11 @@ class CircleUserSerializer(serializers.HyperlinkedModelSerializer):
 
     class Meta:
         model = CircleUser
-        fields = '__all__'
+        fields = ('id',
+                  'url',
+                  'user',
+                  'circle',
+                  'is_active')
 
 
 class MessageSerializer(serializers.HyperlinkedModelSerializer):
@@ -75,38 +80,87 @@ class CircleUserAccountSerializer(serializers.HyperlinkedModelSerializer):
 
     class Meta:
         model = CircleUserAccount
-        fields = ('url', 'deposits', 'withdrawals', 'pending_deposits', 'pending_withdrawals',
-                 'n_pending', 'circle_user', 'updated_at')
+        fields = ('url',
+                  'deposits',
+                  'withdrawals',
+                  'pending_deposits',
+                  'pending_withdrawals',
+                  'n_pending',
+                  'circle_user',
+                  'updated_at')
+
 
 
 class CircleAccountSerializer(serializers.HyperlinkedModelSerializer):
+    circle = CircleSerializer(many=False, required=False, read_only=True)
+
     class Meta:
         model = CircleAccount
-        fields = '__all__'
-
-
+        fields = ('url',
+                  'deposits',
+                  'withdrawals',
+                  'pending_deposits',
+                  'pending_withdrawals',
+                  'n_pending',
+                  'circle',
+                  'updated_at')
 
 class TransactionSerializer(serializers.HyperlinkedModelSerializer):
-    # account = CircleUserAccountSerializer(many=False, required=False, read_only=True)
-    # circle_account = CircleAccountSerializer(many=False, required=False, read_only=True)
+    # transaction_status = TransactionStatusSerializer(many=True, required=False, read_only=True)
 
     class Meta:
         model = Transaction
-        fields = ('transaction_id', 'circle_account', 'account', 'type', 'amount', 'created_at')
+        fields = ('transaction_id',
+                  'circle_account',
+                  'account',
+                  'type',
+                  'amount',
+                  'created_at')
 
-        # @db_transaction.atomic()
-        # def save(self, validated_data):
-        #     # write transaction as deposit to circle_user
-        #     circle_account = CircleAccount.objects.get(pk=validated_data.circle_account)
-        #     account = CircleAccount.objects.get(pk=validated_data.account)
-        #     validated_data.amount = 30
-        #     is_deposit = False
-        #     if validated_data.type == "DP":
-        #         is_deposit = True
-        #
-        #     # Update accounts
-        #     account.set_pending_funds(delta=validated_data.amount, is_depost=is_deposit)
-        #     circle_account.set_pending_funds(delta=validated_data.amount, is_deposit=is_deposit)
-        #     transaction = Transaction.objects.create(**validated_data)
-        #
-        #     return transaction, account, circle_account
+    @db_transaction.atomic()
+    def create(self, validated_data):
+        transaction = Transaction.objects.create(**validated_data)
+        TransactionStatus.objects.create(transaction_id=transaction,
+                                         created_at=transaction.created_at)
+
+        circle_account = CircleAccount.objects.get(pk=validated_data['circle_account'])
+        account = CircleUserAccount.objects.get(pk=validated_data['account'])
+
+        if circle_account.circle != account.circle_user.circle:
+            raise serializers.ValidationError('User not member of circle.')
+
+        for account_ in [account, circle_account]:
+            account_.set_pending_transaction(delta=transaction.amount,
+                                             is_deposit=transaction.is_deposit())
+        return transaction
+
+
+
+class TransactionStatusSerializer(serializers.HyperlinkedModelSerializer):
+    class Meta:
+        model = TransactionStatus
+        fields = ('transaction_id',
+                  'status')
+
+    @db_transaction.atomic()
+    def create(self, validated_data):
+        status = validated_data['status']
+        transaction = validated_data['transaction_id']
+        created_at = timezone.now()
+
+        previous_status = TransactionStatus.objects.filter(transaction_id=transaction).latest('created_at')
+
+        if previous_status.status != 'pending':
+            raise ValidationError('Transaction already completed. Create a new transaction.')
+
+        transaction_status = TransactionStatus.objects.create(
+                                         transaction_id=transaction,
+                                         status=status,
+                                         created_at=created_at)
+
+        if status == 'approved':
+            transaction.approve_transaction()
+        elif status in ['rejected', 'withdrawn']:
+            transaction.reject_transaction()
+
+        return transaction_status

@@ -1,7 +1,7 @@
 from django.shortcuts import get_object_or_404
 from rest_framework.response import Response
 from rest_framework.request import Request
-from rest_framework import viewsets, serializers, permissions, status
+from rest_framework import viewsets, serializers, permissions, status, mixins
 from rest_framework.decorators import action
 from django.contrib.auth import get_user_model
 from .models import *
@@ -45,7 +45,7 @@ class CircleViewSet(viewsets.ModelViewSet):
         if not self.request.user.is_authenticated:
             print(self.request.user)
             raise serializers.ValidationError("User must be authenticated to create a Circle")
-        serializer.save(creator=self.request.user)
+        serializer.save(executor=self.request.user)
 
     @action(methods=['get'], detail=False, url_path='join_code/(?P<join_code>\w+)')
     def get_by_join_code(self, request, join_code):
@@ -103,7 +103,6 @@ class MessageViewSet(viewsets.ModelViewSet):
             raise serializers.ValidationError("circle_id must be specified in url")
         return Message.objects.filter(circle=circle_id).order_by("-created_at")
 
-
 class CircleAccountViewSet(viewsets.ReadOnlyModelViewSet):
     """
     This viewset automatically provides `list` and `detail` actions.
@@ -115,7 +114,6 @@ class CircleUserAccountViewSet(viewsets.ReadOnlyModelViewSet):
     """
     This viewset automatically provides `list` and `detail` actions.
     """
-    #queryset = CircleUserAccount.objects.all()
     serializer_class = CircleUserAccountSerializer
 
     def get_queryset(self):
@@ -135,25 +133,16 @@ class CircleUserAccountViewSet(viewsets.ReadOnlyModelViewSet):
 
         return queryset
 
-class TransactionViewSet(viewsets.ModelViewSet):
+class TransactionViewSet(viewsets.ReadOnlyModelViewSet, mixins.CreateModelMixin):
     """
-    This viewset automatically provides `list` and `detail` actions.
+    This viewset automatically provides `create`, `list` and `detail` actions.
     """
     queryset = Transaction.objects.all()
     serializer_class = TransactionSerializer
 
-    @db_transaction.atomic()
-    def create(self, request, *args, **kwargs):
-        serializer = self.get_serializer(data=request.data)
-        serializer.is_valid(raise_exception=True)
-        self.perform_create(serializer)
-        headers = self.get_success_headers(serializer.data)
-
-        is_deposit = False
-        if serializer.validated_data['type'] == "DP":
-            is_deposit = True
-        circle_account = CircleAccount.objects.get(pk=serializer.validated_data["circle_account"])
-        account = CircleUserAccount.objects.get(pk=serializer.validated_data["account"])
-        account.set_pending_transaction(delta=serializer.validated_data["amount"], is_deposit=is_deposit)
-        circle_account.set_pending_transaction(delta=serializer.validated_data["amount"], is_deposit=is_deposit)
-        return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
+class TransactionStatusViewSet(viewsets.ReadOnlyModelViewSet, mixins.CreateModelMixin):
+    """
+    This viewset automatically provides `create`, `list` and `detail` actions.
+    """
+    queryset = TransactionStatus.objects.all()
+    serializer_class = TransactionStatusSerializer

@@ -5,6 +5,7 @@ from django.db.models.signals import post_save
 from django.dispatch import receiver
 from django.utils.crypto import get_random_string
 from django.db import transaction as db_transaction
+from rest_framework import serializers
 
 
 def get_join_code():
@@ -12,7 +13,6 @@ def get_join_code():
 
 
 class User(AbstractUser):
-    # id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     class Meta:
         db_table = 'user'
 
@@ -85,36 +85,6 @@ class CircleUser(models.Model):
         unique_together = ('user', 'circle')
 
 
-
-class CircleExecutor(models.Model):
-    # Connect to circle executor
-
-    def accept_or_reject_transaction(self, transaction_id, accept):
-        '''
-        transaction_id (str)
-        accept (boolean)
-        '''
-
-        transaction = Transaction.objects.filter(transaction_id=transaction_id).exclude(user=None).get()
-
-        is_deposit = False
-        if transaction.type == self.DEPOSIT:
-            is_deposit = True
-
-        account = Account.objects.get(circle=transaction.circle, user=transaction.user)
-        circle_account = CircleAccount.objects.get(circle=transaction.circle)
-        # look up circle_user account
-        # add amount to account
-        if accept:
-            account.accept_transaction(delta=transaction.amount, is_depost=is_deposit)
-            circle_account.accept_transaction(delta=transaction.amount, is_deposit=is_deposit)
-        else:
-            account.reject_transaction(delta=transaction.amount, is_deposit=is_deposit)
-            circle_account.reject_transaction(delta=transaction.amount, is_deposit=is_deposit)
-
-        return
-
-
 class Message(models.Model):
     circle = models.ForeignKey(Circle, on_delete=models.CASCADE, related_name='message')
     user = models.ForeignKey(User, on_delete=models.SET(get_sentinel_user), related_name='message')
@@ -142,7 +112,7 @@ class AbstractAccount(models.Model):
         abstract = True
 
     # TODO: Add logic to ensure pending funds occured before update funds.
-    
+
     def set_pending_transaction(self, delta, is_deposit):
         assert(delta > 0)
 
@@ -164,6 +134,8 @@ class AbstractAccount(models.Model):
         else:
             self.pending_withdrawals -= delta
 
+        return self.save()
+
     def accept_pending_transaction(self, delta, is_deposit):
         self.clear_pending_transaction(delta, is_deposit)
 
@@ -171,6 +143,11 @@ class AbstractAccount(models.Model):
             self.deposits += delta
         else:
             self.withdrawals += delta
+
+        return self.save()
+
+    def reject_pending_transaction(self, delta, is_deposit):
+        return self.clear_pending_transaction(delta, is_deposit)
 
 
 class CircleUserAccount(AbstractAccount):
@@ -182,7 +159,7 @@ class CircleUserAccount(AbstractAccount):
     @receiver(post_save, sender=CircleUser)
     def create_circleaccount(sender, instance, created, **kwargs):
         if created:
-            CircleUserAccount.objects.get_or_create(circle_user=instance)
+            CircleUserAccount.objects.create(circle_user=instance)
 
 
 class CircleAccount(AbstractAccount):
@@ -194,24 +171,55 @@ class CircleAccount(AbstractAccount):
     @receiver(post_save, sender=Circle)
     def create_circleaccount(sender, instance, created, **kwargs):
         if created:
-            CircleAccount.objects.get_or_create(circle=instance)
-
-
+            CircleAccount.objects.create(circle=instance)
 
 class Transaction(models.Model):
-
     WITHDRAWL = "WD"
     DEPOSIT = "DP"
     TYPES = [
         (WITHDRAWL, "withdrawal"),
         (DEPOSIT, "deposit")
     ]
+
     transaction_id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     circle_account = models.ForeignKey(CircleAccount, on_delete=models.PROTECT)
     account = models.ForeignKey(CircleUserAccount, on_delete=models.PROTECT)
     type = models.CharField(max_length=2, choices=TYPES)
     amount = models.IntegerField()
     created_at = models.DateTimeField(auto_now_add=True)
+    # status = models.ManyToManyField(TransactionStatus,
+    #                                 related_name='transactions')
 
     class Meta:
         db_table = 'transaction'
+
+    def clean(self, *args, **kwargs):
+        if circle_account.circle != account.circle_user.circle:
+            raise serializers.ValidationError("User not member of circle.")
+        super(Transaction, self).clean(*args, **kwargs)
+
+    def is_deposit(self):
+        return self.type == "DP"
+
+    def approve_transaction(self):
+        for account in [self.circle_account, self.account]:
+            account.accept_pending_transaction(self.amount,
+                                               self.is_deposit())
+
+    def reject_transaction(self):
+        for account in [self.circle_account, self.account]:
+            account.reject_pending_transaction(self.amount,
+                                               self.is_deposit())
+
+
+class TransactionStatus(models.Model):
+    STATUSES = [
+        ("pending", "pending"),
+        ("withdrawn", "withdrawn"),
+        ("approved", "approved"),
+        ("rejected", "rejected")
+        ]
+
+    transaction_id = models.ForeignKey(Transaction, on_delete=models.PROTECT)
+    status = models.CharField(max_length=8, choices=STATUSES, default="pending")
+    created_at = models.DateTimeField()
