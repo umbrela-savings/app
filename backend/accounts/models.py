@@ -173,6 +173,7 @@ class CircleAccount(AbstractAccount):
         if created:
             CircleAccount.objects.create(circle=instance)
 
+
 class Transaction(models.Model):
     WITHDRAWL = "WD"
     DEPOSIT = "DP"
@@ -196,10 +197,16 @@ class Transaction(models.Model):
     def clean(self, *args, **kwargs):
         if circle_account.circle != account.circle_user.circle:
             raise serializers.ValidationError("User not member of circle.")
+        if self.is_withdrawal() and (circle_account.deposits - circle_account.withdrawal <  self.amount):
+            raise serializer.ValidationError("Cannot request withdrawal greater than balance")
         super(Transaction, self).clean(*args, **kwargs)
 
     def is_deposit(self):
         return self.type == "DP"
+
+    def is_withdrawal(self):
+        return not self.is_deposit()
+
 
     def approve_transaction(self):
         for account in [self.circle_account, self.account]:
@@ -211,7 +218,6 @@ class Transaction(models.Model):
             account.reject_pending_transaction(self.amount,
                                                self.is_deposit())
 
-
 class TransactionStatus(models.Model):
     STATUSES = [
         ("pending", "pending"),
@@ -220,6 +226,6 @@ class TransactionStatus(models.Model):
         ("rejected", "rejected")
         ]
 
-    transaction_id = models.ForeignKey(Transaction, on_delete=models.PROTECT)
+    transaction_id = models.ForeignKey(Transaction, on_delete=models.PROTECT, related_name='status')
     status = models.CharField(max_length=8, choices=STATUSES, default="pending")
     created_at = models.DateTimeField()

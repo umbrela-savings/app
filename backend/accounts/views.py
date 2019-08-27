@@ -27,8 +27,6 @@ class CircleViewSet(viewsets.ModelViewSet):
     This viewset automatically provides `list`, `create`, `retrieve`,
     `update` and `destroy` actions.
     """
-    # authentication_classes = (TokenAuthentication,)
-    # permission_classes = (IsAuthenticated,)
     serializer_class = CircleSerializer
     queryset = Circle.objects.all()
 
@@ -43,7 +41,6 @@ class CircleViewSet(viewsets.ModelViewSet):
 
         """
         if not self.request.user.is_authenticated:
-            print(self.request.user)
             raise serializers.ValidationError("User must be authenticated to create a Circle")
         serializer.save(executor=self.request.user)
 
@@ -64,10 +61,8 @@ class CircleUserViewSet(viewsets.ModelViewSet):
     This viewset automatically provides `list`, `create`, `retrieve`,
     `update` and `destroy` actions.
     """
-    # authentication_classes = (TokenAuthentication,)
-    # permission_classes = (IsAuthenticated,)
-
     serializer_class = CircleUserSerializer
+    # authentication_classes = (TokenAuthentication,)
     # permission_classes = (permissions.IsAuthenticatedOrReadOnly,
     #                       IsOwnerOrReadOnly,)
 
@@ -88,20 +83,6 @@ class CircleUserViewSet(viewsets.ModelViewSet):
 
         return queryset
 
-
-class MessageViewSet(viewsets.ModelViewSet):
-    serializer_class = MessageSerializer
-
-    def get_queryset(self):
-        """
-        Returns the queryset object for Messages which requires a circle_id in
-        the URL
-        """
-        circle_id = self.request.query_params.get('circle_id', None)
-
-        if circle_id is None:
-            raise serializers.ValidationError("circle_id must be specified in url")
-        return Message.objects.filter(circle=circle_id).order_by("-created_at")
 
 class CircleAccountViewSet(viewsets.ReadOnlyModelViewSet):
     """
@@ -133,6 +114,7 @@ class CircleUserAccountViewSet(viewsets.ReadOnlyModelViewSet):
 
         return queryset
 
+
 class TransactionViewSet(viewsets.ReadOnlyModelViewSet, mixins.CreateModelMixin):
     """
     This viewset automatically provides `create`, `list` and `detail` actions.
@@ -140,9 +122,27 @@ class TransactionViewSet(viewsets.ReadOnlyModelViewSet, mixins.CreateModelMixin)
     queryset = Transaction.objects.all()
     serializer_class = TransactionSerializer
 
+
 class TransactionStatusViewSet(viewsets.ReadOnlyModelViewSet, mixins.CreateModelMixin):
     """
     This viewset automatically provides `create`, `list` and `detail` actions.
     """
     queryset = TransactionStatus.objects.all()
     serializer_class = TransactionStatusSerializer
+
+    def perform_create(self, serializer):
+        serializer.save(authenticated_user=self.request.user)
+
+class MessageViewSet(viewsets.ModelViewSet):
+    serializer_class = MessageSerializer
+
+    def get_queryset(self):
+        """
+        Returns the queryset object for Messages which requires a circle_id in
+        the URL
+        """
+        circle_id = self.request.query_params.get('circle_id', None)
+
+        if circle_id is None:
+            raise serializers.ValidationError("circle_id must be specified in url")
+        return Message.objects.filter(circle=circle_id).order_by("-created_at")

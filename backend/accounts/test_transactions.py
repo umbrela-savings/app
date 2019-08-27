@@ -2,9 +2,7 @@ from rest_framework.test import APIRequestFactory, APITestCase
 from rest_framework.reverse import reverse
 from rest_framework import status
 from .models import Transaction, User, Circle, CircleUser, CircleUserAccount, CircleAccount, TransactionStatus
-# from django.contrib.auth.models import User
 from django.test import TestCase
-#from django.urls import reverse
 
 from datetime import date
 from django_seed import Seed
@@ -22,11 +20,11 @@ class TransactionTestCase(APITestCase):
                                                  password=self.password)
 
         url = reverse('user_login')
-        response = self.client.post(url, {'username': self.username,
+        self.executor_response = self.client.post(url, {'username': self.username,
                                           'password': self.password})
-        self.assertIn('token', response.data)
+        self.assertIn('token', self.executor_response.data)
         self.client.credentials(HTTP_AUTHORIZATION=('Token %s' %
-                                                    response.data['token']))
+                                                    self.executor_response.data['token']))
 
         # Circle
         self.circle_data = {
@@ -37,19 +35,63 @@ class TransactionTestCase(APITestCase):
                                          self.circle_data,
                                          format="json")
 
-        for _ in range(0, 2):
-            self.temp_response = self.client.post(reverse('user_register'),
-                                {
-                                  'username': self.seeder.faker.user_name(),
-                                  'password': self.seeder.faker.password()
-                                })
-            self.circleuser_data = {
-                                     'circle': self.circle_response.data['url'],
-                                     'user': self.temp_response.data['user']['url']
-                                    }
 
-            self.circleuser_response = self.client.post(reverse('circleuser-list'),
-                                                        self.circleuser_data)
+        self.temp_response = self.client.post(reverse('user_register'),
+                            {
+                              'username': self.seeder.faker.user_name(),
+                              'password': self.seeder.faker.password()
+                            })
+        self.non_circle_user_response = self.client.post(reverse('user_register'),
+                            {
+                              'username': "sandy",
+                              'password': self.seeder.faker.password()
+                            })
+
+        self.circleuser_data = {
+                                 'circle': self.circle_response.data['url'],
+                                 'user': self.temp_response.data['user']['url']
+                                }
+
+        self.circleuser_response = self.client.post(reverse('circleuser-list'),
+                                                    self.circleuser_data)
+
+        self.circleaccount_response = self.client.get(reverse('circleaccount-detail',
+                                        args=[self.circle_response.data['id']]))
+
+        self.circleuseraccount_response = self.client.get(reverse('circleuseraccount-detail',
+                                         args=[self.circleuser_response.data['id']]))
+
+        self.client.credentials(HTTP_AUTHORIZATION=None)
+
+        # Transactions
+        self.client.credentials(HTTP_AUTHORIZATION=('Token %s' %
+                                                    self.temp_response.data['token']
+                                                    )
+                                )
+        self.deposit_amount = self.seeder.faker.random_int(20,40)
+        self.deposit_data = {
+                        'amount': self.deposit_amount,
+                        'type': 'DP',
+                        'circle_account': self.circleaccount_response.data['url'],
+                        'account': self.circleuseraccount_response.data['url']
+                        }
+        self.deposit_response = self.client.post(reverse('transaction-list'),
+                                             self.deposit_data)
+
+
+        self.withdrawal_amount = self.seeder.faker.random_int(10,19)
+        self.withdrawal_data = {
+                        'amount': self.withdrawal_amount,
+                        'type': 'WD',
+                        'circle_account': self.circleaccount_response.data['url'],
+                        'account': self.circleuseraccount_response.data['url']
+                        }
+
+
+        self.withdrawal_response = self.client.post(reverse('transaction-list'),
+                                                    self.withdrawal_data)
+
+        self.client.credentials(HTTP_AUTHORIZATION=None)
 
     # test set-up
     def test_can_create_circle(self):
@@ -59,37 +101,292 @@ class TransactionTestCase(APITestCase):
         self.assertEqual(self.circleuser_response.status_code, status.HTTP_201_CREATED)
 
     def test_is_account_created_with_circle(self):
-        response = self.client.get(reverse('circleaccount-detail',
-                                   args=[self.circle_response.data['id']]))
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(self.circleaccount_response.status_code, status.HTTP_200_OK)
 
     def test_is_account_created_with_circleuser(self):
-        response = self.client.get(reverse('circleuseraccount-detail',
-                                   args=[self.circleuser_response.data['id']])
-                                   )
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(self.circleuseraccount_response.status_code, status.HTTP_200_OK)
 
     # test transactions
+
+
     def test_can_make_deposit_request(self):
-        pass
+
+        self.assertEqual(self.deposit_response.status_code, status.HTTP_201_CREATED)
+
+        # transaction status set to pending
+        self.assertEqual(self.deposit_response.data['status'][0]['status'], "pending")
+
+        # accounts are updated
+        self.client.credentials(HTTP_AUTHORIZATION=('Token %s' %
+                                                    self.temp_response.data['token']
+                                                    )
+                                )
+
+        for account in [self.circleuseraccount_response, self.circleaccount_response]:
+            response = self.client.get(account.data['url'])
+            self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+
+            self.assertEqual(response.data['pending_deposits'],
+                             self.deposit_amount)
+
+            self.assertEqual(response.data['deposits'],
+                             0)
+
 
     def test_executor_can_approve_pending_deposit(self):
-        pass
+
+        self.client.credentials(HTTP_AUTHORIZATION=('Token %s' %
+                                                    self.executor_response.data['token']
+                                                    )
+                                )
+
+        transaction_status = {'transaction_id': self.deposit_response.data['status'][0]['transaction_id'],
+                              'status': 'approved'}
+
+
+        approved_response = self.client.post(reverse('transactionstatus-list'),
+                                             transaction_status
+                                             )
+
+        self.assertEqual(approved_response.status_code, status.HTTP_201_CREATED)
+
+        for account in [self.circleuseraccount_response, self.circleaccount_response]:
+            response = self.client.get(account.data['url'])
+            self.assertEqual(response.status_code, status.HTTP_200_OK)
+            self.assertEqual(response.data['pending_deposits'],
+                             0)
+            self.assertEqual(response.data['deposits'],
+                             self.deposit_amount)
+
+
 
     def test_executor_can_reject_pending_deposit(self):
-        pass
+        self.client.credentials(HTTP_AUTHORIZATION=('Token %s' %
+                                                    self.executor_response.data['token']
+                                                    )
+                                )
+
+        transaction_status = {'transaction_id': self.deposit_response.data['status'][0]['transaction_id'],
+                              'status': 'rejected'}
+
+
+        approved_response = self.client.post(reverse('transactionstatus-list'),
+                                             transaction_status
+                                             )
+
+        self.assertEqual(approved_response.status_code, status.HTTP_201_CREATED)
+
+        for account in [self.circleuseraccount_response, self.circleaccount_response]:
+            response = self.client.get(account.data['url'])
+            self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+            self.assertEqual(response.data['pending_deposits'],
+                             0)
+
+            self.assertEqual(response.data['deposits'],
+                             0)
+
+    def test_non_executor_cannot_approve_pending_deposit(self):
+
+        self.client.credentials(HTTP_AUTHORIZATION=('Token %s' %
+                                                    self.temp_response.data['token']
+                                                    )
+                                )
+
+        transaction_status = {'transaction_id': self.deposit_response.data['status'][0]['transaction_id'],
+                              'status': 'approved'}
+
+
+        bad_response = self.client.post(reverse('transactionstatus-list'),
+                                             transaction_status
+                                             )
+
+        self.assertEqual(bad_response.status_code, status.HTTP_400_BAD_REQUEST)
+
 
     def test_transactions_fail_if_user_not_part_of_circle(self):
-        pass
+
+        self.client.credentials(HTTP_AUTHORIZATION=('Token %s' %
+                                                    self.non_circle_user_response.data['token']
+                                                    )
+                                )
+
+        circle_data = {
+                        'name': 'tanda',
+                        'start_date': date(2010, 1, 1)
+                       }
+        other_circle_response = self.client.post(reverse('circle-list'),
+                                                circle_data)
+
+        circle_id = {'circle_id': other_circle_response.data['id']}
+        other_circleuser_response = self.client.get(reverse('circleuser-list'), circle_id)
+
+        other_circleuseraccount_response = self.client.get(reverse('circleuseraccount-detail',
+                                         args=[other_circleuser_response.data[0]['id']]))
+
+        bad_deposit_data = {
+                        'amount': self.deposit_amount,
+                        'type': 'DP',
+                        'circle_account': self.circleaccount_response.data['url'],
+                        'account': other_circleuseraccount_response.data['url']
+                        }
+
+        bad_deposit_response = self.client.post(reverse('transaction-list'),
+                                            bad_deposit_data)
+
+        self.assertEqual(bad_deposit_response.status_code, status.HTTP_400_BAD_REQUEST)
+
+        self.client.credentials(HTTP_AUTHORIZATION=None)
 
     def test_can_make_withdrawal_request(self):
-        pass
+        self.assertEqual(self.withdrawal_response.status_code, status.HTTP_201_CREATED)
+
+        # transaction status set to pending
+        self.assertEqual(self.withdrawal_response.data['status'][0]['status'], "pending")
+
+        # accounts are updated
+        self.client.credentials(HTTP_AUTHORIZATION=('Token %s' %
+                                                    self.temp_response.data['token']
+                                                    )
+                                )
+
+        for account in [self.circleuseraccount_response, self.circleaccount_response]:
+            response = self.client.get(account.data['url'])
+            self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+
+            self.assertEqual(response.data['pending_withdrawals'],
+                             self.withdrawal_amount)
+
+            self.assertEqual(response.data['withdrawals'],
+                             0)
 
     def test_executor_can_approve_pending_withdrawal(self):
-        pass
 
-    def test_executor_can_reject_pending_withdrawal(self):
-        pass
+        self.client.credentials(HTTP_AUTHORIZATION=('Token %s' %
+                                                    self.executor_response.data['token']
+                                                    )
+                                )
 
-    def test_user_cannot_update_transaction(self):
-        pass
+        transaction_status = {'transaction_id': self.withdrawal_response.data['status'][0]['transaction_id'],
+                              'status': 'approved'}
+
+
+        approved_response = self.client.post(reverse('transactionstatus-list'),
+                                             transaction_status
+                                             )
+
+        self.assertEqual(approved_response.status_code, status.HTTP_201_CREATED)
+
+        for account in [self.circleuseraccount_response, self.circleaccount_response]:
+            response = self.client.get(account.data['url'])
+
+            self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+            self.assertEqual(response.data['pending_withdrawals'],
+                             0)
+
+            self.assertEqual(response.data['withdrawals'],
+                             self.withdrawal_amount)
+
+
+
+    # def test_user_can_withdraw_request_for_pending_withdrawal(self):
+    #     self.client.credentials(HTTP_AUTHORIZATION=('Token %s' %
+    #                                                 self.temp_response.data['token']
+    #                                                 )
+    #                             )
+    #     transaction_status = {'transaction_id': self.withdrawal_response.data['status'][0]['transaction_id'],
+    #                           'status': 'withdrawn'}
+    #     approved_response = self.client.post(reverse('transactionstatus-list'),
+    #                                          transaction_status
+    #                                          )
+    #
+    #     self.assertEqual(approved_response.status_code, status.HTTP_201_CREATED)
+    #
+    #     for account in [self.circleuseraccount_response, self.circleaccount_response]:
+    #         response = self.client.get(account.data['url'])
+    #
+    #         self.assertEqual(response.status_code, status.HTTP_200_OK)
+    #
+    #         self.assertEqual(response.data['pending_withdrawals'],
+    #                          0)
+    #
+    #         self.assertEqual(response.data['withdrawals'],
+    #                          self.withdrawal_amount)
+    #
+    #
+    #
+    # def test_user_cannot_withdrawal_more_than_pot_size(self):
+    #     self.client.credentials(HTTP_AUTHORIZATION=('Token %s' %
+    #                                                 self.temp_response.data['token']
+    #                                                 )
+    #                             )
+    #     response = self.client.get(self.circleaccount_response.data['url'])
+    #     pot_size = response.data['deposits']
+    #
+    #     withdrawal_data = {
+    #                     'amount': pot_size + 1,
+    #                     'type': 'WD',
+    #                     'circle_account': self.circleaccount_response.data['url'],
+    #                     'account': self.circleuseraccount_response.data['url']
+    #                     }
+    #
+    #
+    #     bad_withdrawal_response = self.client.post(reverse('transaction-list'),
+    #                                                withdrawal_data)
+    #     # TODO transaction.clean() doesn't seem to do anything
+    #     self.assertEqual(bad_withdrawal_response.status_code, status.HTTP_400_BAD_REQUEST)
+    #
+
+    # def test_user_cannot_request_more_than_credit_line(self):
+    #     pass
+
+    def test_users_cannot_update_transaction(self):
+        for user in [self.temp_response, self.executor_response]:
+            self.client.credentials(HTTP_AUTHORIZATION=('Token %s' %
+                                                        user.data['token']
+                                                        )
+                                    )
+
+            updated_withdrawal_data = {
+                            'amount': self.withdrawal_amount + 1,
+                            'type': 'WD',
+                            'circle_account': self.circleaccount_response.data['url'],
+                            'account': self.circleuseraccount_response.data['url']
+                            }
+
+            update_withdrawal_response = self.client.post(self.withdrawal_response.data['status'][0]['transaction_id'],
+                             updated_withdrawal_data)
+
+            self.assertEqual(update_withdrawal_response.status_code, status.HTTP_405_METHOD_NOT_ALLOWED)
+
+    def test_users_cannot_change_non_pending_transaction_status(self):
+        self.client.credentials(HTTP_AUTHORIZATION = ('Token %s' %
+                                                      self.executor_response.data['token']
+                                                      )
+                                )
+
+        transaction_status = {'transaction_id': self.withdrawal_response.data['status'][0]['transaction_id'],
+                              'status': 'approved'}
+
+
+        self.client.post(reverse('transactionstatus-list'),
+                         transaction_status
+                        )
+
+        for user in [self.temp_response, self.executor_response]:
+            self.client.credentials(HTTP_AUTHORIZATION=('Token %s' %
+                                                        user.data['token']
+                                                        )
+                                    )
+
+            transaction_status = {'transaction_id': self.withdrawal_response.data['status'][0]['transaction_id'],
+                                  'status': 'rejected'}
+
+
+            try_to_reject_response = self.client.post(reverse('transactionstatus-list'),
+                                                 transaction_status
+                                                 )
+            self.assertEqual(try_to_reject_response.status_code, status.HTTP_400_BAD_REQUEST)

@@ -40,6 +40,7 @@ class CircleSerializer(serializers.HyperlinkedModelSerializer):
                   'url',
                   'name',
                   'users',
+                  'executor',
                   'voting_rules',
                   'saving_rules',
                   'start_date',
@@ -105,9 +106,45 @@ class CircleAccountSerializer(serializers.HyperlinkedModelSerializer):
                   'circle',
                   'updated_at')
 
-class TransactionSerializer(serializers.HyperlinkedModelSerializer):
-    # transaction_status = TransactionStatusSerializer(many=True, required=False, read_only=True)
+class TransactionStatusSerializer(serializers.HyperlinkedModelSerializer):
+    class Meta:
+        model = TransactionStatus
+        fields = ('transaction_id',
+                  'status',
+                  'created_at')
+        read_only_fields = ('created_at',)
 
+    @db_transaction.atomic()
+    def create(self, validated_data):
+        status = validated_data['status']
+        transaction = validated_data['transaction_id']
+        created_at = timezone.now()
+
+        previous_status = TransactionStatus.objects.filter(transaction_id=transaction).latest('created_at')
+
+        if previous_status.status != 'pending':
+            raise serializers.ValidationError('Transaction already completed. Create a new transaction.')
+
+        transaction_status = TransactionStatus.objects.create(
+                                         transaction_id=transaction,
+                                         status=status,
+                                         created_at=created_at)
+
+        if transaction.circle_account.circle.executor != validated_data['authenticated_user']:
+            raise serializers.ValidationError('Transaction must be approved or rejected by executor.')
+
+        if status == 'approved':
+            transaction.approve_transaction()
+        elif status in ['rejected', 'withdrawn']:
+            transaction.reject_transaction()
+
+        return transaction_status
+
+
+class TransactionSerializer(serializers.HyperlinkedModelSerializer):
+    status = TransactionStatusSerializer(many=True,
+                                         required=False,
+                                         read_only=True)
     class Meta:
         model = Transaction
         fields = ('transaction_id',
@@ -115,12 +152,13 @@ class TransactionSerializer(serializers.HyperlinkedModelSerializer):
                   'account',
                   'type',
                   'amount',
-                  'created_at')
+                  'created_at',
+                  'status')
 
     @db_transaction.atomic()
     def create(self, validated_data):
         transaction = Transaction.objects.create(**validated_data)
-        TransactionStatus.objects.create(transaction_id=transaction,
+        transaction_status = TransactionStatus.objects.create(transaction_id=transaction,
                                          created_at=transaction.created_at)
 
         circle_account = CircleAccount.objects.get(pk=validated_data['circle_account'])
@@ -133,34 +171,3 @@ class TransactionSerializer(serializers.HyperlinkedModelSerializer):
             account_.set_pending_transaction(delta=transaction.amount,
                                              is_deposit=transaction.is_deposit())
         return transaction
-
-
-
-class TransactionStatusSerializer(serializers.HyperlinkedModelSerializer):
-    class Meta:
-        model = TransactionStatus
-        fields = ('transaction_id',
-                  'status')
-
-    @db_transaction.atomic()
-    def create(self, validated_data):
-        status = validated_data['status']
-        transaction = validated_data['transaction_id']
-        created_at = timezone.now()
-
-        previous_status = TransactionStatus.objects.filter(transaction_id=transaction).latest('created_at')
-
-        if previous_status.status != 'pending':
-            raise ValidationError('Transaction already completed. Create a new transaction.')
-
-        transaction_status = TransactionStatus.objects.create(
-                                         transaction_id=transaction,
-                                         status=status,
-                                         created_at=created_at)
-
-        if status == 'approved':
-            transaction.approve_transaction()
-        elif status in ['rejected', 'withdrawn']:
-            transaction.reject_transaction()
-
-        return transaction_status
