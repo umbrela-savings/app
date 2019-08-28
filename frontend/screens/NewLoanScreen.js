@@ -3,7 +3,8 @@ import {
   View,
   Button,
   TextInput,
-  Text
+  Text,
+  Alert
 } from 'react-native'
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
@@ -16,7 +17,8 @@ export class NewLoanScreen extends React.Component {
     circle: null,
     user: null,
     circleAccount: null,
-    amount: null
+    amount: null,
+    reason: null
   }
 
   static propTypes = {
@@ -27,9 +29,12 @@ export class NewLoanScreen extends React.Component {
   }
 
   componentWillMount() {
-    const circle = this.props.navigation.dangerouslyGetParent().getParam('circle');
-    const user = this.props.navigation.dangerouslyGetParent().getParam('user');
-    const account = this.props.navigation.dangerouslyGetParent().getParam('account');
+    const circle = this.props.navigation.dangerouslyGetParent().getParam('circle', 
+      this.props.navigation.getParam('circle'));
+    const user = this.props.navigation.dangerouslyGetParent().getParam('user', 
+      this.props.navigation.getParam('user'));
+    const account = this.props.navigation.dangerouslyGetParent().getParam('account', 
+      this.props.navigation.getParam('account'));
     this.setState({ 
       circle: circle,
       user: user,
@@ -54,11 +59,28 @@ export class NewLoanScreen extends React.Component {
       <Text>Note that you can't request an amount more than the group
          current has or above your maximum loan amount</Text>
       <Text>Please describe the reason you are requestng a group loan</Text>
-      <TextInput placeholder='Reason'/>
+      <TextInput 
+        value={this.state.reason}
+        placeholder='Reason'
+        onChangeText={(text) => this.setState({ reason: text })}/>
       <Text>Remember, the group will vote anonymously whether to approve
          this emergency loan from your group savings</Text>
       <Button title='Submit'
-        onPress={() => this.onSubmit()}/>
+        onPress={() => Alert.alert(
+                          'Confirm request',
+                          'Amount: ' + this.state.amount + '\nReason: ' + this.state.reason,
+                          [
+                            {
+                              text: 'Cancel',
+                              onPress: () => console.log('Cancel Pressed'),
+                              style: 'cancel',
+                            },
+                            {
+                              text: 'Confirm', 
+                              onPress: () => this.onSubmit()},
+                          ],
+                          {cancelable: false},
+                        )}/>
       </View>
     );
   }

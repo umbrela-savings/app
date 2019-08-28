@@ -66,7 +66,7 @@ export default function(state = initialState, action) {
         isLoading: false
       };
     case WITHDRAW_FAILED:
-      Alert.alert('Withdrawal failed!');
+      Alert.alert(action.payload);
       return {
         ...state,
         isLoading: false
