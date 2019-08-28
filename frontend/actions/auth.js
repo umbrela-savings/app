@@ -26,7 +26,7 @@ export const login = (username, password) => dispatch => {
   const body = JSON.stringify({ username, password });
 
   axios
-    .post(url+"/api/auth/login", body, config)
+    .post(url+"/auth/login", body, config)
     .then(res => {
       dispatch({
         type: LOGIN_SUCCESS,
@@ -61,7 +61,7 @@ export const register =
     last_name: lastName });
 
   axios
-    .post(url+"/api/auth/register", body, config)
+    .post(url+"/auth/register", body, config)
     .then(res => {
       dispatch({
         type: REGISTER_SUCCESS,
@@ -80,7 +80,7 @@ export const register =
 export const logout = () => (dispatch, getState) => {
   dispatch({ type: AUTH_LOADING });
   axios
-    .post(url+"/api/auth/logout", null, tokenConfig(getState))
+    .post(url+"/auth/logout", null, tokenConfig(getState))
     .then(res => {
       dispatch({
         type: LOGOUT_SUCCESS
