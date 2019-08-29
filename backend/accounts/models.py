@@ -188,18 +188,9 @@ class Transaction(models.Model):
     type = models.CharField(max_length=2, choices=TYPES)
     amount = models.IntegerField()
     created_at = models.DateTimeField(auto_now_add=True)
-    # status = models.ManyToManyField(TransactionStatus,
-    #                                 related_name='transactions')
 
     class Meta:
         db_table = 'transaction'
-
-    def clean(self, *args, **kwargs):
-        if circle_account.circle != account.circle_user.circle:
-            raise serializers.ValidationError("User not member of circle.")
-        if self.is_withdrawal() and (circle_account.deposits - circle_account.withdrawal <  self.amount):
-            raise serializer.ValidationError("Cannot request withdrawal greater than balance")
-        super(Transaction, self).clean(*args, **kwargs)
 
     def is_deposit(self):
         return self.type == "DP"

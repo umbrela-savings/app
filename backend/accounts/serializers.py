@@ -1,8 +1,11 @@
 from rest_framework import serializers
 from django.contrib.auth import authenticate, get_user_model
 from django.db import transaction as db_transaction
+from django.db import models
 from .models import *
 from django.utils import timezone
+import pytz
+
 
 
 User = get_user_model()
@@ -114,24 +117,26 @@ class TransactionStatusSerializer(serializers.HyperlinkedModelSerializer):
                   'created_at')
         read_only_fields = ('created_at',)
 
+
+
     @db_transaction.atomic()
     def create(self, validated_data):
         status = validated_data['status']
         transaction = validated_data['transaction_id']
-        created_at = timezone.now()
 
         previous_status = TransactionStatus.objects.filter(transaction_id=transaction).latest('created_at')
 
         if previous_status.status != 'pending':
-            raise serializers.ValidationError('Transaction already completed. Create a new transaction.')
+            raise serializers.ValidationError('Transaction already completed.')
+
+        if status in ['approved', 'rejected']:
+            if transaction.circle_account.circle.executor != validated_data['authenticated_user']:
+                raise serializers.ValidationError('Transaction must be approved or rejected by executor.')
 
         transaction_status = TransactionStatus.objects.create(
                                          transaction_id=transaction,
                                          status=status,
-                                         created_at=created_at)
-
-        if transaction.circle_account.circle.executor != validated_data['authenticated_user']:
-            raise serializers.ValidationError('Transaction must be approved or rejected by executor.')
+                                         created_at=timezone.now())
 
         if status == 'approved':
             transaction.approve_transaction()
@@ -142,30 +147,42 @@ class TransactionStatusSerializer(serializers.HyperlinkedModelSerializer):
 
 
 class TransactionSerializer(serializers.HyperlinkedModelSerializer):
-    status = TransactionStatusSerializer(many=True,
-                                         required=False,
-                                         read_only=True)
+    status = serializers.SerializerMethodField()
+    updated_at = serializers.SerializerMethodField()
+
     class Meta:
         model = Transaction
-        fields = ('transaction_id',
+        fields = ('url',
+                  'transaction_id',
                   'circle_account',
                   'account',
                   'type',
                   'amount',
                   'created_at',
-                  'status')
+                  'status',
+                  'updated_at')
+
+    def get_status(self, obj):
+        return obj.status.all().latest('created_at').status
+
+    def get_updated_at(self, obj):
+        return obj.status.all().latest('created_at').created_at
 
     @db_transaction.atomic()
     def create(self, validated_data):
-        transaction = Transaction.objects.create(**validated_data)
-        transaction_status = TransactionStatus.objects.create(transaction_id=transaction,
-                                         created_at=transaction.created_at)
-
         circle_account = CircleAccount.objects.get(pk=validated_data['circle_account'])
         account = CircleUserAccount.objects.get(pk=validated_data['account'])
 
         if circle_account.circle != account.circle_user.circle:
-            raise serializers.ValidationError('User not member of circle.')
+            raise serializers.ValidationError("User not member of circle.")
+
+        transaction = Transaction.objects.create(**validated_data)
+
+        if transaction.is_withdrawal() and (circle_account.deposits - circle_account.withdrawals <  transaction.amount):
+            raise serializers.ValidationError("Cannot request withdrawal greater than balance")
+
+        transaction_status = TransactionStatus.objects.create(transaction_id=transaction,
+                                         created_at=transaction.created_at)
 
         for account_ in [account, circle_account]:
             account_.set_pending_transaction(delta=transaction.amount,

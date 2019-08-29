@@ -119,8 +119,20 @@ class TransactionViewSet(viewsets.ReadOnlyModelViewSet, mixins.CreateModelMixin)
     """
     This viewset automatically provides `create`, `list` and `detail` actions.
     """
-    queryset = Transaction.objects.all()
     serializer_class = TransactionSerializer
+
+    def get_queryset(self):
+        """
+        Returns the queryset object for CircleUsers.
+        We can optionally filter by circle_id.
+        """
+        queryset = Transaction.objects.all()
+        circle_id = self.request.query_params.get('circle_id', None)
+
+        if circle_id is not None:
+            queryset = queryset.filter(circle_account=circle_id)
+
+        return queryset
 
 
 class TransactionStatusViewSet(viewsets.ReadOnlyModelViewSet, mixins.CreateModelMixin):
