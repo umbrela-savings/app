@@ -40,6 +40,24 @@ class Profile(models.Model):
 
 
 class Circle(models.Model):
+    FREQUENCY = [
+        ("once_per_month", "once per month"),
+        ("twice_per_month", "twice per month"),
+        ("once_per_week", "once per week"),
+        ]
+
+    VOTING_RULES = [
+        ("", ""),
+        ("simple_majority", "simple majority"),
+        ("two_thirds_majority", "two-thirds majority")
+        ]
+
+    LENDING_RULES = [
+        ("turn", "turn"),
+        ("turn_share", "turn_share"),
+        ("vote", "vote")
+        ]
+
     name = models.CharField(max_length=100)
     executor = models.ForeignKey(User,
                                  null=True,
@@ -47,8 +65,11 @@ class Circle(models.Model):
     users = models.ManyToManyField(User,
                                    through='CircleUser',
                                    related_name='circles')
-    voting_rules = models.TextField(max_length=100, blank=True)
-    saving_rules = models.TextField(max_length=100, blank=True)
+    voting_rules = models.TextField(max_length=100, blank=True, choices=VOTING_RULES, default="simple_majority")
+    contibution_amount = models.IntegerField(default=50)
+    contrbution_frequency = models.TextField(max_length=100, blank=True, choices=FREQUENCY, default="once_per_month")
+    contract_length = models.IntegerField(default=12)
+    lending_rules = models.TextField(max_length=100, blank=True, choices=LENDING_RULES, default="vote")
     start_date = models.DateField(default=None, blank=True, null=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
