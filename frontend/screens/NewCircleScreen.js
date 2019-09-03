@@ -13,7 +13,6 @@ import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import DateTimePicker from "react-native-modal-datetime-picker";
-import RNPickerSelect from 'react-native-picker-select';
 import { CheckBox } from 'react-native-elements'
 
 import { LandingStyles } from '../constants/Styles';
@@ -21,30 +20,18 @@ import { createCircle } from '../actions/circle'
 
 const styles = LandingStyles;
 
-const sports = [
-  {
-    label: 'Rule#1',
-    value: 'Rule: 1',
-  },
-  {
-    label: 'Rule#2',
-    value: 'Rule 2',
-  },
-  {
-    label: 'Rule#3',
-    value: 'Rule3',
-  },
-];
-
 export class NewCircleScreen extends React.Component {
   state = {
     name: '',
     votingRules: '',
-    savingRules: '',
+    lendingRules: '',
     startDate: new Date(),
-    isActive: true,
+    amount: '',
+    frequency: '',
+    length: '',
     isDateTimePickerVisible: false,
-    isChecked: false
+    isChecked: false,
+    executor: null
   };
 
   static propTypes = {
@@ -67,17 +54,42 @@ export class NewCircleScreen extends React.Component {
     this.setState({ isDateTimePickerVisible: false });
   };
 
+  componentWillMount() {
+    const user = this.props.navigation.dangerouslyGetParent().getParam('user');
+    const amount = this.props.navigation.getParam('amount');
+    const frequency = this.props.navigation.getParam('frequency');
+    const length = this.props.navigation.getParam('length');
+    this.setState({ 
+      executor: user.url,
+      amount: amount,
+      frequency: frequency,
+      length: length
+    });
+  }
+
   onSubmit() {
-    const {name, votingRules, savingRules, startDate, isActive} = this.state;
+    const 
+    { name, 
+      votingRules, 
+      lendingRules, 
+      startDate, 
+      executor, 
+      amount,
+      frequency, 
+      length} = this.state;
     if (!this.state.isChecked) {
       Alert.alert('Submit failed:', 'You have not checked the box yet')
     } else {
       this.props.createCircle(
         name, 
+        executor,
         votingRules, 
-        savingRules, 
-        startDate.toISOString().substr(0, 10), 
-        isActive);
+        lendingRules,
+        amount,
+        frequency,
+        length,
+        startDate.toISOString().substr(0, 10)
+      );
     }
   }
 
@@ -90,13 +102,7 @@ export class NewCircleScreen extends React.Component {
     }
   }
 
-
   render() {
-    const placeholder = {
-      label: 'Rules',
-      value: null,
-      color: '#9EA0A4',
-    };
       return (
       <KeyboardAwareScrollView
         resetScrollToCoords={{ x: 0, y: 0 }}
@@ -107,52 +113,33 @@ export class NewCircleScreen extends React.Component {
 
           <View style={styles.container}>
 
-            <Text>Circle name:</Text>
+            <Text>What should we call your circle</Text>
             <View style={styles.inputContainer}>
               <TextInput
                 style={styles.body}
                 value={this.state.name}
-                placeholder='Name'
                 onChangeText={(text) => this.setState({ name: text })}
                 />
             </View>
 
-            <Text>Voting Rules</Text>
-            <RNPickerSelect
-              placeholder={placeholder}
-              items={sports}
-              onValueChange={value => {
-                this.setState({
-                  votingRules: value,
-                });
-              }}
-              style={pickerSelectStyles}
-              value={this.state.votingRules}
-            />
-            
-            <Text>Saving Rules</Text>
-            <RNPickerSelect
-              placeholder={placeholder}
-              items={sports}
-              onValueChange={value => {
-                this.setState({
-                  savingRules: value,
-                });
-              }}
-              style={pickerSelectStyles}
-              value={this.state.savingRules}
-            />
-
+            <Text>When will you start saving?</Text>
             <Text>
               Date: {this.state.startDate.toString().substr(4, 12)}
             </Text>
-
             <Button title="Show DatePicker" onPress={this.showDateTimePicker} />
               <DateTimePicker
                 minimumDate={this.state.startDate}
                 isVisible={this.state.isDateTimePickerVisible}
                 onConfirm={this.handleDatePicked}
                 onCancel={this.hideDateTimePicker}
+            />
+
+            <Text>All loans are approved by groupd vote. 
+              How many members are need for a loan to pass?</Text>
+            <TextInput
+              style={styles.body}
+              value={this.state.votingRules}
+              onChangeText={(text) => this.setState({ votingRules: text })}
             />
 
             <CheckBox
@@ -183,29 +170,6 @@ export class NewCircleScreen extends React.Component {
       }
 
 }
-
-const pickerSelectStyles = StyleSheet.create({
-  inputIOS: {
-    fontSize: 16,
-    paddingVertical: 12,
-    paddingHorizontal: 10,
-    borderWidth: 1,
-    borderColor: 'gray',
-    borderRadius: 4,
-    color: 'black',
-    paddingRight: 30, // to ensure the text is never behind the icon
-  },
-  inputAndroid: {
-    fontSize: 16,
-    paddingHorizontal: 10,
-    paddingVertical: 8,
-    borderWidth: 0.5,
-    borderColor: 'gray',
-    borderRadius: 8,
-    color: 'black',
-    paddingRight: 30, // to ensure the text is never behind the icon
-  },
-});
 
 const mapStateToProps = state => ({
   isLoading: state.circle.isLoading,
