@@ -239,5 +239,5 @@ class TransactionStatus(models.Model):
         ]
 
     transaction_id = models.ForeignKey(Transaction, on_delete=models.PROTECT, related_name='status')
-    status = models.CharField(max_length=8, choices=STATUSES, default="pending")
+    status = models.CharField(max_length=9, choices=STATUSES, default="pending")
     created_at = models.DateTimeField()
