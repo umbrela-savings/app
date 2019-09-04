@@ -2,7 +2,8 @@ import React from 'react';
 import {
   View,
   Text,
-  Button
+  Button,
+  Alert
 } from 'react-native'
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
@@ -13,7 +14,7 @@ import {
   approve,
   reject,
   cancel
-} from '../actions/circle';
+} from '../actions/account';
 
 export class LoanRequestsScreen extends React.Component {
   state = {
@@ -31,7 +32,7 @@ export class LoanRequestsScreen extends React.Component {
     reject: PropTypes.func.isRequired,
     cancel: PropTypes.func.isRequired,
     transactions: PropTypes.array,
-    userAccount: PropTypes.object,
+    userAccount: PropTypes.array,
     isLoading: PropTypes.bool
   }
 
@@ -42,7 +43,7 @@ export class LoanRequestsScreen extends React.Component {
       this.props.navigation.getParam('user'));
     const account = this.props.navigation.dangerouslyGetParent().getParam('account', 
       this.props.navigation.getParam('account'));
-    if (circie.executor == user.url) {
+    if (circle.executor == user.url) {
       this.setState({ executor: true });
     }
     this.setState({ 
@@ -61,19 +62,63 @@ export class LoanRequestsScreen extends React.Component {
         this.props.transactions.map((transaction, index) =>
         <View key={index}>
           <Text>type: {transaction.type}</Text>
-          <Text>amount: {transacton.amount}</Text>
+          <Text>amount: {transaction.amount}</Text>
           <Text>status: {transaction.status}</Text>
-          {this.state.executor && 
+          {(this.state.executor && transaction.status == 'pending') && 
             <View>
             <Button title='approve'
-            onPress={() => this.props.approve(transaction.url)}/>
+            onPress={() => Alert.alert(
+              'Confirmed?',
+              'Are you sure you want to approve this transaction?',
+              [
+                {
+                  text: 'Cancel',
+                  onPress: () => console.log('Cancel Pressed'),
+                  style: 'cancel',
+                },
+                {
+                  text: 'Confirm', 
+                  onPress: () => this.props.approve(transaction.url)},
+              ],
+              {cancelable: false},
+            )}/>
             <Button title='reject'
-            onPress={() => this.props.reject(transaction.url)}/>
+            onPress={() => Alert.alert(
+              'Confirmed?',
+              'Are you sure you want to reject this transaction?',
+              [
+                {
+                  text: 'Cancel',
+                  onPress: () => console.log('Cancel Pressed'),
+                  style: 'cancel',
+                },
+                {
+                  text: 'Confirm', 
+                  onPress: () => this.props.reject(transaction.url)},
+              ],
+              {cancelable: false},
+            )}/>
             </View>
           }
-          {(transaction.account == this.props.userAccount.url) && 
+          {this.props.userAccount && 
+          (transaction.account == this.props.userAccount[0].url) && 
+          transaction.status == 'pending' &&
             <Button title='cancel'
-            onPress={() => this.props.cancel(transaction.url)}/>
+            onPress={() => Alert.alert(
+              'Confirmed?',
+              'Are you sure you want to cancel this transaction?',
+              [
+                {
+                  text: 'Cancel',
+                  onPress: () => console.log('Cancel Pressed'),
+                  style: 'cancel',
+                },
+                {
+                  text: 'Confirm', 
+                  onPress: () => this.props.cancel(transaction.url)},
+              ],
+              {cancelable: false},
+            )}/>
           }
           </View>
           )

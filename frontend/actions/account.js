@@ -141,7 +141,7 @@ export const cancel = (id) => (dispatch, getState) => {
   );
 
   axios
-    .post(url+'/transactionstatuses/', body, tokenConfig(getState))
+    .post(url+'/transaction_statuses/', body, tokenConfig(getState))
     .then(res => {
       dispatch({
         type: CANCEL_SUCCESS,
@@ -150,7 +150,7 @@ export const cancel = (id) => (dispatch, getState) => {
     })
     .catch(err => {
       dispatch({
-        type: CANCEL_FAILED,
+        type: CANCEL_FAIL,
         payload: err.response.data
       });
     });
@@ -166,7 +166,7 @@ export const approve = (id) => (dispatch, getState) => {
   );
 
   axios
-    .post(url+'/transactionstatuses/', body, tokenConfig(getState))
+    .post(url+'/transaction_statuses/', body, tokenConfig(getState))
     .then(res => {
       dispatch({
         type: APPROVE_SUCCESS,
@@ -175,7 +175,7 @@ export const approve = (id) => (dispatch, getState) => {
     })
     .catch(err => {
       dispatch({
-        type: APPROVE_FAILED,
+        type: APPROVE_FAIL,
         payload: err.response.data
       });
     });
@@ -191,7 +191,7 @@ export const reject = (id) => (dispatch, getState) => {
   );
 
   axios
-    .post(url+'/transactionstatuses/', body, tokenConfig(getState))
+    .post(url+'/transaction_statuses/', body, tokenConfig(getState))
     .then(res => {
       dispatch({
         type: REJECT_SUCCESS,
@@ -200,7 +200,7 @@ export const reject = (id) => (dispatch, getState) => {
     })
     .catch(err => {
       dispatch({
-        type: REJECT_FAILED,
+        type: REJECT_FAIL,
         payload: err.response.data
       });
     });
