@@ -9,7 +9,7 @@ export default class KeyboardShift extends Component {
     shift: new Animated.Value(0),
   };
 
-  componentWillMount() {
+  componentDidMount() {
     this.keyboardDidShowSub = Keyboard.addListener('keyboardDidShow', this.handleKeyboardDidShow);
     this.keyboardDidHideSub = Keyboard.addListener('keyboardDidHide', this.handleKeyboardDidHide);
   }

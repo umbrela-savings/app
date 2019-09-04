@@ -18,10 +18,12 @@ import {
   MESSAGE_FAILED,
   MESSAGE_SUCCESS,
   MESSAGE_LOADED,
-  MESSAGE_NONEXIST
-} from "../constants/Types";
+  MESSAGE_NONEXIST,
+  USERLIST_LOADED,
+  USERLIST_FAILED
+} from '../constants/Types';
 
-const url = 'http://47.90.103.121:8000';
+import url from '../constants/URL';
 
 export const loadCircleList = (id) => (dispatch, getState) => {
   dispatch({ type: CIRCLE_LOADING });
@@ -43,10 +45,26 @@ export const loadCircleList = (id) => (dispatch, getState) => {
 };
 
 export const createCircle = 
-(name, voting_rules, saving_rules, start_date, is_active) => (dispatch, getState) => {
+( name, 
+  executor,
+  voting_rules, 
+  lending_rules,
+  contribution_amount,
+  contrbution_frequency,
+  contract_length,
+  start_date) => (dispatch, getState) => {
   dispatch({ type: CIRCLE_LOADING });
 
-  const body = JSON.stringify({ name, voting_rules, saving_rules, start_date, is_active });
+  const body = JSON.stringify(
+    { name, 
+      executor,
+      voting_rules, 
+      lending_rules,
+      contribution_amount,
+      contrbution_frequency,
+      contract_length,
+      start_date
+    });
 
   axios
     .post(url+'/circles/', body, tokenConfig(getState))
@@ -190,4 +208,23 @@ export const loadMessage = (circle_id) => (dispatch, getState) => {
         });
       }
     })
+};
+
+export const loadUserList = (id) => (dispatch, getState) => {
+  dispatch({ type: CIRCLE_LOADING });
+
+  axios
+    .get(url+'/circleusers/?circle_id='+id, tokenConfig(getState))
+    .then(res => {
+      dispatch({
+        type: USERLIST_LOADED,
+        payload: res.data
+      });
+    })
+    .catch(err => {
+      dispatch({
+        type: USERLIST_FAILED,
+        payload: err.response.data
+      });
+    });
 };

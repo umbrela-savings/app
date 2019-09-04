@@ -1,1 +1,1 @@
-export const url = 'http://47.90.103.121:8000';
+export default url = 'http://47.90.103.121:8000/api';

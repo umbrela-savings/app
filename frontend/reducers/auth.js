@@ -1,6 +1,4 @@
-import { 
-  AsyncStorage, 
-  Alert } from 'react-native';
+import { Alert } from 'react-native';
 import {
   AUTH_LOADING,
   LOGIN_SUCCESS,

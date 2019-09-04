@@ -1,28 +1,37 @@
 import React from 'react';
 import {
   Text,
-  FlatList,
-  View
+  TouchableOpacity,
+  View,
+  RefreshControl,
+  ScrollView
 } from 'react-native'
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 
 import { loadMessage } from '../actions/circle';
+import { loadUserAccount } from '../actions/account'
 
 
 export class DashboardScreen extends React.Component {
   state = {
     circle: null,
-    show: false
+    show: false,
+    index: 1,
+    accounts: []
   }
 
   static propTypes = {
     loadMessage: PropTypes.func.isRequired,
-    message: PropTypes.array
+    loadUserAccount: PropTypes.func.isRequired,
+    message: PropTypes.array,
+    account: PropTypes.array,
+    isLoading: PropTypes.bool,
   }
 
   componentWillMount() {
     const circle = this.props.navigation.getParam('circle');
+    this.props.loadUserAccount(circle.users[0].id, circle.id);
     this.setState({ 
       circle: circle
     })
@@ -36,24 +45,58 @@ export class DashboardScreen extends React.Component {
     }
   }
 
+  componentDidUpdate(prevProps) {
+    let circle = this.state.circle;
+    let index = this.state.index;
+    let account = this.props.account;
+
+    if (account && account != prevProps.account)
+      this.state.accounts.push(account[0]);
+    
+    if (circle.users.length > 0 && index < circle.users.length) {
+      this.props.loadUserAccount(circle.users[index].id, circle.id);
+      ++this.state.index;
+    }
+  }
+
+  onRefresh = () => {
+    this.props.loadUserAccount(this.state.circle.users[this.state.index-1].id, this.state.circle.id);
+  }
+
   render() {
     return (
-      <View>
-      <FlatList
-        data={this.state.circle.users}
-        renderItem={({item}) => <Text>{item.first_name}</Text>}
-        keyExtractor={item => item.id.toString()}
-      />
+        <ScrollView
+          refreshControl={
+            <RefreshControl
+              refreshing={this.props.isLoading}
+              onRefresh={this.onRefresh}
+          />}
+        >
+      {this.state.accounts &&
+        this.state.accounts.map((account, index) => 
+            <TouchableOpacity
+              key = {index}>
+              <Text>
+                {this.state.circle.users[index].username}
+                {account.deposits}
+              </Text>
+            </TouchableOpacity>
+            )
+          }
+        
       { (this.props.message.length > 0 && this.state.show) && 
         <Text>{this.props.message[0].message}</Text>
       }
-      </View>
+      </ScrollView>
+      
     );
   }
 }
 
 const mapStateToProps = state => ({
-  message: state.circle.message
+  message: state.circle.message,
+  account: state.account.userAccount,
+  isLoading: state.account.isLoading
 });
 
-export default connect(mapStateToProps, { loadMessage }) (DashboardScreen);
+export default connect(mapStateToProps, { loadMessage, loadUserAccount }) (DashboardScreen);

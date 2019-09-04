@@ -4,6 +4,7 @@
 
 ## Getting django up and running locally
 
+### Set-up the first time
 Clone the repo.
 
 ```
@@ -14,6 +15,12 @@ source venv/bin/activate
 pip install --upgrade pip
 pip install -r requirements.txt
 
+python3 backend/manage.py runserver
+```
+
+### Set-up thereafter
+```
+source venv/bin/activate
 # in the app directory, run
 python3 backend/manage.py runserver
 ```

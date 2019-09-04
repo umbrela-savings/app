@@ -199,92 +199,114 @@ export class RegisterScreen extends React.Component {
       <KeyboardShift>
         {() => (
           <ImageBackground
-            source={Constants.images.background} 
-            style={{width: '100%', height: '100%'}}>
+          source={Constants.images.background} 
+          style={{width: '100%', height: '100%'}}>
 
-            <View style={styles.container}>
+          <View style={styles.container}>
 
-            <LoadingScreen loading={this.props.isLoading} />
+          <LoadingScreen loading={this.props.isLoading} />
 
-            <TouchableOpacity 
-                onPress={() => this.props.navigation.goBack()}
-                style={styles.backContainer}>
-                  <View style={styles.textContainer}>
-                    <Text style={styles.loginText}>Back</Text>
-                  </View>
-              </TouchableOpacity>
+          <TouchableOpacity 
+              onPress={() => this.props.navigation.goBack()}
+              style={styles.backContainer}>
+                <View style={styles.textContainer}>
+                  <Text style={styles.loginText}>Back</Text>
+                </View>
+            </TouchableOpacity>
 
-              <View style={styles.image}>
-                <Logo width={300} height={200}/>
-              </View>
-
-              <View style={styles.inputContainer}>
-                <TextInput
-                  style={styles.body}
-                  value={this.state.firstName}
-                  placeholder='First Name'
-                  onChangeText={(text) => this.setState({ first: text })}
-                  />
-              </View>
-
-              <View style={styles.inputContainer}>
-                <TextInput
-                  style={styles.body}
-                  value={this.state.lastName}
-                  placeholder='Last Name'
-                  onChangeText={(text) => this.setState({ last: text })}
-                  />
-              </View>
-
-              <View style={styles.inputContainer}>
-                <TextInput
-                  style={styles.body}
-                  value={this.state.username}
-                  placeholder='Username'
-                  onChangeText={(text) => this.setState({ username: text })}
-                  />
-              </View>
-
-              <View style={styles.inputContainer}>
-                <TextInput
-                  style={styles.body}
-                  value={this.state.email}
-                  placeholder='Email'
-                  onChangeText={(text) => this.setState({ email: text })}
-                  />
-              </View>
-
-              <View style={styles.inputContainer}>
-                <TextInput
-                  style={styles.body}
-                  value={this.state.password}
-                  placeholder='Password'
-                  secureTextEntry={true}
-                  onChangeText={(text) => this.setState({ password: text })}
-                />
-              </View>
-
-              <View style={styles.inputContainer}>
-                <TextInput
-                  style={styles.body}
-                  value={this.state.password2}
-                  placeholder='Confirm your password'
-                  secureTextEntry={true}
-                  onChangeText={(text) => this.setState({ password2: text })}
-                />
-              </View>
-
-              <TouchableOpacity 
-                onPress={() => {this._addUser()}}
-                style={styles.loginContainer}>
-                  <View style={styles.textContainer}>
-                    <Text style={styles.loginText}>Submit</Text>
-                  </View>
-              </TouchableOpacity>
-
+            <View style={styles.image}>
+              <Logo width={300} height={200}/>
             </View>
 
-          </ImageBackground>
+            <View style={styles.inputContainer}>
+              <TextInput
+                style={styles.body}
+                value={this.state.firstName}
+                placeholder='First Name'
+                enablesReturnKeyAutomatically={true}
+                textContentType='givenName'
+                clearButtonMode='while-editing'
+                onChangeText={(text) => this.setState({ firstName: text })}
+                />
+            </View>
+
+            <View style={styles.inputContainer}>
+              <TextInput
+                style={styles.body}
+                value={this.state.lastName}
+                placeholder='Last Name'
+                enablesReturnKeyAutomatically={true}
+                textContentType='familyName'
+                clearButtonMode='while-editing'
+                onChangeText={(text) => this.setState({ lastName: text })}
+                />
+            </View>
+
+            <View style={styles.inputContainer}>
+              <TextInput
+                style={styles.body}
+                value={this.state.username}
+                placeholder='Username'
+                autoCapitalize='none'
+                enablesReturnKeyAutomatically={true}
+                textContentType='username'
+                clearButtonMode='while-editing'
+                onChangeText={(text) => this.setState({ username: text })}
+                />
+            </View>
+
+            <View style={styles.inputContainer}>
+              <TextInput
+                style={styles.body}
+                value={this.state.email}
+                placeholder='Email'
+                autoCapitalize='none'
+                  enablesReturnKeyAutomatically={true}
+                  textContentType='emailAddress'
+                  clearButtonMode='while-editing'
+                onChangeText={(text) => this.setState({ email: text })}
+                />
+            </View>
+
+            <View style={styles.inputContainer}>
+              <TextInput
+                style={styles.body}
+                value={this.state.password}
+                placeholder='Password'
+                autoCapitalize='none'
+                enablesReturnKeyAutomatically={true}
+                textContentType='password'
+                clearButtonMode='while-editing'
+                secureTextEntry={true}
+                onChangeText={(text) => this.setState({ password: text })}
+              />
+            </View>
+
+            <View style={styles.inputContainer}>
+              <TextInput
+                style={styles.body}
+                value={this.state.password2}
+                placeholder='Confirm your password'
+                autoCapitalize='none'
+                enablesReturnKeyAutomatically={true}
+                textContentType='password'
+                clearButtonMode='while-editing'
+                secureTextEntry={true}
+                onChangeText={(text) => this.setState({ password2: text })}
+              />
+            </View>
+
+            <TouchableOpacity 
+              onPress={() => {this._addUser()}}
+              style={styles.loginContainer}>
+                <View style={styles.textContainer}>
+                  <Text style={styles.loginText}>Submit</Text>
+                </View>
+            </TouchableOpacity>
+
+          </View>
+
+        </ImageBackground>
         )}
       </KeyboardShift>
     );

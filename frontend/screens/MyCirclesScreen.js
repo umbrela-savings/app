@@ -13,6 +13,7 @@ import { StackActions } from 'react-navigation';
 
 import { logout } from '../actions/auth';
 import { loadCircleList, loadCircle } from '../actions/circle';
+import { loadCircleAccount } from '../actions/account';
 import { HomeStyles } from '../constants/Styles';
 import LoadingScreen from './LoadingScreen';
 
@@ -21,6 +22,7 @@ const styles = HomeStyles;
 export class MyCirclesScreen extends React.Component {
   state = {
     listOfCircles: [],
+    accountList: [],
     index: 0,
     reload: null
   }
@@ -28,11 +30,13 @@ export class MyCirclesScreen extends React.Component {
     logout: PropTypes.func.isRequired,
     loadCircleList: PropTypes.func.isRequired,
     loadCircle: PropTypes.func.isRequired,
+    loadCircleAccount: PropTypes.func.isRequired,
     user: PropTypes.object,
     circle: PropTypes.object,
     circleList: PropTypes.array,
     isAuthenticated: PropTypes.bool,
-    isLoading: PropTypes.bool
+    isLoading: PropTypes.bool,
+    circleAccount: PropTypes.object
   };
 
   static navigationOptions = ({ navigation }) => {
@@ -46,7 +50,7 @@ export class MyCirclesScreen extends React.Component {
     }
   };
 
-  componentDidMount() {
+  componentWillMount() {
     this.props.loadCircleList(this.props.user.id);
   }
 
@@ -56,18 +60,21 @@ export class MyCirclesScreen extends React.Component {
     }
     let circleList = this.props.circleList;
     let circle = this.props.circle;
-    let list = this.state.listOfCircles;
-    let index = this.state.index
+    let account = this.props.circleAccount;
+    let index = this.state.index;
 
-    if (circle && 
-      list.length < circleList.length &&
-      circle != prevProps.circle) {
-        this.state.listOfCircles.push(circle);
+    if (account && account != prevProps.circleAccount) {
+      this.state.accountList.push(account);
+    }
+
+    if (circle && circle != prevProps.circle) {
+      this.props.loadCircleAccount(circle.id);
+      this.state.listOfCircles.push(circle);
     }
 
     if (circleList.length > 0 && index < circleList.length) {
       this.props.loadCircle(circleList[index].circle);
-      this.state.index++;
+      ++this.state.index;
     } 
   }
 
@@ -92,16 +99,20 @@ export class MyCirclesScreen extends React.Component {
               onRefresh={this.onRefresh}
           />}
         >
-          {this.state.listOfCircles &&
-            this.state.listOfCircles.map((circle, index) => 
+          {this.state.accountList &&
+            this.state.accountList.map((account, index) => 
             <TouchableOpacity
-                key = {index}
-                style = {styles.loginContainer}
-                onPress = {() => this.props.navigation.navigate('Circle',
-                 {circle: circle})}>
-                <Text style = {styles.loginText}>
-                  {circle.id}
-                </Text>
+              key = {index}
+              style = {styles.loginContainer}
+              onPress = {() => this.props.navigation.navigate('Circle',
+                { circle: this.state.listOfCircles[index], 
+                  account: account,
+                  user: this.props.user})}>
+              <Text style = {styles.loginText}>
+                Team Name {this.state.listOfCircles[index].name} 
+                {this.state.listOfCircles[index].users.length} savers 
+                {account.deposits}
+              </Text>
             </TouchableOpacity>
             )
           }
@@ -144,10 +155,11 @@ export class MyCirclesScreen extends React.Component {
 const mapStateToProps = state => ({
   circleList: state.circle.circleList,
   isAuthenticated: state.auth.isAuthenticated,
-  isLoading: state.auth.isLoading || state.circle.isLoading,
+  isLoading: state.auth.isLoading || state.circle.isLoading || state.account.isLoading,
   user: state.auth.user,
-  circle: state.circle.circle
+  circle: state.circle.circle,
+  circleAccount: state.account.circleAccount
 });
 
 export default connect(mapStateToProps, 
-  { loadCircleList, logout, loadCircle })(MyCirclesScreen);
+  { loadCircleList, logout, loadCircle, loadCircleAccount })(MyCirclesScreen);

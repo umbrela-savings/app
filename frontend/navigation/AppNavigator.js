@@ -20,18 +20,20 @@ import RegisterScreen from '../screens/RegisterScreen';
 import InvitationScreen from '../screens/InvitationScreen';
 import CircleScreen from '../screens/CircleScreen';
 import MessengerScreen from '../screens/MessengerScreen'
-import RequestScreen from '../screens/RequestScreen'
+import LoanRequestsScreen from '../screens/LoanRequestsScreen'
 import JoinCircleScreen from '../screens/JoinCircleScreen'
-import CircleModalScreen from '../screens/CircleModalScreen'
 import LoanScreen from '../screens/LoanScreen'
 import NewLoanScreen from '../screens/NewLoanScreen'
 import AddUserScreen from '../screens/AddUserScreen'
 import DashboardScreen from '../screens/DashboardScreen'
+import RecordPaymentScreen from '../screens/RecordPaymentScreen'
+import ConfirmPaymentScreen from '../screens/ConfirmPaymentScreen'
+import NewCircleFirstScreen from '../screens/NewCircleFirstScreen'
 
 const RequestStack = 
 createStackNavigator(
   {
-    Request: RequestScreen,
+    Request: LoanRequestsScreen,
     Loan: LoanScreen,
     NewLoan: NewLoanScreen
   },
@@ -79,7 +81,11 @@ const CircleTab = createBottomTabNavigator(
 
 const CircleDrawer = createDrawerNavigator(
   {
-    CircleHome: CircleTab
+    CircleHome: CircleTab,
+    RecordPayment: RecordPaymentScreen,
+    ConfirmPayment: ConfirmPaymentScreen,
+    LoanRequest: RequestStack,
+    NewLoan: NewLoanScreen
   },
   {
     initialRouteName: 'CircleHome',
@@ -106,6 +112,7 @@ const JoinStack = createStackNavigator(
 
 const NewCircleStack = createStackNavigator(
   {
+    First: NewCircleFirstScreen,
     Rules: NewCircleScreen,
     Add: AddUserScreen,
     Invitation: InvitationScreen
