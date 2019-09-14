@@ -191,9 +191,7 @@ export class NewCircleScreen extends React.Component {
                 </View>
             </TouchableOpacity>
           </View>
-          </ScrollView>
-        )}
-      </KeyboardShift>
+          </KeyboardAwareScrollView>
     );
   }
 }
