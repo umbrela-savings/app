@@ -2,12 +2,15 @@ import React from 'react';
 import {
   View,
   TextInput,
+  TouchableOpacity,
+  Text,
   Button
 } from 'react-native';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import { StackActions, NavigationActions } from 'react-navigation';
 
+import Colors from '../constants/Colors'
 import { HomeStyles } from '../constants/Styles';
 import { loadCircleFromCode, findUserInCircle } from '../actions/circle';
 
@@ -38,7 +41,7 @@ export class JoinCircleScreen extends React.Component {
           index: 1,
           actions: [
             NavigationActions.navigate({ routeName: 'MyCircles' }),
-            NavigationActions.navigate({ 
+            NavigationActions.navigate({
               routeName: 'Circle',
               params: {
                 circle: this.props.circle
@@ -48,9 +51,9 @@ export class JoinCircleScreen extends React.Component {
         });
         this.props.navigation.dispatch(resetAction);
       } else {
-        this.props.navigation.navigate('CircleModal', 
-        { 
-          circle: this.props.circle, 
+        this.props.navigation.navigate('CircleModal',
+        {
+          circle: this.props.circle,
           user: user
         });
       }
@@ -60,6 +63,9 @@ export class JoinCircleScreen extends React.Component {
   render() {
     return (
       <View style={styles.container}>
+        <Text style={styles.baseText}>
+          Plese enter the circle code you recieved to view the terms:
+        </Text>
         <View style={styles.inputContainer}>
           <TextInput
             style={styles.body}
@@ -68,10 +74,16 @@ export class JoinCircleScreen extends React.Component {
             onChangeText={(text) => this.setState({ code: text })}
             />
         </View>
-        <Button 
-          title='Find'
-          onPress={() => this.props.loadCircleFromCode(this.state.code)}
-        />
+        <Text style={styles.noteText}>
+          You wll have a chance to review the members, rules, and obligations of the circle before you officially join!
+        </Text>
+        <TouchableOpacity
+          style={styles.activeContainer}
+          onPress={() => this.props.loadCircleFromCode(this.state.code)}>
+          <View style={styles.textContainer}>
+            <Text style={styles.loginText}>View this Circle</Text>
+          </View>
+        </TouchableOpacity>
       </View>
     );
   }
@@ -84,5 +96,5 @@ const mapStateToProps = state => ({
   circleuserExist: state.circle.circleuserExist
 });
 
-export default connect(mapStateToProps, 
+export default connect(mapStateToProps,
   { loadCircleFromCode, findUserInCircle }) (JoinCircleScreen);

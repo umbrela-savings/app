@@ -9,15 +9,73 @@ export const Constants = {
   }
 };
 
-export const LandingStyles = StyleSheet.create({
+export const HomeStyles = StyleSheet.create({
+  button: {
+    padding: 15,
+    borderRadius: 20,
+  },
+  baseText: {
+    fontSize: 20,
+    paddingLeft: 20,
+    paddingRight: 20,
+    marginVertical: 10,
+    color: Colors.primaryText
+  },
+  fineText: {
+    fontSize: 10,
+    paddingLeft: 20,
+    paddingRight: 20,
+    color: Colors.fineText,
+    textAlign: 'right'
+  },
+  noteText: {
+    fontSize: 12,
+    paddingLeft: 20,
+    paddingRight: 20,
+    marginVertical: 10,
+    color: Colors.noteText
+  },
+  boldText: {
+    fontSize: 30,
+    paddingLeft: 20,
+    paddingRight: 20,
+    marginVertical: -10,
+    color: Colors.primaryText
+  },
+  supportText: {
+    fontWeight: 'bold',
+    fontSize: 16,
+    paddingLeft: 20,
+    paddingRight: 0,
+    marginVertical: 10,
+    color: Colors.primaryText
+  },
   container: {
     flex: 1,
     alignItems: 'center',
     justifyContent: 'center'
   },
+  rowContainer: {
+    flexDirection: 'row'
+  },
   loginContainer: {
     width: '80%',
-    backgroundColor: '#0086a2',
+    backgroundColor: Colors.accountButton,
+    borderRadius: 5,
+    padding: 10,
+    marginHorizontal: 10,
+    marginVertical: 5
+  },
+  activeContainer: {
+    backgroundColor: Colors.primaryActive,
+    borderRadius: 5,
+    padding: 10,
+    marginHorizontal: 10,
+    marginVertical: 5
+  },
+  notificationContainer: {
+    width: '80%',
+    backgroundColor: Colors.headerBackground,
     borderRadius: 5,
     padding: 10,
     marginHorizontal: 10,
@@ -27,7 +85,7 @@ export const LandingStyles = StyleSheet.create({
     alignItems: 'center'
   },
   loginText: {
-    color: 'white'
+    color: Colors.loginText
   },
   inputContainer: {
     width: '80%',
@@ -35,60 +93,15 @@ export const LandingStyles = StyleSheet.create({
     marginVertical: 5,
     borderWidth: 1,
     borderStyle: 'solid',
-    borderColor: 'grey',
+    borderColor: Colors.primaryBorderColor,
     borderRadius: 5,
-    backgroundColor: '#ffffff'
+    backgroundColor: Colors.primaryBackground
   },
   body: {
     height: 42,
     paddingLeft: 20,
     paddingRight: 20,
-    color: '#696969'
-  },
-  image: {
-    alignItems: 'center'
-  },
-  backgroundImage: {
-    height: deviceHeight,
-    width: deviceWidth
-  }
-});
-
-export const SignUpStyles = StyleSheet.create({
-  container: {
-    flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center'
-  },
-  loginContainer: {
-    width: '80%',
-    backgroundColor: '#0086a2',
-    borderRadius: 5,
-    padding: 10,
-    marginHorizontal: 10,
-    marginVertical: 5
-  },
-  textContainer: {
-    alignItems: 'center'
-  },
-  loginText: {
-    color: 'white'
-  },
-  inputContainer: {
-    width: '80%',
-    marginHorizontal: 10,
-    marginVertical: 5,
-    borderWidth: 1,
-    borderStyle: 'solid',
-    borderColor: 'grey',
-    borderRadius: 5,
-    backgroundColor: '#ffffff'
-  },
-  body: {
-    height: 42,
-    paddingLeft: 20,
-    paddingRight: 20,
-    color: '#696969'
+    color: Colors.primaryBorderColor
   },
   image: {
     alignItems: 'center'
@@ -99,57 +112,12 @@ export const SignUpStyles = StyleSheet.create({
   },
   backContainer: {
     position: 'absolute',
-    right: 10,
-    top: 40,
+    right: '10%',
+    top: '5%',
     borderRadius: 5,
     padding: 10,
-    backgroundColor: '#0086a2',
+    backgroundColor: Colors.accountButton,
     width: '15%'
-  }
-});
-
-export const HomeStyles = StyleSheet.create({
-  container: {
-    flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center'
-  },
-  loginContainer: {
-    width: '80%',
-    backgroundColor: '#0086a2',
-    borderRadius: 5,
-    padding: 10,
-    marginHorizontal: 10,
-    marginVertical: 5
-  },
-  textContainer: {
-    alignItems: 'center'
-  },
-  loginText: {
-    color: 'white'
-  },
-  inputContainer: {
-    width: '80%',
-    marginHorizontal: 10,
-    marginVertical: 5,
-    borderWidth: 1,
-    borderStyle: 'solid',
-    borderColor: 'grey',
-    borderRadius: 5,
-    backgroundColor: '#ffffff'
-  },
-  body: {
-    height: 42,
-    paddingLeft: 20,
-    paddingRight: 20,
-    color: '#696969'
-  },
-  image: {
-    alignItems: 'center'
-  },
-  backgroundImage: {
-    height: deviceHeight,
-    width: deviceWidth
   },
   homeContainer: {
     position: 'absolute',
@@ -157,7 +125,7 @@ export const HomeStyles = StyleSheet.create({
     top: 40,
     borderRadius: 5,
     padding: 10,
-    backgroundColor: '#0086a2',
+    backgroundColor: Colors.accountButton,
     width: '15%'
   }
 });

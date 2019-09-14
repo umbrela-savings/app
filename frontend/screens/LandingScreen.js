@@ -1,9 +1,9 @@
 import React from 'react';
-import { 
+import {
   TextInput,
-  Alert, 
-  Text, 
-  TouchableOpacity, 
+  Alert,
+  Text,
+  TouchableOpacity,
   View,
   ImageBackground,
   Button,
@@ -17,12 +17,12 @@ import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view
 import { login } from '../actions/auth';
 import Logo from '../assets/images/umbrela_landing_logo.svg';
 import { 
-  LandingStyles,
+  HomeStyles,
   Constants } from '../constants/Styles';
 import KeyboardShift from '../components/Keyboard';
 import LoadingScreen from './LoadingScreen';
 
-const styles = LandingStyles;
+const styles = HomeStyles;
 
 export class LandingScreen extends React.Component {
   state = {
@@ -51,7 +51,7 @@ export class LandingScreen extends React.Component {
     } else {
       Alert.alert('A field is empty!');
     }
-    
+
   };
 
   render() {
@@ -65,9 +65,9 @@ export class LandingScreen extends React.Component {
           enableAutomaticScroll>
 
           <ImageBackground
-            source={Constants.images.background} 
+            source={Constants.images.background}
             style={{width: '100%', height: '100%'}}>
-    
+
             <View style={styles.container}>
 
               <LoadingScreen loading={this.props.isLoading} />
@@ -75,8 +75,8 @@ export class LandingScreen extends React.Component {
               <View style={styles.image}>
                 <Logo width={300} height={200}/>
               </View>
-              
-              <View 
+
+              <View
               style={styles.inputContainer}>
                 <TextInput
                   style={styles.body}
@@ -89,7 +89,7 @@ export class LandingScreen extends React.Component {
                   onChangeText={(text) => this.setState({ username: text })}
                 />
               </View>
-              
+
               <View
                 style={styles.inputContainer}>
                 <TextInput
@@ -104,31 +104,31 @@ export class LandingScreen extends React.Component {
                   onChangeText={(text) => this.setState({ password: text })}
                 />
               </View>
-    
-              <Button 
+
+              <Button
               //onPress={() => this.onPressLogin()}
                 title='Forgot Password?'
                 color='white'
               />
-              
-              <TouchableOpacity 
+
+              <TouchableOpacity
                 onPress={() => this._logIn()}
                 style={styles.loginContainer}>
                   <View style={styles.textContainer}>
                     <Text style={styles.loginText}>Log in</Text>
                   </View>
               </TouchableOpacity>
-    
-              <TouchableOpacity 
+
+              <TouchableOpacity
                 onPress={() => {this.props.navigation.navigate('Register')}}
                 style={styles.loginContainer}>
                   <View style={styles.textContainer}>
                     <Text style={styles.loginText}>Create Account</Text>
                   </View>
               </TouchableOpacity>
-    
+
             </View>
-            
+
           </ImageBackground>
 
         </KeyboardAwareScrollView>
@@ -138,18 +138,18 @@ export class LandingScreen extends React.Component {
       <KeyboardShift>
         {() => (
         <ImageBackground
-          source={Constants.images.background} 
+          source={Constants.images.background}
           style={{width: '100%', height: '100%'}}>
-  
+
           <View style={styles.container}>
 
             <LoadingScreen loading={this.props.isLoading} />
-  
+
             <View style={styles.image}>
               <Logo width={300} height={200}/>
             </View>
-            
-            <View 
+
+            <View
             style={styles.inputContainer}>
               <TextInput
                 style={styles.body}
@@ -158,7 +158,7 @@ export class LandingScreen extends React.Component {
                 onChangeText={(text) => this.setState({ username: text })}
               />
             </View>
-            
+
             <View
               style={styles.inputContainer}>
               <TextInput
@@ -169,31 +169,31 @@ export class LandingScreen extends React.Component {
                 onChangeText={(text) => this.setState({ password: text })}
               />
             </View>
-  
-            <Button 
+
+            <Button
             //onPress={() => this.onPressLogin()}
               title='Forgot Password?'
               color='grey'
             />
 
-            <TouchableOpacity 
+            <TouchableOpacity
               onPress={() => this._logIn()}
               style={styles.loginContainer}>
                 <View style={styles.textContainer}>
                   <Text style={styles.loginText}>Log in</Text>
                 </View>
             </TouchableOpacity>
-  
-            <TouchableOpacity 
+
+            <TouchableOpacity
               onPress={() => {this.props.navigation.navigate('Register')}}
               style={styles.loginContainer}>
                 <View style={styles.textContainer}>
                   <Text style={styles.loginText}>Create Account</Text>
                 </View>
             </TouchableOpacity>
-  
+
           </View>
-          
+
         </ImageBackground>
         )}
       </KeyboardShift>

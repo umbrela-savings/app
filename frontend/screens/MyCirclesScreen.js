@@ -9,8 +9,9 @@ import {
 } from 'react-native';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
-import { StackActions } from 'react-navigation';
+import { StackActions, NavigationActions } from 'react-navigation';
 
+import Ionicons from 'react-native-vector-icons/Ionicons';
 import { logout } from '../actions/auth';
 import { loadCircleList, loadCircle } from '../actions/circle';
 import { loadCircleAccount } from '../actions/account';
@@ -41,11 +42,14 @@ export class MyCirclesScreen extends React.Component {
 
   static navigationOptions = ({ navigation }) => {
     return {
-      headerTitle: 'My Circles',
       headerRight: (
-        <Button
+        <TouchableOpacity
           onPress={() => alert('Notification!')}
-          title='bell' />
+          style={styles.notificationContainer}>
+          <View>
+            <Ionicons name={`ios-notifications`} size={25} color={'#fff'}/>
+          </View>
+        </TouchableOpacity>
       )
     }
   };
@@ -75,7 +79,7 @@ export class MyCirclesScreen extends React.Component {
     if (circleList.length > 0 && index < circleList.length) {
       this.props.loadCircle(circleList[index].circle);
       ++this.state.index;
-    } 
+    }
   }
 
   signOut() {
@@ -100,24 +104,24 @@ export class MyCirclesScreen extends React.Component {
           />}
         >
           {this.state.accountList &&
-            this.state.accountList.map((account, index) => 
+            this.state.accountList.map((account, index) =>
             <TouchableOpacity
               key = {index}
               style = {styles.loginContainer}
               onPress = {() => this.props.navigation.navigate('Circle',
-                { circle: this.state.listOfCircles[index], 
+                { circle: this.state.listOfCircles[index],
                   account: account,
                   user: this.props.user})}>
               <Text style = {styles.loginText}>
-                Team Name {this.state.listOfCircles[index].name} 
-                {this.state.listOfCircles[index].users.length} savers 
+                Team Name {this.state.listOfCircles[index].name}
+                {this.state.listOfCircles[index].users.length} savers
                 {account.deposits}
               </Text>
             </TouchableOpacity>
             )
           }
 
-          <TouchableOpacity 
+          <TouchableOpacity
             onPress={() => this.props.navigation.navigate('NewCircle', {
               user: this.props.user
             })}
@@ -127,7 +131,7 @@ export class MyCirclesScreen extends React.Component {
               </View>
           </TouchableOpacity>
 
-          <TouchableOpacity 
+          <TouchableOpacity
             onPress={() => this.props.navigation.navigate('Join', {
               user: this.props.user
             })}
@@ -137,9 +141,9 @@ export class MyCirclesScreen extends React.Component {
               </View>
           </TouchableOpacity>
         </ScrollView>
-        
-        
-        <TouchableOpacity 
+
+
+        <TouchableOpacity
           onPress={() => this.signOut()}
           style={styles.loginContainer}>
           <View style={styles.textContainer}>
@@ -161,5 +165,5 @@ const mapStateToProps = state => ({
   circleAccount: state.account.circleAccount
 });
 
-export default connect(mapStateToProps, 
+export default connect(mapStateToProps,
   { loadCircleList, logout, loadCircle, loadCircleAccount })(MyCirclesScreen);
