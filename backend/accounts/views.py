@@ -1,17 +1,19 @@
 from django.shortcuts import get_object_or_404
 from rest_framework.response import Response
 from rest_framework.request import Request
-from rest_framework import viewsets, serializers, permissions, status
+from rest_framework import viewsets, serializers, permissions, status, mixins
 from rest_framework.decorators import action
-from django.contrib.auth.models import User
-from .models import Circle, CircleUser, Message
-from .serializers import UserSerializer, CircleSerializer, CircleUserSerializer, MessageSerializer
+from django.contrib.auth import get_user_model
+from .models import *
+from .serializers import *
 
 from knox.auth import TokenAuthentication
 from rest_framework.permissions import IsAuthenticated
+from django.utils.crypto import get_random_string
+import uuid
 
+User = get_user_model()
 
-# Create your views here.
 class UserViewSet(viewsets.ReadOnlyModelViewSet):
     """
     This viewset automatically provides `list` and `detail` actions.
@@ -25,8 +27,6 @@ class CircleViewSet(viewsets.ModelViewSet):
     This viewset automatically provides `list`, `create`, `retrieve`,
     `update` and `destroy` actions.
     """
-    # authentication_classes = (TokenAuthentication,)
-    # permission_classes = (IsAuthenticated,)
     serializer_class = CircleSerializer
     queryset = Circle.objects.all()
 
@@ -35,10 +35,6 @@ class CircleViewSet(viewsets.ModelViewSet):
     #     serializer = CircleSerializer(queryset, many=True)
     #     return Response(serializer.data)
 
-    # @action(detail=True, renderer_classes=[renderers.StaticHTMLRenderer])
-    # def highlight(self, request, *args, **kwargs):
-    #     snippet = self.get_object()
-    #     return Response(snippet.highlighted)
 
     def perform_create(self, serializer):
         """
@@ -46,7 +42,7 @@ class CircleViewSet(viewsets.ModelViewSet):
         """
         if not self.request.user.is_authenticated:
             raise serializers.ValidationError("User must be authenticated to create a Circle")
-        serializer.save(creator=self.request.user)
+        serializer.save(executor=self.request.user)
 
     @action(methods=['get'], detail=False, url_path='join_code/(?P<join_code>\w+)')
     def get_by_join_code(self, request, join_code):
@@ -65,10 +61,8 @@ class CircleUserViewSet(viewsets.ModelViewSet):
     This viewset automatically provides `list`, `create`, `retrieve`,
     `update` and `destroy` actions.
     """
-    # authentication_classes = (TokenAuthentication,)
-    # permission_classes = (IsAuthenticated,)
-
     serializer_class = CircleUserSerializer
+    # authentication_classes = (TokenAuthentication,)
     # permission_classes = (permissions.IsAuthenticatedOrReadOnly,
     #                       IsOwnerOrReadOnly,)
 
@@ -89,6 +83,67 @@ class CircleUserViewSet(viewsets.ModelViewSet):
 
         return queryset
 
+
+class CircleAccountViewSet(viewsets.ReadOnlyModelViewSet):
+    """
+    This viewset automatically provides `list` and `detail` actions.
+    """
+    queryset = CircleAccount.objects.all()
+    serializer_class = CircleAccountSerializer
+
+class CircleUserAccountViewSet(viewsets.ReadOnlyModelViewSet):
+    """
+    This viewset automatically provides `list` and `detail` actions.
+    """
+    serializer_class = CircleUserAccountSerializer
+
+    def get_queryset(self):
+        """
+        Returns the queryset object for CircleUsers.
+        We can optionally filter by user_id and circle_id.
+        """
+        queryset = CircleUserAccount.objects.all()
+        user_id = self.request.query_params.get('user_id', None)
+        circle_id = self.request.query_params.get('circle_id', None)
+
+        if user_id is not None:
+            queryset = queryset.filter(circle_user__user=user_id)
+
+        if circle_id is not None:
+            queryset = queryset.filter(circle_user__circle=circle_id)
+
+        return queryset
+
+
+class TransactionViewSet(viewsets.ReadOnlyModelViewSet, mixins.CreateModelMixin):
+    """
+    This viewset automatically provides `create`, `list` and `detail` actions.
+    """
+    serializer_class = TransactionSerializer
+
+    def get_queryset(self):
+        """
+        Returns the queryset object for CircleUsers.
+        We can optionally filter by circle_id.
+        """
+        queryset = Transaction.objects.all()
+        circle_id = self.request.query_params.get('circle_id', None)
+
+        if circle_id is not None:
+            queryset = queryset.filter(circle_account=circle_id)
+
+        return queryset
+
+
+class TransactionStatusViewSet(viewsets.ReadOnlyModelViewSet, mixins.CreateModelMixin):
+    """
+    This viewset automatically provides `create`, `list` and `detail` actions.
+    """
+    queryset = TransactionStatus.objects.all()
+    serializer_class = TransactionStatusSerializer
+
+    def perform_create(self, serializer):
+        serializer.save(authenticated_user=self.request.user)
 
 class MessageViewSet(viewsets.ModelViewSet):
     serializer_class = MessageSerializer

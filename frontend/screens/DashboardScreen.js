@@ -32,7 +32,6 @@ export class DashboardScreen extends React.Component {
   componentWillMount() {
     const circle = this.props.navigation.getParam('circle');
     this.props.loadUserAccount(circle.users[0].id, circle.id);
-    console.log
     this.setState({ 
       circle: circle
     })

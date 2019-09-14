@@ -10,18 +10,17 @@ router.register(r'circles', views.CircleViewSet, basename='circle')
 router.register(r'circleusers', views.CircleUserViewSet, basename='circleuser')
 router.register(r'users', views.UserViewSet)
 router.register(r'messages', views.MessageViewSet, basename='message')
+router.register(r'accounts', views.CircleUserAccountViewSet, basename='circleuseraccount')
+router.register(r'circle_accounts', views.CircleAccountViewSet, basename='circleaccount')
+router.register(r'transactions', views.TransactionViewSet, basename='transaction')
+router.register(r'transaction_statuses', views.TransactionStatusViewSet, basename='transactionstatus')
+
 
 urlpatterns = [
     path('', include(router.urls)),
-    path('api/auth', include('knox.urls')),
-    path('api/auth/register', RegisterAPI.as_view(), name='user_register'),
-    path('api/auth/login', LoginAPI.as_view(), name='user_login'),
-    path('api/auth/logout',
+    path('auth/register', RegisterAPI.as_view(), name='user_register'),
+    path('auth/login', LoginAPI.as_view(), name='user_login'),
+    path('auth/logout',
          knox_views.LogoutView.as_view(),
          name='knox_logout')
 ]
-
-
-# urlpatterns += [
-#     path('api-auth/', include('rest_framework.urls')),
-# ]
