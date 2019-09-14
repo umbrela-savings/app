@@ -1,9 +1,11 @@
 import React from 'react';
 import {
-  Button
+  Button,
+  TouchableOpacity,
+  View
 } from 'react-native';
-import { 
-  createAppContainer, 
+import {
+  createAppContainer,
   createSwitchNavigator,
   createStackNavigator,
   createBottomTabNavigator,
@@ -11,6 +13,8 @@ import {
 } from 'react-navigation';
 import createAnimatedSwitchNavigator from 'react-navigation-animated-switch';
 import { Transition } from 'react-native-reanimated';
+import Ionicons from 'react-native-vector-icons/Ionicons';
+import Colors from '../constants/Colors'
 
 import AuthLoadingScreen from '../screens/AuthLoadingScreen';
 import MyCirclesScreen from '../screens/MyCirclesScreen';
@@ -30,7 +34,10 @@ import RecordPaymentScreen from '../screens/RecordPaymentScreen'
 import ConfirmPaymentScreen from '../screens/ConfirmPaymentScreen'
 import NewCircleFirstScreen from '../screens/NewCircleFirstScreen'
 
-const RequestStack = 
+import { HomeStyles } from '../constants/Styles';
+const styles = HomeStyles;
+
+const RequestStack =
 createStackNavigator(
   {
     Request: LoanRequestsScreen,
@@ -68,33 +75,55 @@ const CircleTab = createBottomTabNavigator(
   },
   {
     initialRouteName: 'CircleMain',
-    /*navigationOptions: () => ({
-      headerBackTitle: 'null',
-      headerRight: (
-        <Button
-          onPress={() => alert('Notification!')}
-          title='bell' />
-      )
-    })*/
+    defaultNavigationOptions: ({ navigation }) => ({
+      tabBarIcon: ({ focused, horizontal, tintColor }) => {
+        const { routeName } = navigation.state;
+        let IconComponent = Ionicons;
+        let iconName;
+        if (routeName === 'CircleMain') {
+          iconName = `ios-home${focused ? '' : ''}`;
+        } else if (routeName === 'Messenger') {
+          iconName = `ios-text`;
+        } else if (routeName === 'Request') {
+          iconName = `ios-cash`;
+        } else if (routeName === 'Drawer') {
+          iconName = `ios-reorder`;
+        }
+
+        // You can return any component that you like here!
+        return <IconComponent name={iconName} size={25} color={tintColor} />;
+      },
+    }),
+    tabBarOptions: {
+      showLabel: false,
+      activeBackgroundColor: Colors.headerBackground,
+      inactiveBackgroundColor: Colors.headerBackground,
+      activeTintColor: Colors.primaryActive,
+      inactiveTintColor: Colors.primaryBackground,
+    },
   }
 );
 
 const CircleDrawer = createDrawerNavigator(
   {
-    CircleHome: CircleTab,
-    RecordPayment: RecordPaymentScreen,
-    ConfirmPayment: ConfirmPaymentScreen,
-    LoanRequest: RequestStack,
-    NewLoan: NewLoanScreen
+    CircleHome: CircleTab
+    // RecordPayment: RecordPaymentScreen,
+    // ConfirmPayment: ConfirmPaymentScreen,
+    // LoanRequest: RequestStack,
+    // NewLoan: NewLoanScreen
   },
   {
     initialRouteName: 'CircleHome',
     navigationOptions: ({ navigation }) => ({
       headerBack: 'null',
       headerRight: (
-        <Button
+        <TouchableOpacity
           onPress={() => alert('Notification!')}
-          title='bell' />
+          style={styles.notificationContainer}>
+          <View>
+            <Ionicons name={`ios-notifications`} size={25} color={'#fff'}/>
+          </View>
+        </TouchableOpacity>
       )
     })
   }
@@ -122,13 +151,48 @@ const NewCircleStack = createStackNavigator(
   }
 );
 
-const AppStack = 
+const AppStack =
 createStackNavigator(
-  { 
-    MyCircles: MyCirclesScreen,
-    NewCircle: NewCircleStack,
-    Join: JoinStack,
-    Circle: CircleDrawer
+  {
+    MyCircles: {
+      screen: MyCirclesScreen,
+      navigationOptions: {
+        title: 'My Circles',
+        headerStyle: {
+          backgroundColor: Colors.headerBackground
+        },
+        headerTintColor: "#fff",
+      },
+    },
+    NewCircle: {
+      screen: NewCircleStack,
+      navigationOptions: {
+        title: 'Start a New Circle',
+        headerStyle: {
+          backgroundColor: Colors.headerBackground
+          },
+        headerTintColor: "#fff",
+      },
+    },
+    Join: {
+      screen: JoinStack,
+      navigationOptions: {
+        title: 'Join a New Circle',
+        headerStyle: {
+          backgroundColor: Colors.headerBackground
+          },
+        headerTintColor: "#fff",
+      },
+    },
+    Circle: {
+      screen: CircleDrawer,
+      navigationOptions: {
+        headerStyle: {
+          backgroundColor: Colors.headerBackground
+          },
+        headerTintColor: "#fff",
+      },
+    },
   },
   {
     headerMode: 'float',
@@ -137,7 +201,7 @@ createStackNavigator(
 );
 
 const AuthStack =
-  createStackNavigator({ 
+  createStackNavigator({
     Landing: {
       screen: LandingScreen,
       navigationOptions: () => ({
@@ -172,5 +236,5 @@ export default createAppContainer(
       </Transition.Together>
     ),
   }),
-  
+
 );
